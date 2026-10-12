@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[0,)"
+license = "GPL-3.0-only"
+issueTrackerURL = "https://github.com/S1nuxoff/InGame-Messenger/issues"
+
+[[mods]]
+modId = "ingamemessenger"
+version = "${version}"
+displayName = "InGame Messenger"
+logoFile = "ingamemessenger.png"
+authors = "S1nuxoff"
+displayURL = "https://live.sinuxoff.com/messenger/"
+description = '''
+A messenger in the Minecraft chat: bubbles with faces, stickers and emoji, reactions, replies, @mentions, private chats, pictures, voice messages, polls and search through the whole history. Needed on the server and on the client.
+'''
+
+[[dependencies.ingamemessenger]]
+modId = "forge"
+mandatory = true
+versionRange = "${loader_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ingamemessenger]]
+modId = "minecraft"
+mandatory = true
+versionRange = "${minecraft_range}"
+ordering = "NONE"
+side = "BOTH"

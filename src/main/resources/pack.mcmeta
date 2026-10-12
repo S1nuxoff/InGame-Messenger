@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "description": "InGame Messenger resources",
+    ${pack_meta}
+  }
+}

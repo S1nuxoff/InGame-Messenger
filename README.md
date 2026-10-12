@@ -11,6 +11,7 @@ A messenger inside the Minecraft chat.
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1%20to%2026.3-62B47A)](#supported-versions)
 [![NeoForge](https://img.shields.io/badge/NeoForge-supported-E68C37)](#supported-versions)
 [![Fabric](https://img.shields.io/badge/Fabric-supported-C6BBA5)](#supported-versions)
+[![Forge](https://img.shields.io/badge/Forge-supported-1E2D3D)](#supported-versions)
 
 [Features](#features) · [Installation](#installation) · [Server guide](docs/server.md) · [Building](#building-from-source) · [Contributing](CONTRIBUTING.md)
 
@@ -18,7 +19,7 @@ A messenger inside the Minecraft chat.
 
 InGame Messenger replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
 custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. It runs on
-NeoForge and Fabric, from Minecraft 1.21.1 to 26.3.
+NeoForge, Fabric and Forge, from Minecraft 1.21.1 to 26.3.
 
 The mod is required on the server and on every client.
 
@@ -74,21 +75,23 @@ The mod is required on the server and on every client.
 
 ## Supported versions
 
-| Minecraft          | NeoForge | Fabric | Java |
-|--------------------|:--------:|:------:|:----:|
-| 1.21.1             |    ✓     |   ✓    |  21  |
-| 1.21.4             |    ✓     |   ✓    |  21  |
-| 1.21.5             |    ✓     |   ✓    |  21  |
-| 1.21.6 – 1.21.8    |    ✓     |   ✓    |  21  |
-| 1.21.9 – 1.21.10   |    ✓     |   ✓    |  21  |
-| 1.21.11            |    ✓     |   ✓    |  21  |
-| 26.1 – 26.1.2      |    ✓     |   ✓    |  25  |
-| 26.2               |    ✓     |   ✓    |  25  |
-| 26.3               |    ✓     |   ✓    |  25  |
+| Minecraft          | NeoForge | Fabric | Forge    | Java |
+|--------------------|:--------:|:------:|:--------:|:----:|
+| 1.21.1             |    ✓     |   ✓    |    ✓     |  21  |
+| 1.21.4             |    ✓     |   ✓    |    ✓     |  21  |
+| 1.21.5             |    ✓     |   ✓    |    ✓     |  21  |
+| 1.21.6 – 1.21.8    |    ✓     |   ✓    | 1.21.8 only |  21  |
+| 1.21.9 – 1.21.10   |    ✓     |   ✓    | 1.21.10 only |  21  |
+| 1.21.11            |    ✓     |   ✓    |    ✓     |  21  |
+| 26.1 – 26.1.2      |    ✓     |   ✓    | 26.1.2 only |  25  |
+| 26.2               |    ✓     |   ✓    |    ✓     |  25  |
+| 26.3               |    ✓     |   ✓    |    ✓     |  25  |
 
 Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
 
-Forge, Quilt, a Paper/Spigot plugin and older Minecraft versions are planned.
+Forge builds are made for one Minecraft release each, as Forge itself is.
+
+Quilt, a Paper/Spigot plugin and older Minecraft versions are planned.
 
 ## Installation
 

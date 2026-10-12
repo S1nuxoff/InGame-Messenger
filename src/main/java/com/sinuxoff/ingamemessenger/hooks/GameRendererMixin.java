@@ -1,4 +1,4 @@
-package com.sinuxoff.ingamemessenger.fabric.mixin;
+package com.sinuxoff.ingamemessenger.hooks;
 
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.sinuxoff.ingamemessenger.client.ClientEvents;
 
-/** Frame start hook (Fabric has no event for it). */
+/** Frame start hook (for loaders without an event for it). */
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
     @Inject(method = "render", at = @At("HEAD"))

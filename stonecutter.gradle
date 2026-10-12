@@ -5,6 +5,8 @@ plugins {
     id 'net.fabricmc.fabric-loom-remap' version '1.18.4' apply false // Minecraft up to 1.21.11 (obfuscated)
     id 'net.fabricmc.fabric-loom' version '1.18.4' apply false       // 26.x (Mojang's own names)
     id 'net.neoforged.moddev' version '2.0.148' apply false
+    id 'net.minecraftforge.gradle' version '7.0.40' apply false
+    id 'net.minecraftforge.jarjar' version '0.2.3' apply false
 }
 
 stonecutter.active '1.21.1-neoforge' /* [SC] DO NOT EDIT */

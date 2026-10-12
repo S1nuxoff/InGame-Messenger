@@ -3,8 +3,8 @@
 def loader = property('loader') as String
 def mcVersion = property('minecraft_version') as String
 
-// //? if fabric { ... } and //? if neoforge { ... } in the sources
-stonecutter.constants.match(loader, 'fabric', 'neoforge')
+// //? if fabric { ... }, //? if neoforge { ... } and //? if forge { ... } in the sources
+stonecutter.constants.match(loader, 'fabric', 'neoforge', 'forge')
 
 // names Mojang changed: the sources keep the old ones, Stonecutter writes the new ones for the newer versions
 def since = { String v -> stonecutter.current.parsed.matches(">=$v") }
@@ -59,7 +59,12 @@ stonecutter.replacements.string(since('26.1')) {
 
 // Minecraft 26.x comes with Mojang's own names (nothing to map); older ones obfuscated (Loom maps them)
 def obfuscated = findProperty('obfuscated') != 'false'
-apply plugin: loader == 'neoforge' ? 'net.neoforged.moddev' : obfuscated ? 'net.fabricmc.fabric-loom-remap' : 'net.fabricmc.fabric-loom'
+if (loader == 'forge') {
+    apply plugin: 'net.minecraftforge.gradle'
+    apply plugin: 'net.minecraftforge.jarjar'
+} else {
+    apply plugin: loader == 'neoforge' ? 'net.neoforged.moddev' : obfuscated ? 'net.fabricmc.fabric-loom-remap' : 'net.fabricmc.fabric-loom'
+}
 
 version = mod_version
 group = 'com.sinuxoff'
@@ -74,14 +79,21 @@ repositories {
     maven { url = 'https://maven.fabricmc.net/' }
 }
 
-def other = loader == 'fabric' ? 'neoforge' : 'fabric'
+// each loader's own package and files stay out of the other loaders' jars; the vanilla hook mixins are for loaders
+// without the matching events (Fabric, Forge)
+def otherLoaders = ['fabric', 'neoforge', 'forge'] - loader
+def loaderFiles = [fabric: ['fabric.mod.json'], neoforge: ['META-INF/neoforge.mods.toml'], forge: ['META-INF/mods.toml', 'pack.mcmeta']]
 sourceSets.main {
     java.srcDir rootProject.file('core/src/main/java')
-    java.exclude "com/sinuxoff/ingamemessenger/${other}/**"
-    resources.exclude loader == 'fabric' ? 'META-INF/neoforge.mods.toml' : ['fabric.mod.json', 'ingamemessenger.fabric.mixins.json']
+    otherLoaders.each { java.exclude "com/sinuxoff/ingamemessenger/$it/**" }
+    otherLoaders.each { resources.exclude loaderFiles[it] }
+    if (loader == 'neoforge') {
+        java.exclude 'com/sinuxoff/ingamemessenger/hooks/**'
+        resources.exclude 'ingamemessenger.hooks.mixins.json'
+    }
 }
 
-def props = [version: version, minecraft_range: minecraft_range, loader_range: loader_range]
+def props = [version: version, minecraft_range: minecraft_range, loader_range: loader_range, pack_meta: findProperty('pack_meta') ?: '']
 
 if (loader == 'neoforge') {
     neoForge {
@@ -108,6 +120,46 @@ if (loader == 'neoforge') {
     tasks.named('processResources', ProcessResources) {
         inputs.properties props
         filesMatching('META-INF/neoforge.mods.toml') { expand props }
+    }
+} else if (loader == 'forge') {
+    minecraft {
+        if (obfuscated) {
+            mappings channel: 'official', version: mcVersion
+        }
+        runs {
+            register('client')
+            register('server') {
+                args '--nogui'
+            }
+        }
+    }
+    repositories {
+        minecraft.mavenizer(it)
+        maven fg.forgeMaven
+        maven fg.minecraftLibsMaven
+    }
+    jarJar.register()
+    dependencies {
+        implementation minecraft.dependency("net.minecraftforge:forge:${mcVersion}-${forge_version}")
+        // carried inside the mod's jar; Forge ships MixinExtras itself only from 26.3
+        implementation(jarJar("io.github.jaredmdobson:concentus:${concentus_version}")) { transitive = false }
+        implementation(jarJar("com.h2database:h2:${h2_version}")) { transitive = false }
+        compileOnly "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+        if (!stonecutter.current.parsed.matches('>=26.3')) {
+            implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixinextras_version}")) { transitive = false }
+        }
+    }
+    tasks.named('jar', Jar) {
+        manifest.attributes('MixinConfigs': 'ingamemessenger.mixins.json,ingamemessenger.hooks.mixins.json')
+        archiveClassifier = 'slim'
+    }
+    // the jar with the libraries inside is the one to install
+    tasks.named('jarJar') {
+        archiveClassifier = ''
+    }
+    tasks.named('processResources', ProcessResources) {
+        inputs.properties props
+        filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) { expand props }
     }
 } else {
     dependencies {

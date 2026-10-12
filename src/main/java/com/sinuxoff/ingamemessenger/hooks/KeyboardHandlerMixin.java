@@ -1,4 +1,4 @@
-package com.sinuxoff.ingamemessenger.fabric.mixin;
+package com.sinuxoff.ingamemessenger.hooks;
 
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.sinuxoff.ingamemessenger.client.ClientEvents;
 
-/** Typed characters before the screen gets them (Fabric has no event for it). */
+/** Typed characters before the screen gets them (for loaders without an event for it). */
 @Mixin(KeyboardHandler.class)
 public abstract class KeyboardHandlerMixin {
     //? if >=1.21.9 {

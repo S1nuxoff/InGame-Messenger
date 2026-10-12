@@ -1,4 +1,4 @@
-package com.sinuxoff.ingamemessenger.fabric.mixin;
+package com.sinuxoff.ingamemessenger.hooks;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.sinuxoff.ingamemessenger.client.ClientEvents;
 
-/** Fabric HUD hooks: blur before the HUD, our overlays after it, hotbar hidden while the chat is open. */
+/** HUD hooks for loaders without HUD events (Fabric, Forge): blur before the HUD, our overlays after it, hotbar hidden while the chat is open. */
 //? if >=26.2 {
 /*@Mixin(net.minecraft.client.gui.Hud.class)
 *///?} else {

@@ -34,7 +34,9 @@ src/main/java/com/sinuxoff/ingamemessenger/
   *.java                  The Minecraft server side: platform glue, commands, config.
   client/                 Everything the player sees: chat rendering, input, panels, screens, audio.
   mixin/                  Mixins shared by all loaders.
-  neoforge/  fabric/      Entry points, networking and events for each loader.
+  hooks/                  Mixins for HUD, typed characters and frame start, used on loaders without such events
+                          (Fabric, Forge).
+  neoforge/ fabric/ forge/  Entry points, networking and events for each loader.
 
 versions/<mc>-<loader>/   One build target each, with its versions in gradle.properties.
 ```
@@ -49,11 +51,13 @@ shared code, not per loader.
 
 ```sh
 ./gradlew buildAll                 # every target
-./gradlew :26.3-fabric:build       # one target
+./gradlew :26.3-fabric:build       # one target (targets are <minecraft>-<neoforge|fabric|forge>)
 ./gradlew :core:test               # unit tests
 ```
 
 JDK 21 is enough to run Gradle; the JDK 25 needed for the 26.x targets is downloaded through Gradle toolchains.
+The first build of a Forge target takes several minutes per Minecraft version while ForgeGradle prepares the game;
+later builds use the cache.
 
 ## Multiple Minecraft versions
 
@@ -70,7 +74,7 @@ comments:
 ```
 
 The active branch is plain code, inactive branches are commented out. Stonecutter swaps them when building each
-target. Loader-specific code uses `//? if fabric {` and `//? if neoforge {`.
+target. Loader-specific code uses `//? if fabric {`, `//? if neoforge {` and `//? if forge {`.
 
 Renames that apply to every file (for example `ResourceLocation` to `Identifier` in 1.21.11) are declared once as
 replacements in `build.gradle` instead of conditions in each file.

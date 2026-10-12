@@ -9,6 +9,7 @@ pluginManagement {
         gradlePluginPortal()
         maven { url = 'https://maven.fabricmc.net/' }
         maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url = 'https://maven.minecraftforge.net/' }
         maven { url = 'https://maven.kikugie.dev/releases' }
     }
 }
@@ -31,17 +32,18 @@ stonecutter {
         def mc = { String minecraft, List<String> loaders ->
             loaders.each { version("$minecraft-$it", minecraft) }
         }
-        mc('1.21.1', ['neoforge', 'fabric'])
-        mc('1.21.4', ['neoforge', 'fabric'])
-        mc('1.21.5', ['neoforge', 'fabric'])
-        mc('1.21.8', ['neoforge', 'fabric'])   // 1.21.6 - 1.21.8
-        mc('1.21.10', ['neoforge', 'fabric'])  // 1.21.9 - 1.21.10
-        mc('1.21.11', ['neoforge', 'fabric'])
+        mc('1.21.1', ['neoforge', 'fabric', 'forge'])
+        mc('1.21.4', ['neoforge', 'fabric', 'forge'])
+        mc('1.21.5', ['neoforge', 'fabric', 'forge'])
+        mc('1.21.8', ['neoforge', 'fabric', 'forge'])   // 1.21.6 - 1.21.8
+        mc('1.21.10', ['neoforge', 'fabric', 'forge'])  // 1.21.9 - 1.21.10
+        mc('1.21.11', ['neoforge', 'fabric', 'forge'])
         // 26.x: one jar a release (26.1 covers 26.1 - 26.1.2), built against its latest patch
         version('26.1-neoforge', '26.1.2')
         version('26.1-fabric', '26.1.2')
-        mc('26.2', ['neoforge', 'fabric'])
-        mc('26.3', ['neoforge', 'fabric'])
+        version('26.1-forge', '26.1.2')
+        mc('26.2', ['neoforge', 'fabric', 'forge'])
+        mc('26.3', ['neoforge', 'fabric', 'forge'])
 
         // the version the sources in git are written for
         vcsVersion = '1.21.1-neoforge'

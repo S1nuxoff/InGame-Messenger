@@ -19,7 +19,7 @@
   },
   "mixins": [
     "ingamemessenger.mixins.json",
-    {"config": "ingamemessenger.fabric.mixins.json", "environment": "client"}
+    {"config": "ingamemessenger.hooks.mixins.json", "environment": "client"}
   ],
   "depends": {
     "fabricloader": "${loader_range}",

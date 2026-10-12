@@ -18,7 +18,8 @@ storage, sticker packs and commands.
 
 ## Installation
 
-1. Download the jar for your Minecraft version and loader and put it in `mods/`. On Fabric, Fabric API is required.
+1. Download the jar for your Minecraft version and loader (NeoForge, Fabric or Forge) and put it in `mods/`. On Fabric,
+   Fabric API is required.
 2. Start the server. The mod creates `config/ingamemessenger/` with `server.toml` and the `stickers/` and `emoji/`
    folders.
 3. Every player needs the same mod version on their client.
