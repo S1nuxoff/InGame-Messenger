@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -20,12 +21,25 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      # Minecraft as prepared by Loom, ModDevGradle and ForgeGradle: slow to produce, the same until a version changes
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches/fabric-loom
+            ~/.gradle/caches/neoformruntime
+            ~/.gradle/caches/minecraftforge
+          key: minecraft-${{ hashFiles('gradle.properties', 'versions/*/gradle.properties', 'stonecutter.gradle') }}
+          restore-keys: minecraft-
+
+      # downloads from Mojang and the loaders' mavens time out now and then: one retry
       - name: Build every version
-        run: ./gradlew :core:test buildAll --stacktrace
+        run: ./gradlew :core:test buildAll --stacktrace || (sleep 30 && ./gradlew :core:test buildAll --stacktrace)
 
       - uses: actions/upload-artifact@v4
         with:
           name: ingamemessenger-jars
-          path: versions/*/build/libs/ingamemessenger-*.jar
+          path: |
+            versions/*/build/libs/ingamemessenger-*.jar
+            !versions/*/build/libs/*-slim.jar
           if-no-files-found: error
           retention-days: 7
