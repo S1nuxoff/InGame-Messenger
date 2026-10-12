@@ -138,6 +138,22 @@ public final class Gfx {
         text(g, font, text, x - font.width(text) / 2, y, color);
     }
 
+    /** Text scaled down to fit maxWidth if needed (long translations on small buttons), vertically centered on its line. */
+    public static void fittedText(GuiGraphics g, Font font, Component text, int x, int y, int maxWidth, int color, boolean centered,
+                                  boolean shadow) {
+        int w = font.width(text);
+        if (w <= maxWidth) {
+            text(g, font, text, centered ? x - w / 2 : x, y, color, shadow);
+            return;
+        }
+        float k = maxWidth / (float) w;
+        push(g);
+        move(g, centered ? x - maxWidth / 2f : x, y + 4 * (1 - k));
+        scale(g, k, k);
+        text(g, font, text, 0, 0, color, shadow);
+        pop(g);
+    }
+
     /** 0xRRGGBB becomes opaque: older versions drew it opaque, newer ones would draw nothing. */
     private static int opaque(int color) {
         return (color & 0xFC000000) == 0 ? color | 0xFF000000 : color;

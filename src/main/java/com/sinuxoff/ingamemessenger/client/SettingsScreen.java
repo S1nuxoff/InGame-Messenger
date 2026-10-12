@@ -200,7 +200,7 @@ final class SettingsScreen extends BaseScreen {
             }
             Component name = Component.translatable(i == CHAT ? "ingamemessenger.tab.chat" : i == AI ? "ingamemessenger.tab.ai"
                     : i == SOUND ? "ingamemessenger.tab.sound" : "ingamemessenger.tab.packs");
-            Gfx.centeredText(g, font, name, tx + TAB_W / 2, ty + 5, i == tab ? 0xFFFFFF : 0xC8CCD8);
+            Gfx.fittedText(g, font, name, tx + TAB_W / 2, ty + 5, TAB_W - 6, i == tab ? 0xFFFFFF : 0xC8CCD8, true, true);
         }
         if (tab == SOUND) { // microphone level while testing, device list when picking
             int ly = testY() + ROW + GAP + 3;

@@ -87,7 +87,7 @@ final class Glass {
                 g.fill(getX() + 5, getY(), getX() + width - 5, getY() + 1, 0x40FFFFFF);
             }
             var font = Minecraft.getInstance().font;
-            Gfx.centeredText(g, font, getMessage(), getX() + width / 2, getY() + (height - 8) / 2, active ? TEXT : MUTED);
+            Gfx.fittedText(g, font, getMessage(), getX() + width / 2, getY() + (height - 8) / 2, width - 8, active ? TEXT : MUTED, true, true);
         }
     }
 
@@ -129,7 +129,7 @@ final class Glass {
             int x = getX(), y = getY();
             Panel.round(g, x, y, width, height, 7, hover ? FILL_HOVER : FILL);
             var font = Minecraft.getInstance().font;
-            Gfx.text(g, font, getMessage(), x + 8, y + 4, TEXT, false);
+            Gfx.fittedText(g, font, getMessage(), x + 8, y + 4, width - 16, TEXT, false, false);
             int tx = x + 8, tw = width - 16, ty = y + height - 8;
             Panel.round(g, tx, ty, tw, 3, 1, 0x30FFFFFF);
             int kx = tx + (int) Math.round(value * tw);
@@ -167,8 +167,9 @@ final class Glass {
             int x = getX(), y = getY();
             Panel.round(g, x, y, width, height, 7, hover ? FILL_HOVER : FILL);
             var font = Minecraft.getInstance().font;
-            Gfx.text(g, font, label.get(), x + 9, y + (height - 8) / 2, active ? TEXT : MUTED, false);
-            int tw = 22, th = 12, tx = x + width - 9 - tw, ty = y + (height - th) / 2;
+            int tw = 22;
+            Gfx.fittedText(g, font, label.get(), x + 9, y + (height - 8) / 2, width - 9 - tw - 9 - 6, active ? TEXT : MUTED, false, false);
+            int th = 12, tx = x + width - 9 - tw, ty = y + (height - th) / 2;
             float target = isOn ? 1f : 0f;
             knob = knob < 0 ? target : knob + (target - knob) * 0.35f;
             Panel.round(g, tx, ty, tw, th, th / 2, isOn ? (active ? ACCENT : 0xFF5A5470) : 0x40FFFFFF);
