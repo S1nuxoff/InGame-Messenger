@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Server setup guide
+    url: https://github.com/S1nuxoff/InGame-Messenger/blob/main/docs/server.md
+    about: Configuration, databases, S3 storage, sticker packs and commands.

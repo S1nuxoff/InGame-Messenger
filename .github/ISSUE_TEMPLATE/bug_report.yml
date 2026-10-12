@@ -1,0 +1,70 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: input
+    id: mod-version
+    attributes:
+      label: InGame Messenger version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: minecraft
+    attributes:
+      label: Minecraft version
+      placeholder: 1.21.1
+    validations:
+      required: true
+  - type: dropdown
+    id: loader
+    attributes:
+      label: Mod loader
+      options:
+        - NeoForge
+        - Fabric
+    validations:
+      required: true
+  - type: input
+    id: loader-version
+    attributes:
+      label: Loader version
+      placeholder: NeoForge 21.1.251 / Fabric Loader 0.19.5
+  - type: dropdown
+    id: side
+    attributes:
+      label: Where does it happen?
+      options:
+        - Client
+        - Server
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: What you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the chat
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or crash report
+      description: The relevant part of logs/latest.log or the crash report. Use a paste service for long logs.
+      render: text
+  - type: textarea
+    id: mods
+    attributes:
+      label: Other mods
+      description: Other mods installed, if the problem might come from a conflict.

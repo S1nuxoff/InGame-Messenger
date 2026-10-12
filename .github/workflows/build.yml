@@ -28,3 +28,4 @@ jobs:
           name: ingamemessenger-jars
           path: versions/*/build/libs/ingamemessenger-*.jar
           if-no-files-found: error
+          retention-days: 7

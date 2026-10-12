@@ -1,7 +1,23 @@
+<div align="center">
+
+<img src="src/main/resources/ingamemessenger.png" alt="InGame Messenger" width="128">
+
 # InGame Messenger
 
-A Minecraft mod that replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
-custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. Runs on
+A messenger inside the Minecraft chat.
+
+[![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1%20to%2026.3-62B47A)](#supported-versions)
+[![NeoForge](https://img.shields.io/badge/NeoForge-supported-E68C37)](#supported-versions)
+[![Fabric](https://img.shields.io/badge/Fabric-supported-C6BBA5)](#supported-versions)
+
+[Features](#features) · [Installation](#installation) · [Server guide](docs/server.md) · [Building](#building-from-source) · [Contributing](CONTRIBUTING.md)
+
+</div>
+
+InGame Messenger replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
+custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. It runs on
 NeoForge and Fabric, from Minecraft 1.21.1 to 26.3.
 
 The mod is required on the server and on every client.
