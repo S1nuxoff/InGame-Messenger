@@ -1,0 +1,41 @@
+// InGame Messenger core: the platform-free part (no Minecraft): audio, pictures, text rules, web clients.
+// The loaders' projects compile these sources into their own jar; this build only runs the tests.
+plugins {
+    id 'java-library'
+}
+
+group = 'com.sinuxoff'
+version = '0.1.0'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    // Opus in plain Java (Concentus, BSD): voice messages
+    api "io.github.jaredmdobson:concentus:${concentus_version}"
+    // H2 (MPL 2.0 / EPL 1.0): the default database, a file in the world folder
+    api "com.h2database:h2:${h2_version}"
+    // JSON: every platform already ships Gson (Minecraft does)
+    compileOnly 'com.google.code.gson:gson:2.11.0'
+
+    testImplementation 'com.google.code.gson:gson:2.11.0'
+    testImplementation platform('org.junit:junit-bom:5.11.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'java.awt.headless', 'true'
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+    }
+}

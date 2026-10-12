@@ -1,0 +1,17 @@
+// The build's controller: the loaders' Gradle plugins (loaded once, each version applies its own) and which version
+// the sources in src/ are set to now ("Set active project to ..." tasks change it; git keeps the vcs version).
+plugins {
+    id 'dev.kikugie.stonecutter'
+    id 'net.fabricmc.fabric-loom-remap' version '1.18.4' apply false // Minecraft up to 1.21.11 (obfuscated)
+    id 'net.fabricmc.fabric-loom' version '1.18.4' apply false       // 26.x (Mojang's own names)
+    id 'net.neoforged.moddev' version '2.0.148' apply false
+}
+
+stonecutter.active '1.21.1-neoforge' /* [SC] DO NOT EDIT */
+
+// every version's jar from one command: gradle buildAll
+tasks.register('buildAll') {
+    group = 'build'
+    description = 'Builds the mod for every Minecraft version and loader'
+    dependsOn childProjects.values().findAll { it.projectDir.parentFile.name == 'versions' }.collect { "${it.path}:build" }
+}

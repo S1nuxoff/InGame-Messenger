@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "ingamemessenger",
+  "version": "${version}",
+  "name": "InGame Messenger",
+  "description": "A messenger in the Minecraft chat: bubbles with faces, stickers and emoji, reactions, replies, @mentions, private chats, pictures, voice messages, polls and search through the whole history. Needed on the server and on the client.",
+  "authors": ["S1nuxoff"],
+  "contact": {
+    "homepage": "https://live.sinuxoff.com/messenger/",
+    "sources": "https://github.com/S1nuxoff/InGame-Messenger",
+    "issues": "https://github.com/S1nuxoff/InGame-Messenger/issues"
+  },
+  "license": "GPL-3.0-only",
+  "icon": "ingamemessenger.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.sinuxoff.ingamemessenger.fabric.FabricMod"],
+    "client": ["com.sinuxoff.ingamemessenger.fabric.FabricClient"]
+  },
+  "mixins": [
+    "ingamemessenger.mixins.json",
+    {"config": "ingamemessenger.fabric.mixins.json", "environment": "client"}
+  ],
+  "depends": {
+    "fabricloader": "${loader_range}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_range}",
+    "java": ">=21"
+  }
+}

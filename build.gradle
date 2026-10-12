@@ -1,0 +1,135 @@
+// InGame Messenger for one Minecraft version on one loader (versions/<minecraft>-<loader>, its versions in its
+// gradle.properties): core and src/main compiled into one jar, without the other loader's code and files.
+def loader = property('loader') as String
+def mcVersion = property('minecraft_version') as String
+
+// //? if fabric { ... } and //? if neoforge { ... } in the sources
+stonecutter.constants.match(loader, 'fabric', 'neoforge')
+
+// names Mojang changed: the sources keep the old ones, Stonecutter writes the new ones for the newer versions
+def since = { String v -> stonecutter.current.parsed.matches(">=$v") }
+stonecutter.replacements.regex(since('1.21.11')) {
+    replace(/\bResourceLocation\b/, 'Identifier', /\bIdentifier\b/, 'ResourceLocation')
+}
+// a resource key's name: location() became identifier()
+stonecutter.replacements.regex(since('1.21.11')) {
+    replace(/\.location\(\)/, '.identifier()', /\.identifier\(\)/, '.location()')
+}
+// a player's profile became a record: getName() / getId() are name() / id()
+stonecutter.replacements.regex(since('1.21.9')) {
+    replace(/\b(getGameProfile|getProfile)\(\)\.getName\(\)/, '$1().name()', /\b(getGameProfile|getProfile)\(\)\.name\(\)/, '$1().getName()')
+}
+stonecutter.replacements.regex(since('1.21.9')) {
+    replace(/\b(getGameProfile|getProfile)\(\)\.getId\(\)/, '$1().id()', /\b(getGameProfile|getProfile)\(\)\.id\(\)/, '$1().getId()')
+}
+stonecutter.replacements.regex(since('26.1')) {
+    replace(/\bGuiGraphics\b/, 'GuiGraphicsExtractor', /\bGuiGraphicsExtractor\b/, 'GuiGraphics')
+}
+// 26.2 split the game's Gui: the screens stay on mc.gui, the HUD (chat, the line over the hotbar) is mc.gui.hud
+stonecutter.replacements.regex(since('26.2')) {
+    replace(/\.gui\.(getChat|setOverlayMessage|getGuiTicks|getTabList)\(/, '.gui.hud.$1(', /\.gui\.hud\.(getChat|setOverlayMessage|getGuiTicks|getTabList)\(/, '.gui.$1(')
+}
+stonecutter.replacements.regex(since('26.2')) {
+    replace(/\b(mc|minecraft|Minecraft\.getInstance\(\))\.screen\b(?!\()/, '$1.gui.screen()', /\b(mc|minecraft|Minecraft\.getInstance\(\))\.gui\.screen\(\)/, '$1.screen')
+}
+stonecutter.replacements.regex(since('26.2')) {
+    replace(/\b(mc|minecraft|Minecraft\.getInstance\(\))\.setScreen\(/, '$1.gui.setScreen(', /\b(mc|minecraft|Minecraft\.getInstance\(\))\.gui\.setScreen\(/, '$1.setScreen(')
+}
+stonecutter.replacements.regex(since('26.2')) {
+    replace(/(net\.minecraft\.world\.entity\.)?\bEntityType\.PLAYER\b/, 'net.minecraft.world.entity.EntityTypes.PLAYER', /net\.minecraft\.world\.entity\.EntityTypes\.PLAYER/, 'EntityType.PLAYER')
+}
+// 26.1 moved the GUI's render state classes
+stonecutter.replacements.string(since('26.1')) {
+    replace('net.minecraft.client.gui.render.state.', 'net.minecraft.client.renderer.state.gui.')
+}
+// 26.3's renderer: its pipelines and textures moved
+stonecutter.replacements.string(since('26.3')) {
+    replace('com.mojang.blaze3d.pipeline.RenderPipeline', 'com.mojang.renderpearl.api.pipeline.RenderPipeline')
+}
+stonecutter.replacements.string(since('26.3')) {
+    replace('com.mojang.blaze3d.textures.', 'com.mojang.renderpearl.api.textures.')
+}
+stonecutter.replacements.string(since('26.1')) {
+    replace('net.minecraft.client.GuiMessage', 'net.minecraft.client.multiplayer.chat.GuiMessage')
+}
+// the same class in the mixins' descriptors
+stonecutter.replacements.string(since('26.1')) {
+    replace('Lnet/minecraft/client/GuiMessage;', 'Lnet/minecraft/client/multiplayer/chat/GuiMessage;')
+}
+
+// Minecraft 26.x comes with Mojang's own names (nothing to map); older ones obfuscated (Loom maps them)
+def obfuscated = findProperty('obfuscated') != 'false'
+apply plugin: loader == 'neoforge' ? 'net.neoforged.moddev' : obfuscated ? 'net.fabricmc.fabric-loom-remap' : 'net.fabricmc.fabric-loom'
+
+version = mod_version
+group = 'com.sinuxoff'
+// named after its version folder (26.1-fabric: ingamemessenger-fabric-26.1), which may cover several releases
+base { archivesName = "ingamemessenger-${loader}-${project.name - "-$loader"}" }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(java_version as int)
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url = 'https://maven.fabricmc.net/' }
+}
+
+def other = loader == 'fabric' ? 'neoforge' : 'fabric'
+sourceSets.main {
+    java.srcDir rootProject.file('core/src/main/java')
+    java.exclude "com/sinuxoff/ingamemessenger/${other}/**"
+    resources.exclude loader == 'fabric' ? 'META-INF/neoforge.mods.toml' : ['fabric.mod.json', 'ingamemessenger.fabric.mixins.json']
+}
+
+def props = [version: version, minecraft_range: minecraft_range, loader_range: loader_range]
+
+if (loader == 'neoforge') {
+    neoForge {
+        version = neo_version
+        mods {
+            ingamemessenger {
+                sourceSet sourceSets.main
+            }
+        }
+        runs {
+            client {
+                client()
+            }
+            server {
+                server()
+            }
+        }
+    }
+    dependencies {
+        // Opus in plain Java (Concentus, BSD), carried inside the mod's jar: voice messages need no other mod
+        jarJar(implementation("io.github.jaredmdobson:concentus:${concentus_version}"))
+        jarJar(implementation("com.h2database:h2:${h2_version}"))
+    }
+    tasks.named('processResources', ProcessResources) {
+        inputs.properties props
+        filesMatching('META-INF/neoforge.mods.toml') { expand props }
+    }
+} else {
+    dependencies {
+        minecraft "com.mojang:minecraft:${mcVersion}"
+        if (obfuscated) {
+            mappings loom.officialMojangMappings()
+            modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+            modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+        } else {
+            implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+            implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+        }
+        // Opus in plain Java (Concentus, BSD), carried inside the mod's jar: voice messages need no other mod
+        include(implementation("io.github.jaredmdobson:concentus:${concentus_version}"))
+        include(implementation("com.h2database:h2:${h2_version}"))
+    }
+    tasks.named('processResources', ProcessResources) {
+        inputs.properties props
+        filesMatching('fabric.mod.json') { expand props }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

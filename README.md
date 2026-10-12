@@ -1,0 +1,146 @@
+# InGame Messenger
+
+A Minecraft mod that replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
+custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. Runs on
+NeoForge and Fabric, from Minecraft 1.21.1 to 26.3.
+
+The mod is required on the server and on every client.
+
+## Features
+
+**Chat**
+- Messages are shown as bubbles with the sender's face, name and time. Consecutive messages from one player are
+  grouped. Date separators between days.
+- Replies with a quote of the original message. Click the quote to jump to it, even if it is far back in the history.
+- Editing and deleting your own messages. Operators can delete any message.
+- Reactions: eight built-in ones plus any emoji from the server's emoji packs. Double-click a message to react with a
+  heart.
+- @mentions with autocompletion. Mentions of you are highlighted and announced above the hotbar.
+- "Player is typing..." indicator.
+- Read receipts: one check when sent, two when someone has read it. Hover to see who.
+- Smooth scrolling, new messages slide in, the chat can be placed on the right side of the screen.
+
+**Private chats**
+- One-to-one conversations in a chat list next to the main chat, with unread counters and notifications.
+- Private messages are stored on the server like public ones and are only delivered to the two participants.
+
+**Stickers and emoji**
+- Sticker and emoji packs are provided by the server (PNG, JPG and animated GIF).
+- Sticker panel with tabs for recent stickers, favourites, emoji and every pack.
+- Hold the chat key to open a quick sticker picker without the text field.
+- Emoji can be used inline in text and as reactions.
+
+**Media**
+- Pictures: up to four per message with a caption. Attach a file, a screenshot from the game, or paste an image from
+  the clipboard with Ctrl+V. Pictures are compressed on the client before upload.
+- Voice messages: hold the microphone button to record, release to send, slide left to cancel. Waveform, playback
+  speed (1x, 1.5x, 2x), a mini player that keeps playing while you move around. Encoded with Opus, no other mod needed.
+- Shared coordinates are shown as a card. With JourneyMap installed, clicking it creates a waypoint.
+
+**More**
+- Polls with single or multiple choice.
+- Full-text search through the whole chat history (Ctrl+F).
+- Optional private chat with Google Gemini, using the player's own free API key. Requests go directly from the
+  player's game to Google, never through the server.
+- Settings for chat size and scale, sticker size, microphone and output device, gain, noise gate and more.
+- English, Russian and Ukrainian translations.
+
+**For server owners**
+- History is stored in a database: H2 by default (a file in the world folder, nothing to configure), or MySQL,
+  MariaDB and PostgreSQL. Drivers for external databases are downloaded automatically on first start.
+- Voice messages and pictures are stored in the world folder or in any S3-compatible storage (AWS S3, Cloudflare R2,
+  Backblaze B2, MinIO, Wasabi). Pictures can also be hosted on ImgBB or Catbox.
+- Automatic cleanup of old voice messages and pictures.
+- One configuration file, reloadable in game.
+
+## Supported versions
+
+| Minecraft          | NeoForge | Fabric | Java |
+|--------------------|:--------:|:------:|:----:|
+| 1.21.1             |    ✓     |   ✓    |  21  |
+| 1.21.4             |    ✓     |   ✓    |  21  |
+| 1.21.5             |    ✓     |   ✓    |  21  |
+| 1.21.6 – 1.21.8    |    ✓     |   ✓    |  21  |
+| 1.21.9 – 1.21.10   |    ✓     |   ✓    |  21  |
+| 1.21.11            |    ✓     |   ✓    |  21  |
+| 26.1 – 26.1.2      |    ✓     |   ✓    |  25  |
+| 26.2               |    ✓     |   ✓    |  25  |
+| 26.3               |    ✓     |   ✓    |  25  |
+
+Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
+
+Forge, Quilt, a Paper/Spigot plugin and older Minecraft versions are planned.
+
+## Installation
+
+### Players
+
+1. Download the jar that matches your Minecraft version and mod loader.
+2. Put it in the `mods` folder of your game. On Fabric, also install Fabric API.
+3. Join a server that has the mod.
+
+### Servers
+
+1. Put the same jar in the server's `mods` folder (plus Fabric API on Fabric).
+2. Start the server once. It creates `config/ingamemessenger/` with the configuration file and the folders for
+   sticker and emoji packs.
+3. Add sticker packs if you want them, adjust the configuration if needed, then run `/messenger reload`.
+
+The defaults work without any changes: history in an H2 database in the world folder, voice messages and pictures in
+the world folder.
+
+See the [server guide](docs/server.md) for the full configuration reference, external databases, S3 storage, sticker
+packs and commands.
+
+## Controls
+
+| Action                         | How                                                                      |
+|--------------------------------|--------------------------------------------------------------------------|
+| Open the chat                  | Tap the chat key (T)                                                     |
+| Quick sticker picker           | Hold the chat key, click a sticker, release the key                      |
+| Sticker panel                  | Smiley button in the input field; right-click it to pin the panel open  |
+| Add a sticker to favourites    | Right-click it in the panel                                              |
+| Preview a sticker              | Press and hold it in the panel                                           |
+| React to a message             | Hover the message and click the reaction button, or double-click it      |
+| Reply, copy, edit, delete      | Right-click the message                                                  |
+| Player menu                    | Click a player's face or name                                            |
+| Voice message                  | Hold the microphone button (shown when the input is empty)               |
+| Attach a picture, location, poll | Paper clip button                                                      |
+| Paste a picture                | Ctrl+V with an image in the clipboard                                    |
+| Search                         | Ctrl+F or the magnifier above the chat                                   |
+| Settings                       | Gear button at the bottom of the chat list                               |
+
+## Privacy
+
+Messages, including private chats, are stored on the server in plain form. Server operators can read them, the same
+way as with any other chat platform. Voice messages and pictures are kept for a configurable number of days and then
+deleted.
+
+The optional Gemini chat runs entirely on the player's computer: the API key and the conversation never reach the
+server.
+
+## Building from source
+
+Requires JDK 21 or newer. JDK 25 is downloaded automatically for the 26.x builds.
+
+```sh
+./gradlew buildAll
+```
+
+Jars are written to `versions/<minecraft>-<loader>/build/libs/`. To build a single target, for example
+`./gradlew :1.21.1-neoforge:build`. `./gradlew :core:test` runs the unit tests.
+
+The project uses [Stonecutter](https://stonecutter.kikugie.dev/) to build every Minecraft version and loader from one
+source tree. See [CONTRIBUTING.md](CONTRIBUTING.md) for how the code is organized.
+
+## Contributing
+
+Bug reports, feature requests, translations and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md)
+first.
+
+## License
+
+InGame Messenger is free software, licensed under the [GNU General Public License v3.0](LICENSE), with an additional
+attribution term described in [NOTICE.md](NOTICE.md).
+
+Third-party assets and libraries are listed in [CREDITS.md](CREDITS.md).
