@@ -59,8 +59,9 @@ The mod is required on the server and on every client.
 - Optional private chat with Google Gemini, using the player's own free API key. Requests go directly from the
   player's game to Google, never through the server.
 - Settings for chat size and scale, sticker size, microphone and output device, gain, noise gate and more.
-- Translated into 18 languages: English, Chinese (Simplified), Czech, Danish, Dutch, Finnish, French, German, Italian,
-  Japanese, Korean, Polish, Portuguese (Brazil), Russian, Spanish, Swedish, Turkish and Ukrainian.
+- Translated into 30 languages: English, Arabic, Bulgarian, Chinese (Simplified), Czech, Danish, Dutch, Finnish,
+  French, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Japanese, Korean, Norwegian, Polish, Portuguese
+  (Brazil), Romanian, Russian, Serbian, Slovak, Spanish, Swedish, Thai, Turkish, Ukrainian and Vietnamese.
 
 **For server owners**
 - History is stored in a database: H2 by default (a file in the world folder, nothing to configure), or MySQL,
