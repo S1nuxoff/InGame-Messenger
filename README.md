@@ -101,6 +101,9 @@ Quilt, a Paper/Spigot plugin and older Minecraft versions are planned.
 2. Put it in the `mods` folder of your game. On Fabric, also install Fabric API.
 3. Join a server that has the mod.
 
+You can keep the mod installed everywhere: on servers without it the chat stays the normal Minecraft chat. Servers
+with the mod let in players without it too; they see stickers, voice messages and pictures as short text lines.
+
 ### Servers
 
 1. Put the same jar in the server's `mods` folder (plus Fabric API on Fabric).

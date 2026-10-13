@@ -28,6 +28,15 @@ public interface ServerSettings {
 
     int imageMaxKb();
 
+    /** Show stickers, voice messages, pictures, polls and private messages to players without the mod as chat lines. */
+    boolean plainLines();
+
+    /** Tell players without the mod, once, that the server uses it. */
+    boolean installHint();
+
+    /** The server's own text for a plain line ("install", "sticker", "voice", ...), or "" for the default. */
+    String plainText(String line);
+
     DatabaseConfig database();
 
     StorageConfig storage();

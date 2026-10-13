@@ -24,6 +24,12 @@ public interface ServerPlatform {
     /** Sends a translated system line to the player. */
     void tell(UUID player, String translationKey);
 
+    /** Sends a translated line with arguments; clients without the mod see the English fallback. */
+    void say(UUID player, String translationKey, String fallback, String... args);
+
+    /** The mod's version, e.g. "1.0.0". */
+    String modVersion();
+
     /** Runs the task on the server thread. */
     void execute(Runnable task);
 

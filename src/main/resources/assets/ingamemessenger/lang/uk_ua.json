@@ -141,5 +141,15 @@
   "ingamemessenger.card.offline": "Не в мережі",
   "ingamemessenger.card.wrote": "Писав: %s",
   "ingamemessenger.card.mention": "Згадати",
-  "ingamemessenger.screen.own_right": "Мої повідомлення праворуч"
+  "ingamemessenger.screen.own_right": "Мої повідомлення праворуч",
+  "ingamemessenger.server.missing": "На цьому сервері немає InGame Messenger, тому чат працює як звичайно.",
+  "ingamemessenger.server.other_version": "На сервері InGame Messenger %s, а у вас %s. Поки версії не збігаються, чат працює як звичайно.",
+  "ingamemessenger.plain.sticker": "<%s> [стікер]",
+  "ingamemessenger.plain.voice": "<%s> [голосове, %s с]",
+  "ingamemessenger.plain.picture": "<%s> [фото] %s",
+  "ingamemessenger.plain.pictures": "<%s> [фото: %s] %s",
+  "ingamemessenger.plain.poll": "<%s> [опитування] %s",
+  "ingamemessenger.plain.dm": "[%s -> вам] %s",
+  "ingamemessenger.server.unreachable": "На сервері є InGame Messenger, але з вашим завантажувачем модів він не працює. Чат працює як звичайно.",
+  "ingamemessenger.plain.install": "На цьому сервері є InGame Messenger. Встановіть мод, щоб бачити стікери, голосові, фото та опитування."
 }

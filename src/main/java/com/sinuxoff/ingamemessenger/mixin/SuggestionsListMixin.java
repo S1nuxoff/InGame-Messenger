@@ -23,7 +23,7 @@ public abstract class SuggestionsListMixin {
     private Rect2i rect;
 
     private static boolean ingamemessenger$chat() {
-        return Minecraft.getInstance().screen instanceof ChatScreen;
+        return Minecraft.getInstance().screen instanceof ChatScreen && com.sinuxoff.ingamemessenger.client.ChatHooks.on();
     }
 
     //? if >=26.1 {

@@ -17,7 +17,11 @@ import com.sinuxoff.ingamemessenger.core.protocol.Packets;
 public final class FabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        FabricMod.PLATFORM.toServer = p -> ClientPlayNetworking.send(new Net.Payload(p));
+        FabricMod.PLATFORM.toServer = p -> {
+            if (ClientPlayNetworking.canSend(Net.type(p.type())) || Net.serverHasMod.getAsBoolean()) {
+                ClientPlayNetworking.send(new Net.Payload(p));
+            }
+        };
         for (PacketType<?> t : Packets.ALL) {
             if (t.direction() == PacketType.Direction.TO_CLIENT) {
                 ClientPlayNetworking.registerGlobalReceiver(Net.type(t), (p, ctx) -> InGameMessenger.toClient(p.packet()));

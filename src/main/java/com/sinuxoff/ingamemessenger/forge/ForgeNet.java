@@ -8,6 +8,7 @@ import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.EventNetworkChannel;
 import net.minecraftforge.network.PacketDistributor;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
+import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
 import com.sinuxoff.ingamemessenger.core.protocol.PacketType;
 import com.sinuxoff.ingamemessenger.core.protocol.Packets;
@@ -24,10 +25,11 @@ final class ForgeNet {
     }
 
     static void register() {
-        int version = Integer.parseInt(Protocol.VERSION);
+        // optional, with a fixed version: players join whatever the other side has, Welcome sorts out the rest
         for (PacketType<?> t : Packets.ALL) {
             EventNetworkChannel ch = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(Protocol.NAMESPACE, t.id()))
-                    .networkProtocolVersion(version)
+                    .networkProtocolVersion(1)
+                    .optional()
                     .eventNetworkChannel();
             ch.addListener(e -> {
                 var ctx = e.getSource();
@@ -58,10 +60,17 @@ final class ForgeNet {
     }
 
     static void toServer(Packet p) {
-        CHANNELS.get(p.type()).send(buf(p), PacketDistributor.SERVER.noArg());
+        var connection = net.minecraft.client.Minecraft.getInstance().getConnection();
+        EventNetworkChannel ch = CHANNELS.get(p.type());
+        if (connection != null && (ch.isRemotePresent(connection.getConnection()) || Net.serverHasMod.getAsBoolean())) {
+            ch.send(buf(p), PacketDistributor.SERVER.noArg());
+        }
     }
 
     static void toPlayer(ServerPlayer player, Packet p) {
-        CHANNELS.get(p.type()).send(buf(p), PacketDistributor.PLAYER.with(player));
+        EventNetworkChannel ch = CHANNELS.get(p.type());
+        if (ch.isRemotePresent(player.connection.getConnection()) || InGameMessenger.hasClient(player)) {
+            ch.send(buf(p), PacketDistributor.PLAYER.with(player));
+        }
     }
 }

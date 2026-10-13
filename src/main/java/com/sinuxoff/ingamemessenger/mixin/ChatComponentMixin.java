@@ -57,13 +57,13 @@ public abstract class ChatComponentMixin {
     @org.spongepowered.asm.mixin.injection.ModifyConstant(method = "addMessageToQueue",
             constant = @org.spongepowered.asm.mixin.injection.Constant(intValue = 100))
     private int ingamemessenger$keepMessages(int max) {
-        return ChatHooks.MAX_KEPT;
+        return ChatHooks.keptMessages(max);
     }
 
     @org.spongepowered.asm.mixin.injection.ModifyConstant(method = "addMessageToDisplayQueue",
             constant = @org.spongepowered.asm.mixin.injection.Constant(intValue = 100))
     private int ingamemessenger$keepLines(int max) {
-        return ChatHooks.MAX_LINES;
+        return ChatHooks.keptLines(max);
     }
 
     /** Our chat scale on top of Minecraft's. */
@@ -81,7 +81,9 @@ public abstract class ChatComponentMixin {
     /** Our chat height setting, capped at the screen height. */
     @Inject(method = "getHeight()I", at = @At("HEAD"), cancellable = true)
     private void ingamemessenger$height(CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(ChatHooks.chatHeightPx((ChatComponent) (Object) this));
+        if (ChatHooks.on()) {
+            cir.setReturnValue(ChatHooks.chatHeightPx((ChatComponent) (Object) this));
+        }
     }
 
     // Incoming messages
@@ -145,6 +147,9 @@ public abstract class ChatComponentMixin {
     //?}
 
     private void ingamemessenger$before(GuiGraphics g, int ticks, boolean focused, CallbackInfo ci) {
+        if (!ChatHooks.on()) {
+            return;
+        }
         ChatComponent chat = (ChatComponent) (Object) this;
         if (focused && com.sinuxoff.ingamemessenger.client.ChatInput.searching()) { // search results are shown instead
             ChatHooks.hiddenForSearch(g, chat);
@@ -160,6 +165,9 @@ public abstract class ChatComponentMixin {
     }
 
     private void ingamemessenger$after(GuiGraphics g, int ticks, boolean focused) {
+        if (!ChatHooks.on()) {
+            return;
+        }
         ChatHooks.render((ChatComponent) (Object) this, g, ticks, focused);
         Gfx.pop(g);
     }
@@ -178,6 +186,9 @@ public abstract class ChatComponentMixin {
             index = 0)
     ^///?}
     private ChatComponent.ChatGraphicsAccess ingamemessenger$drawing(ChatComponent.ChatGraphicsAccess access, @Local(argsOnly = true) GuiGraphics g) {
+        if (!ChatHooks.on()) {
+            return access;
+        }
         return new com.sinuxoff.ingamemessenger.client.ChatLines((ChatComponent) (Object) this, access, g);
     }
 
@@ -191,6 +202,9 @@ public abstract class ChatComponentMixin {
             index = 0)
     ^///?}
     private ChatComponent.ChatGraphicsAccess ingamemessenger$clicks(ChatComponent.ChatGraphicsAccess access) {
+        if (!ChatHooks.on()) {
+            return access;
+        }
         return new com.sinuxoff.ingamemessenger.client.ChatLines((ChatComponent) (Object) this, access, null);
     }
 
@@ -254,11 +268,17 @@ public abstract class ChatComponentMixin {
     // lambda names: NeoForge's, then Fabric's
     @WrapOperation(method = {"lambda$render$0", "method_71992"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"))
     private void ingamemessenger$rows(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(g, x1, y1, x2, y2, color);
+        }
     }
 
     /^* No background for the pending-message line, and no square scroll bar (we draw a slim one). ^/
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"))
     private void ingamemessenger$scrollBar(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(g, x1, y1, x2, y2, color);
+        }
     }
 
     /^* Messenger message text, right of the face. ^/
@@ -273,17 +293,26 @@ public abstract class ChatComponentMixin {
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
     private void ingamemessenger$row(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(g, x1, y1, x2, y2, color);
+        }
     }
 
     /** No square scroll bar, we draw a slim one. */
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIIII)V"))
     private void ingamemessenger$scrollBar(GuiGraphics g, int x1, int y1, int x2, int y2, int z, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(g, x1, y1, x2, y2, z, color);
+        }
     }
 
     /** No tag bar next to bubbles. */
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 1))
     private void ingamemessenger$tagBar(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(g, x1, y1, x2, y2, color);
+        }
     }
 
     /** Messenger message text, right of the face. */
@@ -299,6 +328,10 @@ public abstract class ChatComponentMixin {
     /** Draws a line's text: faded in when new, right of the face, moving with the chat. */
     private static void ingamemessenger$line(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color, GuiMessage.Line line,
                                       java.util.function.BiConsumer<Integer, Integer> draw) {
+        if (!ChatHooks.on()) {
+            draw.accept(x, color);
+            return;
+        }
         int alpha = Math.round((color >>> 24) * ChatHooks.alphaOf(line.tag()));
         if (alpha <= 3) {
             return;

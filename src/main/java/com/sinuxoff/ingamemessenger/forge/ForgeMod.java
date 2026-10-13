@@ -6,13 +6,16 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
+import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.Platform;
+import com.sinuxoff.ingamemessenger.core.protocol.Packets;
 
 /**
  * Forge entry point: registers the packets and forwards server events to the shared code. Forge 1.21.6 replaced its
@@ -35,6 +38,7 @@ public final class ForgeMod {
                 InGameMessenger.playerJoined(p);
             }
         });
+        ChannelRegistrationChangeEvent.BUS.addListener(ForgeMod::channelsChanged);
         PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(e -> {
             if (e.getEntity() instanceof ServerPlayer p) {
                 InGameMessenger.playerLeft(p);
@@ -52,6 +56,7 @@ public final class ForgeMod {
                 InGameMessenger.playerJoined(p);
             }
         });
+        ChannelRegistrationChangeEvent.BUS.addListener(ForgeMod::channelsChanged);
         PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(e -> {
             if (e.getEntity() instanceof ServerPlayer p) {
                 InGameMessenger.playerLeft(p);
@@ -70,6 +75,7 @@ public final class ForgeMod {
                 InGameMessenger.playerJoined(p);
             }
         });
+        bus.addListener(ForgeMod::channelsChanged);
         bus.addListener((PlayerEvent.PlayerLoggedOutEvent e) -> {
             if (e.getEntity() instanceof ServerPlayer p) {
                 InGameMessenger.playerLeft(p);
@@ -79,5 +85,21 @@ public final class ForgeMod {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ForgeClient.init(context);
         }
+    }
+
+    /** Fabric clients list their play channels only after joining, too late for the first Welcome. */
+    private static void channelsChanged(ChannelRegistrationChangeEvent e) {
+        var server = Platform.get().server();
+        if (server == null || e.getType() != ChannelRegistrationChangeEvent.Type.REGISTER
+                || !e.getChannels().contains(Net.type(Packets.Welcome.TYPE).id())) {
+            return;
+        }
+        server.execute(() -> {
+            for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+                if (p.connection.getConnection() == e.getSource()) {
+                    InGameMessenger.channelsArrived(p);
+                }
+            }
+        });
     }
 }

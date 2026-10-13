@@ -12,6 +12,7 @@ storage, sticker packs and commands.
 - [File storage](#file-storage)
 - [Pictures](#pictures)
 - [Sticker and emoji packs](#sticker-and-emoji-packs)
+- [Players without the mod](#players-without-the-mod)
 - [Commands](#commands)
 - [Backups](#backups)
 - [Troubleshooting](#troubleshooting)
@@ -22,7 +23,8 @@ storage, sticker packs and commands.
    Fabric API is required.
 2. Start the server. The mod creates `config/ingamemessenger/` with `server.toml` and the `stickers/` and `emoji/`
    folders.
-3. Every player needs the same mod version on their client.
+3. Players install the same version of the mod on their client to get the messenger. See
+   [Players without the mod](#players-without-the-mod) for everyone else.
 
 Nothing else is required. Without changes the server stores the history in an H2 database inside the world folder
 and keeps voice messages and pictures next to it.
@@ -81,6 +83,24 @@ When a newer version of the mod adds options, they are appended to the existing 
 | `imgbbKey` | `""`       | ImgBB API key, used with `provider = "imgbb"`.                              |
 | `keepDays` | `30`       | Delete pictures after this many days. `0` keeps them forever.               |
 | `maxKb`    | `800`      | Maximum size of a picture after compression, 64 to 1000 KB.                |
+
+### [withoutMod]
+
+What players without the mod see. See [Players without the mod](#players-without-the-mod).
+
+| Option         | Default | Description                                                                          |
+|----------------|---------|--------------------------------------------------------------------------------------|
+| `plainLines`   | `true`  | Show stickers, voice messages, pictures, polls and private messages as chat lines.  |
+| `installHint`  | `true`  | Tell them once, a few seconds after joining, that the server uses InGame Messenger. |
+| `installText`  | `""`    | Your own text for that line. Empty uses the default.                                 |
+| `stickerText`  | `""`    | Your own text for a sticker. `%s`: player.                                           |
+| `voiceText`    | `""`    | Voice message. `%s`: player, seconds.                                                |
+| `pictureText`  | `""`    | One picture. `%s`: player, caption.                                                  |
+| `picturesText` | `""`    | Several pictures. `%s`: player, number, caption.                                     |
+| `pollText`     | `""`    | Poll. `%s`: player, question.                                                        |
+| `dmText`       | `""`    | Private message. `%s`: sender, text.                                                 |
+
+The texts take `&` color codes, for example `stickerText = "&e%s&7 sent a sticker"`.
 
 ### [database]
 
@@ -257,6 +277,44 @@ from the server the first time it is shown.
 Animated GIFs are limited to 64 frames; longer animations are sampled. Their frames are scaled down until the result
 fits in 900 KB.
 
+## Players without the mod
+
+The mod never keeps anyone out. Players can always join, whatever they have installed:
+
+| Client                         | Server with the mod                                   | Server without the mod |
+|--------------------------------|-------------------------------------------------------|------------------------|
+| With the mod, same version     | The messenger                                         | Normal chat            |
+| With the mod, other version    | Normal chat and a note about the versions             | Normal chat            |
+| Without the mod                | Normal chat and a note to install the mod             | Normal chat            |
+
+When a client with the mod joins a server without it, the player sees the normal Minecraft chat and a one-line note
+that the server doesn't use InGame Messenger. Players can turn these notes off with `"serverNotices": false` in their
+`client.json`.
+
+A few seconds after a player without the mod joins, they get one line saying the server uses InGame Messenger and
+that installing it shows stickers, voice messages, pictures and polls.
+
+The server and the client should run the same loader. A client on another loader can join, but the messenger may stay
+off for it, with a note in the chat.
+
+Players without the mod still see what others send through the messenger, as plain chat lines:
+
+```
+<Alex> [sticker]
+<Alex> [voice message, 4 s]
+<Alex> [picture] look at this
+<Alex> [poll] Where do we build the base?
+[Alex -> you] see you at spawn
+```
+
+The wording of these lines and the install note can be changed or turned off in [`[withoutMod]`](#withoutmod).
+
+Their own messages are ordinary chat messages, so players with the mod see them as usual.
+
+On joining, the server and the client exchange their protocol versions. The messenger turns on only when they match;
+the protocol changes only with releases that change the network format, so different releases often still work
+together.
+
 ## Commands
 
 All commands require operator permission.
@@ -296,5 +354,6 @@ Try switching `pathStyle`.
 **A sticker pack does not show up.** Check the log for `Stickers: N packs, M stickers` after `/messenger reload` and
 for lines starting with `Stickers: can't read`. Empty folders and unsupported files are skipped.
 
-**Players get disconnected with a message about a missing channel.** The client and the server have different
-versions of the mod, or the server does not have it. Install the same version on both.
+**A player with the mod sees the normal chat.** Look for `has InGame Messenger ..., the server ...` in the server log:
+the client has a different version, install the server's version on it. If there is no such line, check that the
+mod started on the server (`InGame Messenger is OFF` means the database could not be opened).

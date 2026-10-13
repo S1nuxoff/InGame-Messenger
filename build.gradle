@@ -20,7 +20,7 @@ stonecutter.replacements.regex(since('1.21.9')) {
     replace(/\b(getGameProfile|getProfile)\(\)\.getName\(\)/, '$1().name()', /\b(getGameProfile|getProfile)\(\)\.name\(\)/, '$1().getName()')
 }
 stonecutter.replacements.regex(since('1.21.9')) {
-    replace(/\b(getGameProfile|getProfile)\(\)\.getId\(\)/, '$1().id()', /\b(getGameProfile|getProfile)\(\)\.id\(\)/, '$1().getId()')
+    replace(/\b(getGameProfile|getProfile|getOwner)\(\)\.getId\(\)/, '$1().id()', /\b(getGameProfile|getProfile|getOwner)\(\)\.id\(\)/, '$1().getId()')
 }
 stonecutter.replacements.regex(since('26.1')) {
     replace(/\bGuiGraphics\b/, 'GuiGraphicsExtractor', /\bGuiGraphicsExtractor\b/, 'GuiGraphics')

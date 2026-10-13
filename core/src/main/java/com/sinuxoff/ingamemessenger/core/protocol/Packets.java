@@ -16,6 +16,49 @@ public final class Packets {
     private Packets() {
     }
 
+    /**
+     * S2C, on join: the server's protocol and mod version. Welcome and Hello never change their format, so any two
+     * versions can tell each other apart. Nothing else is sent until both sides have the same protocol.
+     */
+    public record Welcome(String protocol, String version) implements Packet {
+        public static final PacketType<Welcome> TYPE = new PacketType<>("welcome", Direction.TO_CLIENT, Welcome.class, Welcome::read);
+
+        @Override
+        public PacketType<Welcome> type() {
+            return TYPE;
+        }
+
+        @Override
+        public void write(Wire.Out out) {
+            out.str(protocol, 32);
+            out.str(version, 64);
+        }
+
+        static Welcome read(Wire.In in) {
+            return new Welcome(in.str(32), in.str(64));
+        }
+    }
+
+    /** C2S: the answer to Welcome, with the client's protocol and mod version. */
+    public record Hello(String protocol, String version) implements Packet {
+        public static final PacketType<Hello> TYPE = new PacketType<>("hello", Direction.TO_SERVER, Hello.class, Hello::read);
+
+        @Override
+        public PacketType<Hello> type() {
+            return TYPE;
+        }
+
+        @Override
+        public void write(Wire.Out out) {
+            out.str(protocol, 32);
+            out.str(version, 64);
+        }
+
+        static Hello read(Wire.In in) {
+            return new Hello(in.str(32), in.str(64));
+        }
+    }
+
     /** S2C: the server's sticker and emoji packs (on join and after a reload). */
     public record StickerIndex(String json) implements Packet {
         public static final PacketType<StickerIndex> TYPE = new PacketType<>("sticker_index", Direction.TO_CLIENT, StickerIndex.class, StickerIndex::read);
@@ -974,5 +1017,5 @@ public final class Packets {
         }
     }
 
-    public static final List<PacketType<?>> ALL = List.of(StickerIndex.TYPE, StickerGet.TYPE, StickerData.TYPE, Send.TYPE, Show.TYPE, Tag.TYPE, React.TYPE, Reactions.TYPE, HistoryRequest.TYPE, HistoryPage.TYPE, Typing.TYPE, TypingState.TYPE, Features.TYPE, EditMsg.TYPE, DeleteMsg.TYPE, Edited.TYPE, Deleted.TYPE, AlbumStart.TYPE, ImageStart.TYPE, ImageChunk.TYPE, ImageShow.TYPE, Route.TYPE, ChatTarget.TYPE, DmSend.TYPE, DmShow.TYPE, DmHistoryReq.TYPE, DmHistory.TYPE, DmRead.TYPE, DmReadState.TYPE, DmChats.TYPE, ReadUpTo.TYPE, ReadState.TYPE, ReadAll.TYPE, PollCreate.TYPE, PollVote.TYPE, PollShow.TYPE, PollState.TYPE, SearchReq.TYPE, SearchRes.TYPE, ImageLinks.TYPE, ImageGet.TYPE, ImageData.TYPE, VoiceStart.TYPE, VoiceChunk.TYPE, VoiceShow.TYPE, VoiceGet.TYPE, VoiceData.TYPE);
+    public static final List<PacketType<?>> ALL = List.of(Welcome.TYPE, Hello.TYPE, StickerIndex.TYPE, StickerGet.TYPE, StickerData.TYPE, Send.TYPE, Show.TYPE, Tag.TYPE, React.TYPE, Reactions.TYPE, HistoryRequest.TYPE, HistoryPage.TYPE, Typing.TYPE, TypingState.TYPE, Features.TYPE, EditMsg.TYPE, DeleteMsg.TYPE, Edited.TYPE, Deleted.TYPE, AlbumStart.TYPE, ImageStart.TYPE, ImageChunk.TYPE, ImageShow.TYPE, Route.TYPE, ChatTarget.TYPE, DmSend.TYPE, DmShow.TYPE, DmHistoryReq.TYPE, DmHistory.TYPE, DmRead.TYPE, DmReadState.TYPE, DmChats.TYPE, ReadUpTo.TYPE, ReadState.TYPE, ReadAll.TYPE, PollCreate.TYPE, PollVote.TYPE, PollShow.TYPE, PollState.TYPE, SearchReq.TYPE, SearchRes.TYPE, ImageLinks.TYPE, ImageGet.TYPE, ImageData.TYPE, VoiceStart.TYPE, VoiceChunk.TYPE, VoiceShow.TYPE, VoiceGet.TYPE, VoiceData.TYPE);
 }

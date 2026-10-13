@@ -37,6 +37,27 @@ public final class FileSettings implements ModSettings {
     private static final Key IMAGE_KEEP = new Key("images", "keepDays", 30, "Delete pictures after this many days (0 = keep forever).");
     private static final Key IMAGE_MAX = new Key("images", "maxKb", 800,
             "Maximum picture size after compression, in KB (64-" + ChatServer.IMAGE_MAX_KB + ").");
+    private static final Key PLAIN_ON = new Key("withoutMod", "plainLines", true, """
+            Players without the mod can always join. These settings are about what they see.
+            Show them stickers, voice messages, pictures, polls and private messages as plain chat lines.""");
+    private static final Key INSTALL_HINT = new Key("withoutMod", "installHint", true,
+            "Tell them once, a few seconds after joining, that this server uses InGame Messenger.");
+    private static final Key TEXT_INSTALL = new Key("withoutMod", "installText", "", """
+            Your own wording for those lines. Empty = the default text. Each %s is replaced, in this order:
+              installText  - nothing
+              stickerText  - player
+              voiceText    - player, seconds
+              pictureText  - player, caption
+              picturesText - player, number of pictures, caption
+              pollText     - player, question
+              dmText       - sender, text
+            Colors: & codes, e.g. "&e%s&7 sent a sticker".""");
+    private static final Key TEXT_STICKER = new Key("withoutMod", "stickerText", "", "");
+    private static final Key TEXT_VOICE = new Key("withoutMod", "voiceText", "", "");
+    private static final Key TEXT_PICTURE = new Key("withoutMod", "pictureText", "", "");
+    private static final Key TEXT_PICTURES = new Key("withoutMod", "picturesText", "", "");
+    private static final Key TEXT_POLL = new Key("withoutMod", "pollText", "", "");
+    private static final Key TEXT_DM = new Key("withoutMod", "dmText", "", "");
     private static final Key DB_TYPE = new Key("database", "type", "h2", """
             Where messages are stored. Changes need a server restart.
               "h2"         - a file in the world folder, nothing to set up
@@ -61,6 +82,7 @@ public final class FileSettings implements ModSettings {
             "true: endpoint/bucket/key URLs (works almost everywhere); false: bucket.endpoint/key.");
     private static final Key S3_PREFIX = new Key("storage", "prefix", "", "Folder inside the bucket (empty = the root).");
     private static final Key[] ALL = {TYPING, STICKER_COOLDOWN, VOICE_ON, VOICE_MAX, VOICE_KEEP, IMAGES, IMGBB_KEY, IMAGE_KEEP, IMAGE_MAX,
+            PLAIN_ON, INSTALL_HINT, TEXT_INSTALL, TEXT_STICKER, TEXT_VOICE, TEXT_PICTURE, TEXT_PICTURES, TEXT_POLL, TEXT_DM,
             DB_TYPE, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_PREFIX,
             FILES_TYPE, S3_ENDPOINT, S3_REGION, S3_BUCKET, S3_ACCESS, S3_SECRET, S3_PATH_STYLE, S3_PREFIX};
 
@@ -221,6 +243,34 @@ public final class FileSettings implements ModSettings {
     @Override
     public int imageMaxKb() {
         return num(IMAGE_MAX, 64, ChatServer.IMAGE_MAX_KB);
+    }
+
+    @Override
+    public boolean plainLines() {
+        return bool(PLAIN_ON);
+    }
+
+    @Override
+    public boolean installHint() {
+        return bool(INSTALL_HINT);
+    }
+
+    @Override
+    public String plainText(String line) {
+        return colors(switch (line) {
+            case "install" -> str(TEXT_INSTALL);
+            case "sticker" -> str(TEXT_STICKER);
+            case "voice" -> str(TEXT_VOICE);
+            case "picture" -> str(TEXT_PICTURE);
+            case "pictures" -> str(TEXT_PICTURES);
+            case "poll" -> str(TEXT_POLL);
+            case "dm" -> str(TEXT_DM);
+            default -> "";
+        });
+    }
+
+    private static String colors(String text) {
+        return text.replaceAll("&([0-9a-fk-orA-FK-OR])", "§$1");
     }
 
     @Override

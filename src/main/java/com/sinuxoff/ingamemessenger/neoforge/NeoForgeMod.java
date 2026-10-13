@@ -19,7 +19,6 @@ import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.Platform;
 import com.sinuxoff.ingamemessenger.core.protocol.PacketType;
 import com.sinuxoff.ingamemessenger.core.protocol.Packets;
-import com.sinuxoff.ingamemessenger.core.protocol.Protocol;
 
 /** NeoForge entry point: registers the packets and forwards server events to the shared code. */
 @Mod(InGameMessenger.MOD_ID)
@@ -45,7 +44,8 @@ public final class NeoForgeMod {
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar r = event.registrar(Protocol.VERSION);
+        // optional, with a fixed version: players join whatever the other side has, Welcome sorts out the rest
+        PayloadRegistrar r = event.registrar("1").optional();
         for (PacketType<?> t : Packets.ALL) {
             if (t.direction() == PacketType.Direction.TO_CLIENT) {
                 r.playToClient(Net.type(t), Net.codec(t), (p, ctx) -> InGameMessenger.toClient(p.packet()));

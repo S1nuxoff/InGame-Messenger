@@ -51,6 +51,11 @@ final class ForgePlatform implements Platform {
     }
 
     @Override
+    public String modVersion() {
+        return container(InGameMessenger.MOD_ID).map(c -> c.getModInfo().getVersion().toString()).orElse("?");
+    }
+
+    @Override
     public Path configDir() {
         return Platform.ensureDir(FMLPaths.CONFIGDIR.get().resolve(InGameMessenger.MOD_ID));
     }

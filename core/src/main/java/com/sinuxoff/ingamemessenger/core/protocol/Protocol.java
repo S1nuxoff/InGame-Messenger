@@ -3,10 +3,10 @@ package com.sinuxoff.ingamemessenger.core.protocol;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Protocol version, channel namespace and packet encoding. Client and server must have the same version. */
+/** Protocol version, channel namespace and packet encoding. Client and server talk only when their versions match. */
 public final class Protocol {
     /** Bump whenever the wire format of any packet changes. */
-    public static final String VERSION = "19";
+    public static final String VERSION = "20";
     public static final String NAMESPACE = "ingamemessenger";
     /** Number of built-in reactions ("0".."7"). */
     public static final int BUILT_IN_REACTIONS = 8;

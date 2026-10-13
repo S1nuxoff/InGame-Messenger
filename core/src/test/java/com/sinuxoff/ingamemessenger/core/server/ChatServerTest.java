@@ -37,6 +37,8 @@ class ChatServerTest {
         final Map<UUID, String> online = new LinkedHashMap<>(Map.of(A, "Alice", B, "Bob", C, "Cat"));
         final Map<UUID, List<Packet>> got = new HashMap<>();
         final List<String> told = new ArrayList<>();
+        final List<String> said = new ArrayList<>(), fallbacks = new ArrayList<>();
+        boolean plainLines = true;
         UUID op = null;
         String provider = "server";
 
@@ -84,6 +86,17 @@ class ChatServerTest {
         @Override
         public void tell(UUID player, String translationKey) {
             told.add(player + " " + translationKey);
+        }
+
+        @Override
+        public void say(UUID player, String translationKey, String fallback, String... args) {
+            said.add(player + " " + translationKey + " " + String.join(" ", args));
+            fallbacks.add(fallback);
+        }
+
+        @Override
+        public String modVersion() {
+            return "test";
         }
 
         @Override
@@ -160,6 +173,21 @@ class ChatServerTest {
         }
 
         @Override
+        public boolean plainLines() {
+            return plainLines;
+        }
+
+        @Override
+        public boolean installHint() {
+            return true;
+        }
+
+        @Override
+        public String plainText(String line) {
+            return line.equals("sticker") ? "{%s sent a sticker}" : "";
+        }
+
+        @Override
         public DatabaseConfig database() {
             return DatabaseConfig.h2();
         }
@@ -177,6 +205,13 @@ class ChatServerTest {
         return new ChatServer(p, Storage.inline(new ChatStore(db), new LocalBlobStore(dir)));
     }
 
+    /** The players' clients answer Welcome. */
+    static void hello(ChatServer s, UUID... players) {
+        for (UUID u : players) {
+            s.handle(u, new Hello(Protocol.VERSION, "test"));
+        }
+    }
+
     @TempDir
     Path dir;
     FakePlatform p;
@@ -189,15 +224,64 @@ class ChatServerTest {
         ImageIO.write(new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB), "png", dir.resolve("config/stickers/pack/x.png").toFile());
         s = server(p, dir);
         s.stickers().load();
+        hello(s, A, B, C);
+        p.clear();
+    }
+
+    static final UUID D = new UUID(0, 4);
+
+    @Test
+    void joiningIsAHandshake() {
+        p.online.put(D, "Dan");
+        s.joined(D);
+        assertEquals(Protocol.VERSION, p.got(D, Welcome.class).get(0).protocol());
+        assertEquals(1, p.got(D).size(), "nothing else until Hello");
+        hello(s, D);
+        assertEquals(Features.class, p.got(D).get(1).getClass(), "first: it turns the client on");
+        assertTrue(p.got(D, StickerIndex.class).get(0).json().contains("\"pack\""));
+        assertEquals("server", p.got(D, Features.class).get(0).imageHost());
+        assertEquals(1, p.got(D, ReadAll.class).size());
+        assertEquals(1, p.got(D, DmChats.class).size());
+        assertTrue(s.hasClient(D));
     }
 
     @Test
-    void joiningGetsWhatsOn() {
+    void playersWithoutTheModGetPlainLines() {
+        p.online.put(D, "Dan");
+        s.joined(D);
+        s.handle(D, new Hello("1", "0.1")); // another version counts as none
+        s.handle(D, new Send("pack", "x", -1));
+        assertTrue(p.got(A, Show.class).isEmpty(), "their packets are ignored");
+        s.handle(A, new Send("pack", "x", -1));
+        s.handle(A, new PollCreate("Lunch?", "yes\nno", false, -1));
+        s.handle(A, new ChatTarget(D));
+        s.handle(A, new DmSend(D, "psst"));
+        assertEquals(List.of(Welcome.class), p.got(D).stream().map(Object::getClass).toList());
+        assertEquals(List.of(D + " ingamemessenger.plain.sticker Alice", D + " ingamemessenger.plain.poll Alice Lunch?",
+                D + " ingamemessenger.plain.dm Alice psst"), p.said);
+        assertFalse(s.hasClient(D));
+        assertEquals("{%s sent a sticker}", p.fallbacks.get(0), "the server's own wording");
+        assertEquals("<%s> [poll] %s", p.fallbacks.get(1));
+        p.said.clear();
+        p.plainLines = false;
+        s.handle(A, new Send("pack", "x", -1));
+        assertTrue(p.said.isEmpty(), "turned off");
+    }
+
+    @Test
+    void playersWithoutTheModAreToldAboutIt() {
+        p.online.put(D, "Dan");
+        s.joined(D);
+        s.tick(System.currentTimeMillis() + 1000);
+        assertTrue(p.said.isEmpty(), "not before 5 seconds");
+        s.tick(System.currentTimeMillis() + 6000);
+        s.tick(System.currentTimeMillis() + 12000);
+        assertEquals(List.of(D + " ingamemessenger.plain.install "), p.said, "once");
+        p.said.clear();
         s.joined(A);
-        assertTrue(p.got(A, StickerIndex.class).get(0).json().contains("\"pack\""));
-        assertEquals("server", p.got(A, Features.class).get(0).imageHost());
-        assertEquals(1, p.got(A, ReadAll.class).size());
-        assertEquals(1, p.got(A, DmChats.class).size());
+        hello(s, A);
+        s.tick(System.currentTimeMillis() + 6000);
+        assertTrue(p.said.isEmpty(), "not those who have it");
     }
 
     @Test
@@ -263,7 +347,8 @@ class ChatServerTest {
         s.handle(B, new DmRead(A, Integer.MAX_VALUE));
         assertEquals(show.id(), p.got(A, DmReadState.class).get(0).upTo());
         p.clear();
-        s.joined(A);
+        s.left(A, "Alice"); // and back
+        hello(s, A);
         String chats = p.got(A, DmChats.class).get(0).data();
         assertEquals(B + " Bob " + show.id() + " 0 " + show.id(), chats);
         s.handle(A, new DmHistoryReq(B, 0));
@@ -404,10 +489,10 @@ class ChatServerTest {
         s.close();
         FakePlatform p2 = new FakePlatform(dir);
         ChatServer s2 = server(p2, dir);
+        hello(s2, A);
         s2.handle(A, new HistoryRequest(0));
         String json = p2.got(A, HistoryPage.class).get(0).json();
         assertTrue(json.contains("keep me") && json.contains("\"r\":\"2:Bob\""), json);
-        s2.joined(A);
         assertTrue(p2.got(A, ReadAll.class).get(0).data().contains(C + " Cat " + id));
         assertTrue(p2.got(A, DmChats.class).get(0).data().startsWith(B + " Bob "));
         assertTrue(s2.chatLine(A, "Alice", "y", ChatServer.textJson("y")) > id);

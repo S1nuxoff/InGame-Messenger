@@ -33,12 +33,16 @@ public final class ClientEvents {
 
     /** Registers the packet handlers. */
     public static void init() {
-        InGameMessenger.onStickerIndex = p -> Library.onIndex(p.json());
+        Session.init();
+        InGameMessenger.onWelcome = w -> Minecraft.getInstance().execute(() -> Session.onWelcome(w));
+        // on the main thread, after Features: the stickers it fetches need the messenger on
+        InGameMessenger.onStickerIndex = p -> Minecraft.getInstance().execute(() -> Library.onIndex(p.json()));
         InGameMessenger.onStickerData = Library::onData; // a loader thread is waiting for it
         InGameMessenger.onHistory = p -> Minecraft.getInstance().execute(() -> ChatPages.onHistory(p));
         InGameMessenger.onShow = s -> Minecraft.getInstance().execute(() -> ChatMessages.add(s));
         InGameMessenger.onTypingState = t -> Minecraft.getInstance().execute(() -> Typing.onState(t, ChatChannels.takeRoute()));
         InGameMessenger.onFeatures = f -> Minecraft.getInstance().execute(() -> {
+            Session.onFeatures();
             Typing.onFeatures(f);
             VoiceClient.onFeatures(f);
             Images.onFeatures(f);
@@ -78,6 +82,13 @@ public final class ClientEvents {
         VoiceClient.tick();
         Images.tick();
         Minecraft mc = Minecraft.getInstance();
+        if (!Session.on()) { // Minecraft's own chat
+            chatDownAt = -1;
+            while (OPEN.consumeClick()) {
+                // nothing to open
+            }
+            return;
+        }
         if (mc.player == null || mc.screen != null) {
             chatDownAt = -1;
             return;
@@ -119,6 +130,7 @@ public final class ClientEvents {
     }
 
     public static void tickEnd() {
+        Session.tick();
         Typing.tick(Minecraft.getInstance());
     }
 
@@ -137,7 +149,7 @@ public final class ClientEvents {
 
     /** The hotbar and everything on it is hidden while the chat is open. */
     public static boolean hideHotbar() {
-        return Minecraft.getInstance().screen instanceof ChatScreen && Prefs.hideHotbar();
+        return Session.on() && Minecraft.getInstance().screen instanceof ChatScreen && Prefs.hideHotbar();
     }
 
     /** Clips drawing to above the hotbar area. */
@@ -147,6 +159,9 @@ public final class ClientEvents {
 
     /** Before the HUD: our blur behind our screens (instead of Minecraft's). */
     public static void hudStart(GuiGraphics g, float partialTick) {
+        if (!Session.on()) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         boolean ours = mc.screen instanceof ChatScreen || mc.screen instanceof SettingsScreen || mc.screen instanceof PollScreen
                 || mc.screen instanceof ImageViewScreen;
@@ -157,6 +172,9 @@ public final class ClientEvents {
 
     /** After the HUD: typing line next to the closed chat, upload progress, mini player. */
     public static void hudEnd(GuiGraphics g0) {
+        if (!Session.on()) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.screen == null && !Compat.hudHidden(mc)) {
             ChatRenderer.drawTyping(g0);
@@ -176,7 +194,7 @@ public final class ClientEvents {
 
     /** Opened or resized: room for the smiley button, and the pinned panel. */
     public static void screenInit(Screen screen0) {
-        if (screen0 instanceof ChatScreen screen) {
+        if (screen0 instanceof ChatScreen screen && Session.on()) {
             var input = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input();
             ChatInput.place(input, screen.width, screen.height);
             if (Prefs.pinned() && !Panel.open) {
@@ -187,7 +205,7 @@ public final class ClientEvents {
 
     /** Our layer on top of the chat screen. */
     public static void screenRender(Screen screen0, GuiGraphics g, int mx, int my) {
-        if (screen0 instanceof ChatScreen screen) {
+        if (screen0 instanceof ChatScreen screen && Session.on()) {
             Gfx.layerAbove(g); // our windows and lists above the messages
             Panel.command = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input().getValue().startsWith("/");
             ChatUi.render(g, mx, my, screen.width, screen.height,
@@ -199,6 +217,9 @@ public final class ClientEvents {
     }
 
     public static boolean charTyped(Screen screen0, int codePoint) {
+        if (!Session.on()) {
+            return false;
+        }
         if (screen0 instanceof ChatScreen && swallowing()) {
             return true; // key still held from the picker: ignore repeats
         }
@@ -211,6 +232,9 @@ public final class ClientEvents {
     }
 
     public static boolean keyPressed(Screen screen0, int key) {
+        if (!Session.on()) {
+            return false;
+        }
         if (screen0 instanceof ChatScreen && VoiceClient.recording()) {
             if (key == com.mojang.blaze3d.platform.InputConstants.KEY_ESCAPE) { // Esc cancels the recording, the chat stays
                 VoiceClient.stop(false);
@@ -239,6 +263,9 @@ public final class ClientEvents {
     }
 
     public static boolean mouseClicked(Screen screen0, double x, double y, int button) {
+        if (!Session.on()) {
+            return false;
+        }
         if (screen0 instanceof ChatScreen screen
                 && (ChatInput.clickTabs(screen, x, y, button)
                 || ChatUi.clickDown(x, y, button)
@@ -253,6 +280,9 @@ public final class ClientEvents {
     }
 
     public static boolean mouseReleased(Screen screen0, double x, double y, int button) {
+        if (!Session.on()) {
+            return false;
+        }
         if (screen0 instanceof ChatScreen screen && button == 0 && ChatInput.release(screen, x, y)) {
             return true;
         }
@@ -264,6 +294,9 @@ public final class ClientEvents {
     }
 
     public static boolean mouseScrolled(Screen screen0, double x, double y, double dy) {
+        if (!Session.on()) {
+            return false;
+        }
         if (screen0 instanceof ChatScreen screen
                 && (ChatInput.scrollSearch(screen.width, screen.height, x, y, dy)
                 || ChatUi.scroll(x, y, dy)

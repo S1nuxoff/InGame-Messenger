@@ -400,7 +400,11 @@ final class Library {
             } else {
                 CompletableFuture<byte[]> f = new CompletableFuture<>();
                 pending.put(task.key, f);
-                Net.toServer(new Packets.StickerGet(s.pack(), s.id(), task.thumb));
+                if (!Net.toServer(new Packets.StickerGet(s.pack(), s.id(), task.thumb))) {
+                    pending.remove(task.key);
+                    textures.remove(task.key, LOADING); // not connected yet: asked again later
+                    return;
+                }
                 byte[] bytes = f.get(30, TimeUnit.SECONDS);
                 if (bytes.length == 0) {
                     throw new IllegalStateException("not on the server");

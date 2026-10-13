@@ -53,7 +53,10 @@ public final class ChatServer {
         void run() throws Exception;
     }
 
-    final ServerPlatform platform;
+    /** Sends only to players with a matching client, see {@link ClientGate}. */
+    final ClientGate platform;
+    /** The platform itself, for Welcome. */
+    private final ServerPlatform direct;
     final Storage storage;
     final PollBook polls = new PollBook();
     final Dms dms;
@@ -70,12 +73,15 @@ public final class ChatServer {
     private final Map<UUID, UUID> target = new ConcurrentHashMap<>();
     private final Map<UUID, Long> lastSticker = new HashMap<>(), lastReact = new HashMap<>(), lastHistory = new HashMap<>(),
             lastTyping = new HashMap<>(), lastSearch = new HashMap<>();
+    /** Players who joined but haven't said Hello -> when they joined. */
+    private final Map<UUID, Long> unanswered = new ConcurrentHashMap<>();
     /** While set, messages are not stored (test chat). */
     private boolean quiet;
 
     /** Creates the tables if needed. Blocks until the database is ready. */
     public ChatServer(ServerPlatform platform, Storage storage) {
-        this.platform = platform;
+        this.direct = platform;
+        this.platform = new ClientGate(platform);
         this.storage = storage;
         CompletableFuture.runAsync(() -> {
             try {
@@ -126,16 +132,49 @@ public final class ChatServer {
 
     /** Called every few seconds: sweeps old files, drops stale uploads. */
     public void tick() {
-        long now = System.currentTimeMillis();
+        tick(System.currentTimeMillis());
+    }
+
+    void tick(long now) {
         voice.tick(now);
         images.tick(now);
+        unanswered.forEach((id, t) -> {
+            if (now - t > 5000 && unanswered.remove(id) != null && platform.settings().installHint()) {
+                platform.say(id, "ingamemessenger.plain.install",
+                        "This server uses InGame Messenger. Install the mod to see stickers, voice messages, pictures and polls.");
+            }
+        });
     }
 
     // Platform events
 
+    /** A player joined: the client gets Welcome and, if it has the mod, answers with Hello. */
     public void joined(UUID id) {
-        platform.send(id, new StickerIndex(stickers.index()));
+        unanswered.put(id, System.currentTimeMillis());
+        direct.send(id, new Welcome(Protocol.VERSION, platform.modVersion()));
+    }
+
+    private void hello(UUID id, String name, Hello h) {
+        unanswered.remove(id);
+        if (!h.protocol().equals(Protocol.VERSION)) {
+            platform.info(name + " has InGame Messenger " + h.version() + ", the server " + platform.modVersion()
+                    + ": plain chat for them");
+            return;
+        }
+        if (platform.add(id)) {
+            ready(id);
+        }
+    }
+
+    /** Whether the player's client speaks our protocol. */
+    public boolean hasClient(UUID id) {
+        return platform.has(id);
+    }
+
+    private void ready(UUID id) {
+        // Features first: the client turns the messenger on with it, and drops what it would send before
         platform.send(id, features());
+        platform.send(id, new StickerIndex(stickers.index()));
         db("read marks", () -> {
             String marks = storage.chat.readMarks();
             platform.execute(() -> platform.send(id, new ReadAll(marks)));
@@ -144,6 +183,8 @@ public final class ChatServer {
     }
 
     public synchronized void left(UUID id, String name) {
+        platform.remove(id);
+        unanswered.remove(id);
         lastSticker.remove(id);
         lastReact.remove(id);
         lastHistory.remove(id);
@@ -192,6 +233,13 @@ public final class ChatServer {
     public void handle(UUID player, Packet packet) {
         String name = platform.nameOf(player);
         if (name == null) {
+            return;
+        }
+        if (packet instanceof Hello h) {
+            hello(player, name, h);
+            return;
+        }
+        if (!platform.has(player)) {
             return;
         }
         switch (packet) {

@@ -141,5 +141,15 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "Wrote: %s",
   "ingamemessenger.card.mention": "Mention",
-  "ingamemessenger.screen.own_right": "My messages on the right"
+  "ingamemessenger.screen.own_right": "My messages on the right",
+  "ingamemessenger.server.missing": "This server doesn't use InGame Messenger, so the chat works as usual.",
+  "ingamemessenger.server.other_version": "This server has InGame Messenger %s and you have %s. The chat works as usual until the versions match.",
+  "ingamemessenger.plain.sticker": "<%s> [sticker]",
+  "ingamemessenger.plain.voice": "<%s> [voice message, %s s]",
+  "ingamemessenger.plain.picture": "<%s> [picture] %s",
+  "ingamemessenger.plain.pictures": "<%s> [%s pictures] %s",
+  "ingamemessenger.plain.poll": "<%s> [poll] %s",
+  "ingamemessenger.plain.dm": "[%s -> you] %s",
+  "ingamemessenger.server.unreachable": "This server has InGame Messenger, but it doesn't work with your mod loader. The chat works as usual.",
+  "ingamemessenger.plain.install": "This server uses InGame Messenger. Install the mod to see stickers, voice messages, pictures and polls."
 }

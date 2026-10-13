@@ -13,6 +13,7 @@ import com.sinuxoff.ingamemessenger.core.protocol.Protocol;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 /** Core packets as Minecraft custom payloads, one channel per packet type ("ingamemessenger:id"). */
 public final class Net {
@@ -47,8 +48,22 @@ public final class Net {
         });
     }
 
-    public static void toServer(Packet p) {
-        Platform.get().sendToServer(p);
+    /** Set by the client: whether the server answered with a matching Welcome. */
+    public static volatile BooleanSupplier serverReady = () -> false;
+
+    /**
+     * Set by the client: whether the server sent Welcome, so it has the mod. Loaders don't always tell each other
+     * about their channels; once the server has said Welcome we send to it anyway.
+     */
+    public static volatile BooleanSupplier serverHasMod = () -> false;
+
+    /** Only Hello goes out before the server is ready. Returns false if the packet was dropped for that. */
+    public static boolean toServer(Packet p) {
+        if (p instanceof Packets.Hello || serverReady.getAsBoolean()) {
+            Platform.get().sendToServer(p);
+            return true;
+        }
+        return false;
     }
 
     public static void toPlayer(ServerPlayer player, Packet p) {

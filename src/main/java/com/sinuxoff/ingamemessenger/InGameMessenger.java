@@ -79,6 +79,20 @@ public final class InGameMessenger {
         MessengerCommands.register(dispatcher);
     }
 
+    /** The client listed our channels after joining: Welcome again, it couldn't get the first one. */
+    public static void channelsArrived(ServerPlayer player) {
+        ChatServer chat = ServerSide.chat;
+        if (chat != null && !chat.hasClient(player.getUUID())) {
+            chat.joined(player.getUUID());
+        }
+    }
+
+    /** Whether the player's client said Hello with our protocol, so it has our channels whatever its loader reported. */
+    public static boolean hasClient(ServerPlayer player) {
+        ChatServer chat = ServerSide.chat;
+        return chat != null && chat.hasClient(player.getUUID());
+    }
+
     public static void toServer(ServerPlayer player, Packet packet) {
         ChatServer chat = ServerSide.chat;
         if (chat != null) {
@@ -88,6 +102,8 @@ public final class InGameMessenger {
 
     // Client packet handlers (no-ops on a dedicated server)
 
+    public static volatile Consumer<Welcome> onWelcome = w -> {
+    };
     public static volatile Consumer<StickerIndex> onStickerIndex = h -> {
     };
     public static volatile Consumer<StickerData> onStickerData = h -> {
@@ -139,6 +155,7 @@ public final class InGameMessenger {
 
     public static void toClient(Packet packet) {
         switch (packet) {
+            case Welcome p -> onWelcome.accept(p);
             case StickerIndex p -> onStickerIndex.accept(p);
             case StickerData p -> onStickerData.accept(p);
             case Show p -> onShow.accept(p);

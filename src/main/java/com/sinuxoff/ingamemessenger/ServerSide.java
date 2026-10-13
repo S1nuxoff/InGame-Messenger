@@ -111,6 +111,20 @@ final class ServerSide implements ServerPlatform {
     }
 
     @Override
+    public void say(UUID player, String translationKey, String fallback, String... args) {
+        ServerPlayer p = server.getPlayerList().getPlayer(player);
+        if (p != null) {
+            p.sendSystemMessage(Component.translatableWithFallback(translationKey, fallback, (Object[]) args)
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
+        }
+    }
+
+    @Override
+    public String modVersion() {
+        return Platform.get().modVersion();
+    }
+
+    @Override
     public void execute(Runnable task) {
         server.execute(task);
     }

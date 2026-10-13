@@ -44,6 +44,7 @@ final class Prefs {
     private static boolean pinned;
     private static boolean showTyping = true, seeTyping = true;
     private static boolean chatRight, ownRight, keepOpen;
+    private static boolean serverNotices = true;
     private static boolean hideHotbar = true, blurBehind = true;
     /** Line spacing was raised once for the bubbles; not again if the player lowers it. */
     private static boolean spacingSet;
@@ -84,6 +85,7 @@ final class Prefs {
             chatRight = getBool(o, "chatRight", chatRight);
             ownRight = getBool(o, "ownRight", ownRight);
             keepOpen = getBool(o, "keepOpen", keepOpen);
+            serverNotices = getBool(o, "serverNotices", serverNotices);
             hideHotbar = getBool(o, "hideHotbar", hideHotbar);
             blurBehind = getBool(o, "blurBehind", blurBehind);
             spacingSet = getBool(o, "spacingSet", spacingSet);
@@ -116,6 +118,7 @@ final class Prefs {
         o.addProperty("chatRight", chatRight);
         o.addProperty("ownRight", ownRight);
         o.addProperty("keepOpen", keepOpen);
+        o.addProperty("serverNotices", serverNotices);
         o.addProperty("hideHotbar", hideHotbar);
         o.addProperty("blurBehind", blurBehind);
         o.addProperty("spacingSet", spacingSet);
@@ -302,6 +305,12 @@ final class Prefs {
         load();
         keepOpen = !keepOpen;
         save();
+    }
+
+    /** Notes in the chat when the server has no messenger for us. */
+    static boolean serverNotices() {
+        load();
+        return serverNotices;
     }
 
     static boolean hideHotbar() {

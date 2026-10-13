@@ -12,6 +12,9 @@ public interface Platform {
     /** e.g. "NeoForge 21.1.251". */
     String loader();
 
+    /** This mod's version. */
+    String modVersion();
+
     /** The mod's own folder in the config folder (config/ingamemessenger/). */
     Path configDir();
 
@@ -27,8 +30,10 @@ public interface Platform {
     /** The server in this process (dedicated or integrated), or null. */
     MinecraftServer server();
 
+    /** Dropped if the server has no channel for it (it doesn't have the mod). */
     void sendToServer(Packet packet);
 
+    /** Dropped if the player's client has no channel for it. */
     void sendToPlayer(ServerPlayer player, Packet packet);
 
     static Path ensureDir(Path dir) {

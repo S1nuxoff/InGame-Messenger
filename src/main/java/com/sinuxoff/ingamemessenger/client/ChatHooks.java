@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.function.IntSupplier;
@@ -27,18 +28,35 @@ public final class ChatHooks {
     private ChatHooks() {
     }
 
+    /** False on servers without the mod: every hook then leaves Minecraft's chat as it is. */
+    public static boolean on() {
+        return Session.on();
+    }
+
+    public static int keptMessages(int vanilla) {
+        return on() ? MAX_KEPT : vanilla;
+    }
+
+    public static int keptLines(int vanilla) {
+        return on() ? MAX_LINES : vanilla;
+    }
+
     // Incoming
 
     /** True if the message was rebuilt (and the original must be dropped). */
     public static boolean transform(ChatComponent chat, Component content, MessageSignature sig, GuiMessageTag tag) {
-        return ChatMessages.transform(chat, content, sig, tag);
+        // the server's "install the mod" line: we have it, even if the server can't tell
+        if (content.getContents() instanceof TranslatableContents t && t.getKey().equals("ingamemessenger.plain.install")) {
+            return true;
+        }
+        return on() && ChatMessages.transform(chat, content, sig, tag);
     }
 
     // Layout
 
     /** True if the line's text is shifted right of the face. */
     public static boolean shifted(GuiMessageTag tag) {
-        return ChatModel.shifted(tag);
+        return on() && ChatModel.shifted(tag);
     }
 
     public static int textX(GuiMessageTag tag) {
@@ -47,17 +65,17 @@ public final class ChatHooks {
 
     /** True if the message has a reaction row (one more line when wrapping). */
     public static boolean reactionRow(GuiMessageTag tag) {
-        return ChatModel.reactionRow(tag);
+        return on() && ChatModel.reactionRow(tag);
     }
 
     // Size and position
 
     public static double scaleMul() {
-        return ChatMotion.scaleMul();
+        return on() ? ChatMotion.scaleMul() : 1;
     }
 
     public static int clampWidth(int w) {
-        return ChatMotion.clampWidth(w);
+        return on() ? ChatMotion.clampWidth(w) : w;
     }
 
     public static int chatHeightPx(ChatComponent chat) {
@@ -65,11 +83,11 @@ public final class ChatHooks {
     }
 
     public static float shiftX(ChatComponent chat) {
-        return ChatMotion.shiftX(chat);
+        return on() ? ChatMotion.shiftX(chat) : 0;
     }
 
     public static float shiftY() {
-        return ChatMotion.shiftY();
+        return on() ? ChatMotion.shiftY() : 0;
     }
 
     public static void tickShiftY(ChatComponent chat) {
@@ -77,20 +95,20 @@ public final class ChatHooks {
     }
 
     public static int extraLines() {
-        return ChatMotion.extraLines();
+        return on() ? ChatMotion.extraLines() : 0;
     }
 
     /** Slide offset of the newest message this frame, in pixels. */
     public static float slide() {
-        return ChatMotion.slide;
+        return on() ? ChatMotion.slide : 0;
     }
 
     public static boolean viewing() {
-        return ChatMotion.viewing();
+        return on() && ChatMotion.viewing();
     }
 
     public static boolean takeKeepScroll() {
-        return ChatMotion.takeKeepScroll();
+        return on() && ChatMotion.takeKeepScroll();
     }
 
     // Drawing
@@ -113,7 +131,7 @@ public final class ChatHooks {
 
     /** Fade-in of a line's message, 1 = fully visible. */
     public static float alphaOf(GuiMessageTag tag) {
-        return ChatRenderer.alphaOf(tag);
+        return on() ? ChatRenderer.alphaOf(tag) : 1;
     }
 
     public static int clipped(GuiGraphics g, IntSupplier draw) {
@@ -121,6 +139,8 @@ public final class ChatHooks {
     }
 
     public static void drawInlineEmoji(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, float alpha) {
-        ChatDecor.drawInlineEmoji(g, font, text, x, y, alpha);
+        if (on()) {
+            ChatDecor.drawInlineEmoji(g, font, text, x, y, alpha);
+        }
     }
 }

@@ -7,8 +7,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 //? if >=26.1 {
-/*import net.fabricmc.fabric.api.networking.v1.ClientboundPlayChannelEvents;
+/*import net.fabricmc.fabric.api.networking.v1.ClientboundConfigurationChannelEvents;
+import net.fabricmc.fabric.api.networking.v1.ClientboundPlayChannelEvents;
 *///?} else {
+import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents;
 import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
 //?}
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -29,8 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /** Fabric entry point: registers the packets and forwards server events to the shared code. */
 public final class FabricMod implements ModInitializer {
     static final FabricPlatform PLATFORM = new FabricPlatform();
-    /** Any client-bound channel: once the client lists it, it's ready for our packets. */
-    private static final CustomPacketPayload.Type<Net.Payload> READY = Net.type(Packets.StickerIndex.TYPE);
+    /** Once the client lists this channel, it can get Welcome. */
+    private static final CustomPacketPayload.Type<Net.Payload> READY = Net.type(Packets.Welcome.TYPE);
 
     @Override
     public void onInitialize() {
@@ -62,8 +64,19 @@ public final class FabricMod implements ModInitializer {
             InGameMessenger.chatLine(sender, message.decoratedContent());
             return true;
         });
-        // Packets sent before the client registers its channels are dropped, so the join is handled when it does,
-        // or after 3 seconds at the latest.
+        // NeoForge and Forge clients list their play channels while still configuring, and Fabric forgets them when
+        // play starts
+        //? if >=26.1 {
+        /*ClientboundConfigurationChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
+        *///?} else {
+        S2CConfigurationChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
+        //?}
+            if (channels.contains(READY.id())) {
+                early.add(handler.getOwner().getId());
+            }
+        });
+        // Packets sent before the client registers its channels are dropped, so the join is handled when it does
+        // (or listed them early: on the next tick, once the player is in the list), or after 3 seconds at the latest.
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> joining.put(handler.getPlayer().getUUID(), server.getTickCount()));
         //? if >=26.1 {
         /*ClientboundPlayChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
@@ -78,16 +91,25 @@ public final class FabricMod implements ModInitializer {
             ServerPlayer player = server.getPlayerList().getPlayer(id);
             if (player == null) {
                 joining.remove(id);
-            } else if (server.getTickCount() - tick > 60 && ServerPlayNetworking.canSend(player, READY)) {
+            } else if (early.contains(id) || server.getTickCount() - tick > 60 && canSend(player, READY)) {
                 greet(player);
             }
         }));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
             joining.remove(handler.getPlayer().getUUID());
             greeted.remove(handler.getPlayer().getUUID());
+            early.remove(handler.getPlayer().getUUID());
             InGameMessenger.playerLeft(handler.getPlayer());
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registries, environment) -> InGameMessenger.registerCommands(dispatcher));
+    }
+
+    /** Players whose client listed our channels while configuring. */
+    private static final Set<UUID> early = ConcurrentHashMap.newKeySet();
+
+    /** Whether the client can get this packet: Fabric knows it, it listed it early, or it said Hello. */
+    static boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type) {
+        return ServerPlayNetworking.canSend(player, type) || early.contains(player.getUUID()) || InGameMessenger.hasClient(player);
     }
 
     /** Players whose join was handled. */

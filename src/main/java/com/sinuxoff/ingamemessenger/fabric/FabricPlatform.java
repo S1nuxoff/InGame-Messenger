@@ -30,6 +30,12 @@ final class FabricPlatform implements Platform {
     }
 
     @Override
+    public String modVersion() {
+        return FabricLoader.getInstance().getModContainer(InGameMessenger.MOD_ID)
+                .map(m -> m.getMetadata().getVersion().getFriendlyString()).orElse("?");
+    }
+
+    @Override
     public Path configDir() {
         return Platform.ensureDir(FabricLoader.getInstance().getConfigDir().resolve(InGameMessenger.MOD_ID));
     }
@@ -76,6 +82,8 @@ final class FabricPlatform implements Platform {
 
     @Override
     public void sendToPlayer(ServerPlayer player, Packet packet) {
-        ServerPlayNetworking.send(player, new Net.Payload(packet));
+        if (FabricMod.canSend(player, Net.type(packet.type()))) {
+            ServerPlayNetworking.send(player, new Net.Payload(packet));
+        }
     }
 }

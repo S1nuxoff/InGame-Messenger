@@ -36,7 +36,7 @@ public abstract class CommandSuggestionsMixin {
 
     @ModifyConstant(method = "showSuggestions", constant = @Constant(intValue = 12))
     private int ingamemessenger$listAbove(int bottomGap) {
-        return screen instanceof ChatScreen ? screen.height - ChatInput.listBottom(screen.height) : bottomGap;
+        return screen instanceof ChatScreen && com.sinuxoff.ingamemessenger.client.ChatHooks.on() ? screen.height - ChatInput.listBottom(screen.height) : bottomGap;
     }
 
     /** Usage or error text: one rounded bubble above the input, as wide as the text. */
@@ -46,7 +46,7 @@ public abstract class CommandSuggestionsMixin {
     @Inject(method = "renderUsage", at = @At("HEAD"), cancellable = true)
     //?}
     private void ingamemessenger$usage(GuiGraphics g, CallbackInfo ci) {
-        if (anchorToBottom && screen instanceof ChatScreen) {
+        if (anchorToBottom && screen instanceof ChatScreen && com.sinuxoff.ingamemessenger.client.ChatHooks.on()) {
             ci.cancel();
             ChatInput.renderUsage(g, screen, commandUsage, commandUsagePosition, commandUsageWidth);
         }
