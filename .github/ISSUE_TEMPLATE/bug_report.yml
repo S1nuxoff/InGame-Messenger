@@ -23,6 +23,7 @@ body:
       options:
         - NeoForge
         - Fabric
+        - Quilt
         - Forge
         - No mod on the client
     validations:
@@ -34,6 +35,7 @@ body:
       options:
         - NeoForge
         - Fabric
+        - Quilt
         - Forge
         - Paper / Purpur (plugin)
         - Spigot (plugin)

@@ -21,7 +21,7 @@ storage, sticker packs and commands.
 ## Installation
 
 1. On a modded server, download the jar for your Minecraft version and loader (NeoForge, Fabric or Forge) and put it in
-   `mods/`. On Fabric, Fabric API is required.
+   `mods/`. On Fabric, Fabric API is required. Quilt runs the Fabric jar, also with Fabric API.
 
    On Paper, Spigot, Purpur or Folia, put the plugin's jar in `plugins/`. One jar covers 1.21.1 and newer (Folia from
    1.21.4); it needs Java 21. On first start the server downloads the plugin's libraries (the H2 database and the Opus

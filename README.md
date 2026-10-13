@@ -11,6 +11,7 @@ A messenger inside the Minecraft chat.
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1%20to%2026.3-62B47A)](#supported-versions)
 [![NeoForge](https://img.shields.io/badge/NeoForge-supported-E68C37)](#supported-versions)
 [![Fabric](https://img.shields.io/badge/Fabric-supported-C6BBA5)](#supported-versions)
+[![Quilt](https://img.shields.io/badge/Quilt-supported-8A5CF5)](#supported-versions)
 [![Forge](https://img.shields.io/badge/Forge-supported-1E2D3D)](#supported-versions)
 [![Paper](https://img.shields.io/badge/Paper%20%C2%B7%20Spigot%20%C2%B7%20Folia-plugin-F7CF0D)](#server-plugin)
 
@@ -20,7 +21,7 @@ A messenger inside the Minecraft chat.
 
 InGame Messenger replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
 custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. It runs on
-NeoForge, Fabric and Forge, from Minecraft 1.21.1 to 26.3, and the server side also runs as a plugin on Paper,
+NeoForge, Fabric, Quilt and Forge, from Minecraft 1.21.1 to 26.3, and the server side also runs as a plugin on Paper,
 Spigot, Purpur and Folia.
 
 Players install the mod; the server runs either the mod or the plugin. Clients and servers on different loaders work
@@ -80,19 +81,21 @@ together.
 
 ## Supported versions
 
-| Minecraft          | NeoForge | Fabric |    Forge     | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
-|--------------------|:--------:|:------:|:------------:|:------------------------------:|:--------------:|:----:|
-| 1.21.1             |    ✓     |   ✓    |      ✓       |               ✓                |       —        |  21  |
-| 1.21.4             |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  21  |
-| 1.21.5             |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  21  |
-| 1.21.6 – 1.21.8    |    ✓     |   ✓    | 1.21.8 only  |               ✓                |       ✓        |  21  |
-| 1.21.9 – 1.21.10   |    ✓     |   ✓    | 1.21.10 only |               ✓                |       —        |  21  |
-| 1.21.11            |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  21  |
-| 26.1 – 26.1.2      |    ✓     |   ✓    | 26.1.2 only  |               ✓                |       ✓        |  25  |
-| 26.2               |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  25  |
-| 26.3               |    ✓     |   ✓    |      ✓       |               ✓                |       —        |  25  |
+| Minecraft          | NeoForge | Fabric | Quilt |    Forge     | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
+|--------------------|:--------:|:------:|:-----:|:------------:|:------------------------------:|:--------------:|:----:|
+| 1.21.1             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       —        |  21  |
+| 1.21.4             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
+| 1.21.5             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
+| 1.21.6 – 1.21.8    |    ✓     |   ✓    |   ✓   | 1.21.8 only  |               ✓                |       ✓        |  21  |
+| 1.21.9 – 1.21.10   |    ✓     |   ✓    |   ✓   | 1.21.10 only |               ✓                |       —        |  21  |
+| 1.21.11            |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
+| 26.1 – 26.1.2      |    ✓     |   ✓    |   ✓   | 26.1.2 only  |               ✓                |       ✓        |  25  |
+| 26.2               |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  25  |
+| 26.3               |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       —        |  25  |
 
 Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
+
+On Quilt, use the Fabric jar together with Fabric API (not Quilted Fabric API, which stops at 1.21).
 
 Forge builds are made for one Minecraft release each, as Forge itself is.
 
@@ -104,14 +107,15 @@ server with the plugin with the mod on any loader.
 Velocity and BungeeCord work too: install the mod or the plugin on the servers behind the proxy, nothing on the proxy.
 Each server keeps its own chat. See [Proxies](docs/server.md#proxies-velocity-bungeecord).
 
-Quilt and older Minecraft versions are planned.
+Older Minecraft versions are planned.
 
 ## Installation
 
 ### Players
 
 1. Download the jar that matches your Minecraft version and mod loader.
-2. Put it in the `mods` folder of your game. On Fabric, also install Fabric API.
+2. Put it in the `mods` folder of your game. On Fabric and Quilt, also install Fabric API (Quilt uses the Fabric
+   jar).
 3. Join a server that has the mod or the plugin. Its loader doesn't have to match yours.
 
 You can keep the mod installed everywhere: on servers without it the chat stays the normal Minecraft chat. Servers
@@ -119,7 +123,7 @@ with the mod let in players without it too; they see stickers, voice messages an
 
 ### Servers
 
-1. Modded server: put the mod's jar in the `mods` folder (plus Fabric API on Fabric). Paper, Spigot, Purpur or Folia:
+1. Modded server: put the mod's jar in the `mods` folder (plus Fabric API on Fabric and Quilt). Paper, Spigot, Purpur or Folia:
    put the plugin's jar in the `plugins` folder.
 2. Start the server once. It creates `config/ingamemessenger/` (the plugin: `plugins/InGameMessenger/`) with the
    configuration file and the folders for sticker and emoji packs.
