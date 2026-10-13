@@ -40,6 +40,7 @@ class ChatServerTest {
         final List<String> said = new ArrayList<>(), fallbacks = new ArrayList<>();
         boolean plainLines = true;
         UUID op = null;
+        final java.util.Set<UUID> mutedElsewhere = new java.util.HashSet<>();
         String provider = "server";
 
         FakePlatform(Path dir) {
@@ -73,6 +74,11 @@ class ChatServerTest {
         @Override
         public boolean isOperator(UUID id) {
             return id.equals(op);
+        }
+
+        @Override
+        public boolean mutedElsewhere(UUID id) {
+            return mutedElsewhere.contains(id);
         }
 
         @Override
@@ -506,5 +512,101 @@ class ChatServerTest {
         assertTrue(p2.got(A, ReadAll.class).get(0).data().contains(C + " Cat " + id));
         assertTrue(p2.got(A, DmChats.class).get(0).data().startsWith(B + " Bob "));
         assertTrue(s2.chatLine(A, "Alice", "y", ChatServer.textJson("y")) > id);
+    }
+
+    // Mutes
+
+    static List<String> args(String... a) {
+        return List.of(a);
+    }
+
+    @Test
+    void aChatMuteKeepsPrivateChats() {
+        assertTrue(s.mutes().command("Mod", "mute", args("bob", "10m", "spam", "links")).startsWith("Bob muted"));
+        MuteState st = p.got(B, MuteState.class).get(0);
+        assertTrue(st.chatUntil() > System.currentTimeMillis() && st.dmUntil() == 0);
+        assertEquals("spam links", st.reason());
+        s.handle(B, new Send("pack", "x", -1));
+        s.handle(B, new PollCreate("Lunch?", "yes\nno", false, -1));
+        assertTrue(p.got(A, Show.class).isEmpty() && p.got(A, PollShow.class).isEmpty(), "nothing in the chat");
+        assertTrue(p.said.get(0).startsWith(B + " ingamemessenger.mute.chat_for 10m"), p.said.toString());
+        assertEquals(1, p.said.size(), "told once, not on every try");
+        assertFalse(s.mutes().mayChat(B), "the chat line itself is stopped by the platform");
+        s.handle(B, new DmSend(A, "sorry"));
+        assertEquals("sorry", p.got(A, DmShow.class).get(0).text(), "private chats still work");
+        assertTrue(s.mutes().mayChat(A));
+    }
+
+    @Test
+    void aMuteEverywhereAndUnmute() {
+        s.mutes().command("Mod", "mute", args("Bob", "all"));
+        s.handle(B, new DmSend(A, "hi"));
+        assertTrue(p.got(A, DmShow.class).isEmpty());
+        assertTrue(p.said.get(0).startsWith(B + " ingamemessenger.mute.dm "), "forever: no time left shown");
+        s.mutes().command("Mod", "unmute", args("Bob", "dm"));
+        s.handle(B, new DmSend(A, "hi"));
+        assertEquals(1, p.got(A, DmShow.class).size(), "private chats back");
+        s.handle(B, new Send("pack", "x", -1));
+        assertTrue(p.got(A, Show.class).isEmpty(), "still muted in the chat");
+        assertEquals("Bob unmuted", s.mutes().command("Mod", "unmute", args("bob")));
+        s.handle(B, new Send("pack", "x", -1));
+        assertEquals(1, p.got(A, Show.class).size());
+        assertEquals("Bob isn't muted", s.mutes().command("Mod", "unmute", args("bob")));
+        MuteState last = p.got(B, MuteState.class).get(p.got(B, MuteState.class).size() - 1);
+        assertEquals(0, last.chatUntil() + last.dmUntil());
+    }
+
+    @Test
+    void aMuteRunsOut() {
+        s.mutes().command("Mod", "mute", args("Bob", "1m"));
+        s.tick(System.currentTimeMillis() + 61_000);
+        MuteState last = p.got(B, MuteState.class).get(p.got(B, MuteState.class).size() - 1);
+        assertEquals(0, last.chatUntil());
+        assertTrue(s.mutes().mayChat(B));
+        assertEquals("nobody is muted", s.mutes().command("Mod", "mutes", args()));
+    }
+
+    @Test
+    void anotherPluginsMuteCountsInTheChat() {
+        p.mutedElsewhere.add(B);
+        s.handle(B, new Send("pack", "x", -1));
+        assertTrue(p.got(A, Show.class).isEmpty(), "no stickers around Essentials' /mute");
+        assertTrue(s.mutes().mayChat(B), "the chat line is the other plugin's to stop");
+        s.handle(B, new DmSend(A, "hi"));
+        assertEquals(1, p.got(A, DmShow.class).size());
+    }
+
+    @Test
+    void mutedPlayersCantEditOrReact() {
+        int id = s.chatLine(B, "Bob", "hello", ChatServer.textJson("hello"));
+        int other = s.chatLine(A, "Alice", "hey", ChatServer.textJson("hey"));
+        s.mutes().command("Mod", "mute", args("Bob"));
+        s.handle(B, new EditMsg(id, "now with a link"));
+        s.handle(B, new React(other, "1"));
+        assertTrue(p.got(A, Edited.class).isEmpty());
+        assertTrue(p.got(A, Packets.Reactions.class).isEmpty());
+    }
+
+    @Test
+    void mutesOutliveARestart() throws Exception {
+        s.mutes().command("Mod", "mute", args("Bob", "2h", "dm", "rude"));
+        s.close();
+        FakePlatform p2 = new FakePlatform(dir);
+        ChatServer s2 = server(p2, dir);
+        hello(s2, B);
+        MuteState st = p2.got(B, MuteState.class).get(0);
+        assertTrue(st.dmUntil() > System.currentTimeMillis() && st.chatUntil() == 0);
+        assertEquals("rude", st.reason());
+        assertTrue(s2.mutes().command("Mod", "mutes", args()).contains("Bob: private for 2h (rude), by Mod"));
+        s2.close();
+    }
+
+    @Test
+    void muteTimes() {
+        assertEquals(5_400_000L, Mutes.time("1h30m"));
+        assertEquals(Mutes.FOREVER, Mutes.time("forever"));
+        assertNull(Mutes.time("chat"));
+        assertNull(Mutes.time("10x"));
+        assertEquals("no player Zed online", s.mutes().command("Mod", "mute", args("Zed")));
     }
 }

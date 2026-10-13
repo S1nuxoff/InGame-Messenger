@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Je bent gedempt in de chat. %s",
+  "ingamemessenger.mute.chat_for": "Je bent nog %s gedempt in de chat. %s",
+  "ingamemessenger.mute.dm": "Je bent gedempt in privéchats. %s",
+  "ingamemessenger.mute.dm_for": "Je bent nog %s gedempt in privéchats. %s",
+  "ingamemessenger.mute.lifted": "Je kunt weer schrijven.",
+  "ingamemessenger.muted.until": "Gedempt tot %s",
+  "ingamemessenger.muted.forever": "Je bent gedempt",
   "ingamemessenger.panel.empty_recent": "Stickers die je verstuurt verschijnen hier",
   "ingamemessenger.panel.empty_favorites": "Rechtermuisklik op een sticker om hem hier toe te voegen",
   "ingamemessenger.panel.empty": "Dit pakket is leeg",

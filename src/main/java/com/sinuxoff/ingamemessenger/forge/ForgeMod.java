@@ -33,6 +33,8 @@ public final class ForgeMod {
         ServerStartedEvent.BUS.addListener(e -> InGameMessenger.serverStarted(e.getServer()));
         ServerStoppedEvent.BUS.addListener(e -> InGameMessenger.serverStopped());
         TickEvent.ServerTickEvent.Post.BUS.addListener(e -> InGameMessenger.serverTick(e.server()));
+        ServerChatEvent.BUS.addListener(net.minecraftforge.eventbus.api.listener.Priority.HIGHEST,
+                (java.util.function.Predicate<ServerChatEvent>) e -> !InGameMessenger.mayChat(e.getPlayer()));
         ServerChatEvent.BUS.addListener(net.minecraftforge.eventbus.api.listener.Priority.LOWEST,
                 (java.util.function.Consumer<ServerChatEvent>) e -> InGameMessenger.chatLine(e.getPlayer(), e.getMessage()));
         PlayerEvent.PlayerLoggedInEvent.BUS.addListener(e -> {
@@ -51,6 +53,8 @@ public final class ForgeMod {
         ServerStartedEvent.BUS.addListener(e -> InGameMessenger.serverStarted(e.getServer()));
         ServerStoppedEvent.BUS.addListener(e -> InGameMessenger.serverStopped());
         TickEvent.ServerTickEvent.Post.BUS.addListener(e -> InGameMessenger.serverTick(e.getServer()));
+        ServerChatEvent.BUS.addListener(net.minecraftforge.eventbus.api.listener.Priority.HIGHEST,
+                (java.util.function.Predicate<ServerChatEvent>) e -> !InGameMessenger.mayChat(e.getPlayer()));
         ServerChatEvent.BUS.addListener(net.minecraftforge.eventbus.api.listener.Priority.LOWEST,
                 (java.util.function.Consumer<ServerChatEvent>) e -> InGameMessenger.chatLine(e.getPlayer(), e.getMessage()));
         PlayerEvent.PlayerLoggedInEvent.BUS.addListener(e -> {
@@ -78,6 +82,11 @@ public final class ForgeMod {
             }
         });
         *///?}
+        bus.addListener(net.minecraftforge.eventbus.api.EventPriority.HIGHEST, false, (ServerChatEvent e) -> {
+            if (!InGameMessenger.mayChat(e.getPlayer())) {
+                e.setCanceled(true);
+            }
+        });
         bus.addListener(net.minecraftforge.eventbus.api.EventPriority.LOWEST, false,
                 (ServerChatEvent e) -> InGameMessenger.chatLine(e.getPlayer(), e.getMessage()));
         bus.addListener((PlayerEvent.PlayerLoggedInEvent e) -> {

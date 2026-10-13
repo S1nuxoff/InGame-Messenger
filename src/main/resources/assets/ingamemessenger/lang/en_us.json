@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "You are muted in the chat. %s",
+  "ingamemessenger.mute.chat_for": "You are muted in the chat for %s more. %s",
+  "ingamemessenger.mute.dm": "You are muted in private chats. %s",
+  "ingamemessenger.mute.dm_for": "You are muted in private chats for %s more. %s",
+  "ingamemessenger.mute.lifted": "You can write again.",
+  "ingamemessenger.muted.until": "You are muted until %s",
+  "ingamemessenger.muted.forever": "You are muted",
   "ingamemessenger.panel.empty_recent": "Stickers you send show up here",
   "ingamemessenger.panel.empty_favorites": "Right click a sticker to add it here",
   "ingamemessenger.panel.empty": "This pack is empty",

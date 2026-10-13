@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Sei silenziato nella chat. %s",
+  "ingamemessenger.mute.chat_for": "Sei silenziato nella chat per altri %s. %s",
+  "ingamemessenger.mute.dm": "Sei silenziato nelle chat private. %s",
+  "ingamemessenger.mute.dm_for": "Sei silenziato nelle chat private per altri %s. %s",
+  "ingamemessenger.mute.lifted": "Puoi scrivere di nuovo.",
+  "ingamemessenger.muted.until": "Silenziato fino alle %s",
+  "ingamemessenger.muted.forever": "Sei silenziato",
   "ingamemessenger.panel.empty_recent": "Gli sticker che invii appaiono qui",
   "ingamemessenger.panel.empty_favorites": "Fai clic destro su uno sticker per aggiungerlo qui",
   "ingamemessenger.panel.empty": "Questo pacchetto è vuoto",

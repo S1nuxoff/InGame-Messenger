@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Você está silenciado no chat. %s",
+  "ingamemessenger.mute.chat_for": "Você está silenciado no chat por mais %s. %s",
+  "ingamemessenger.mute.dm": "Você está silenciado nas conversas privadas. %s",
+  "ingamemessenger.mute.dm_for": "Você está silenciado nas conversas privadas por mais %s. %s",
+  "ingamemessenger.mute.lifted": "Você pode escrever de novo.",
+  "ingamemessenger.muted.until": "Silenciado até %s",
+  "ingamemessenger.muted.forever": "Você está silenciado",
   "ingamemessenger.panel.empty_recent": "Os adesivos que você envia aparecem aqui",
   "ingamemessenger.panel.empty_favorites": "Clique com o botão direito em um adesivo para adicioná-lo aqui",
   "ingamemessenger.panel.empty": "Este pacote está vazio",

@@ -30,6 +30,11 @@ public final class NeoForgeMod {
         NeoForge.EVENT_BUS.addListener((ServerStartedEvent e) -> InGameMessenger.serverStarted(e.getServer()));
         NeoForge.EVENT_BUS.addListener((ServerStoppedEvent e) -> InGameMessenger.serverStopped());
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post e) -> InGameMessenger.serverTick(e.getServer()));
+        NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, false, (ServerChatEvent e) -> {
+            if (!InGameMessenger.mayChat(e.getPlayer())) {
+                e.setCanceled(true);
+            }
+        });
         NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, (ServerChatEvent e) -> InGameMessenger.chatLine(e.getPlayer(), e.getMessage()));
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent e) -> {
             if (e.getEntity() instanceof ServerPlayer p) {

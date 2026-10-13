@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Le vagy némítva a csevegésben. %s",
+  "ingamemessenger.mute.chat_for": "Még %s le vagy némítva a csevegésben. %s",
+  "ingamemessenger.mute.dm": "Le vagy némítva a privát üzenetekben. %s",
+  "ingamemessenger.mute.dm_for": "Még %s le vagy némítva a privát üzenetekben. %s",
+  "ingamemessenger.mute.lifted": "Újra írhatsz.",
+  "ingamemessenger.muted.until": "Némítva eddig: %s",
+  "ingamemessenger.muted.forever": "Le vagy némítva",
   "ingamemessenger.panel.empty_recent": "Az általad küldött matricák itt jelennek meg",
   "ingamemessenger.panel.empty_favorites": "Kattints jobb gombbal egy matricára, hogy ide add",
   "ingamemessenger.panel.empty": "Ez a csomag üres",

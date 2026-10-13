@@ -43,9 +43,19 @@ final class Tasks {
         }
     }
 
+    /** Off the main thread, every so many ticks (20 a second). */
+    void everyAsync(long ticks, Runnable task) {
+        if (REGIONS) {
+            Bukkit.getAsyncScheduler().runAtFixedRate(plugin, t -> task.run(), ticks * 50, ticks * 50, java.util.concurrent.TimeUnit.MILLISECONDS);
+        } else {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, task, ticks, ticks);
+        }
+    }
+
     void cancelAll() {
         if (REGIONS) {
             Bukkit.getGlobalRegionScheduler().cancelTasks(plugin);
+            Bukkit.getAsyncScheduler().cancelTasks(plugin);
         } else {
             Bukkit.getScheduler().cancelTasks(plugin);
         }

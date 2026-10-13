@@ -18,6 +18,21 @@ public interface ServerPlatform {
 
     boolean isOperator(UUID id);
 
+    /** The online player with this name (any case), or null. */
+    default UUID idOf(String name) {
+        for (ChatPlayer p : online()) {
+            if (p.name().equalsIgnoreCase(name)) {
+                return p.id();
+            }
+        }
+        return null;
+    }
+
+    /** Whether another plugin or mod (Essentials, LiteBans...) has the player muted: then they're muted in the chat. */
+    default boolean mutedElsewhere(UUID id) {
+        return false;
+    }
+
     /** Does nothing if the player is offline. */
     void send(UUID player, Packet packet);
 

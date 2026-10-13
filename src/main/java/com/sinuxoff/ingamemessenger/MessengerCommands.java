@@ -3,14 +3,16 @@ package com.sinuxoff.ingamemessenger;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import com.sinuxoff.ingamemessenger.core.server.ChatServer;
 
 /**
- * /messenger for operators: reload, typing, voice. With -Dingamemessenger.dev=true also test and bots, for trying
+ * /messenger for operators: reload, typing, voice, mute. With -Dingamemessenger.dev=true also test and bots, for trying
  * the chat alone.
  */
 final class MessengerCommands {
@@ -50,7 +52,10 @@ final class MessengerCommands {
                             int d = IntegerArgumentType.getInteger(ctx, "days");
                             Platform.get().settings().setVoiceKeepDays(d);
                             return changed(ctx.getSource(), d == 0 ? "voice messages kept forever" : "voice messages kept " + d + " days");
-                        }))));
+                        }))))
+                .then(mute("mute"))
+                .then(mute("unmute"))
+                .then(Commands.literal("mutes").executes(ctx -> mutes(ctx.getSource(), "mutes", "")));
         if (DEV) {
             root.then(Commands.literal("clients").executes(ctx -> {
                         StringBuilder b = new StringBuilder();
@@ -75,6 +80,23 @@ final class MessengerCommands {
                             })));
         }
         dispatcher.register(root);
+    }
+
+    /** mute|unmute [player time scope reason...]: the words are read by the shared {@link com.sinuxoff.ingamemessenger.core.server.Mutes}. */
+    private static LiteralArgumentBuilder<CommandSourceStack> mute(String what) {
+        return Commands.literal(what).executes(ctx -> mutes(ctx.getSource(), what, ""))
+                .then(Commands.argument("args", StringArgumentType.greedyString())
+                        .suggests((ctx, b) -> SharedSuggestionProvider.suggest(ctx.getSource().getOnlinePlayerNames(), b))
+                        .executes(ctx -> mutes(ctx.getSource(), what, StringArgumentType.getString(ctx, "args"))));
+    }
+
+    private static int mutes(CommandSourceStack src, String what, String args) {
+        ChatServer chat = ServerSide.chat;
+        if (chat == null) {
+            return done(src, "off (no database)");
+        }
+        java.util.List<String> words = args.isBlank() ? java.util.List.of() : java.util.List.of(args.strip().split("\\s+"));
+        return done(src, chat.mutes().command(src.getTextName(), what, words));
     }
 
     private static int changed(CommandSourceStack src, String what) {

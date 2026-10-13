@@ -44,7 +44,7 @@ public final class ChatStore {
     }
 
     private final Database db;
-    private final String messages, reactions, votes, readMarks, dmReads, files, meta;
+    private final String messages, reactions, votes, readMarks, dmReads, files, meta, mutes;
 
     public ChatStore(Database db) {
         this.db = db;
@@ -56,6 +56,7 @@ public final class ChatStore {
         dmReads = p + "dm_reads";
         files = p + "files";
         meta = p + "meta";
+        mutes = p + "mutes";
     }
 
     private Connection c() throws SQLException {
@@ -83,6 +84,9 @@ public final class ChatStore {
                     + "up_to BIGINT NOT NULL, PRIMARY KEY (reader, other_player))");
             s.execute("CREATE TABLE IF NOT EXISTS " + files + " (file_id VARCHAR(64) PRIMARY KEY, category VARCHAR(16) NOT NULL, ts BIGINT NOT NULL)");
             s.execute("CREATE TABLE IF NOT EXISTS " + meta + " (meta_key VARCHAR(64) PRIMARY KEY, meta_value VARCHAR(255) NOT NULL)");
+            s.execute("CREATE TABLE IF NOT EXISTS " + mutes + " (player VARCHAR(36) PRIMARY KEY, player_name VARCHAR(64) NOT NULL, "
+                    + "chat_until BIGINT NOT NULL, dm_until BIGINT NOT NULL, reason VARCHAR(255) NOT NULL, by_name VARCHAR(64) NOT NULL, "
+                    + "ts BIGINT NOT NULL)");
         }
         index(messages + "_pair", messages, "pair_id");
         index(files + "_cat", files, "category, ts");
@@ -149,6 +153,32 @@ public final class ChatStore {
         try (PreparedStatement ps = c().prepareStatement(sql)) {
             bind(ps, params);
             return ps.executeUpdate();
+        }
+    }
+
+    // Mutes
+
+    /** A player's mute: until when in the public chat and in private chats (0 = not muted there). */
+    public record Mute(UUID who, String name, long chatUntil, long dmUntil, String reason, String by, long t) {
+    }
+
+    public List<Mute> mutes() throws SQLException {
+        List<Mute> out = new ArrayList<>();
+        try (PreparedStatement ps = c().prepareStatement("SELECT player, player_name, chat_until, dm_until, reason, by_name, ts FROM " + mutes);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                out.add(new Mute(UUID.fromString(rs.getString(1)), rs.getString(2), rs.getLong(3), rs.getLong(4), rs.getString(5),
+                        rs.getString(6), rs.getLong(7)));
+            }
+        }
+        return out;
+    }
+
+    public void setMute(Mute m) throws SQLException {
+        update("DELETE FROM " + mutes + " WHERE player = ?", m.who().toString());
+        if (m.chatUntil() > 0 || m.dmUntil() > 0) {
+            update("INSERT INTO " + mutes + " (player, player_name, chat_until, dm_until, reason, by_name, ts) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    m.who().toString(), m.name(), m.chatUntil(), m.dmUntil(), m.reason(), m.by(), m.t());
         }
     }
 

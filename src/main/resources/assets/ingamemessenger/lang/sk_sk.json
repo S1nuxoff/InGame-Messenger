@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Si umlčaný v čete. %s",
+  "ingamemessenger.mute.chat_for": "Si umlčaný v čete ešte %s. %s",
+  "ingamemessenger.mute.dm": "Si umlčaný v súkromných správach. %s",
+  "ingamemessenger.mute.dm_for": "Si umlčaný v súkromných správach ešte %s. %s",
+  "ingamemessenger.mute.lifted": "Môžeš znova písať.",
+  "ingamemessenger.muted.until": "Umlčaný do %s",
+  "ingamemessenger.muted.forever": "Si umlčaný",
   "ingamemessenger.panel.empty_recent": "Nálepky, ktoré pošleš, sa zobrazia tu",
   "ingamemessenger.panel.empty_favorites": "Klikni pravým tlačidlom na nálepku pre pridanie sem",
   "ingamemessenger.panel.empty": "Tento balíček je prázdny",

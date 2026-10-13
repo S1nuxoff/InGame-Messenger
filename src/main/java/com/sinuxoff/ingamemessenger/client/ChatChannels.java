@@ -126,6 +126,9 @@ final class ChatChannels {
                 input.setValue("");
             }
         }
+        if (SERVER.equals(peer)) {
+            beforeServer = channel;
+        }
         ChatComponent chat = mc.gui.getChat();
         ChatComponentAccessor acc = (ChatComponentAccessor) chat;
         List<GuiMessage> all = acc.ingamemessenger$allMessages();
@@ -164,6 +167,18 @@ final class ChatChannels {
         }
     }
 
+    /** The chat open before the server chat, to go back to (null = public). */
+    private static UUID beforeServer;
+
+    /** Back from the server chat to the chat open before it (if its tab is still there), else the public chat. */
+    static void leaveServer() {
+        UUID back = beforeServer;
+        if (back != null && !back.equals(Ai.ID) && !dmTabs.containsKey(back) || Ai.ID.equals(back) && !Prefs.geminiOn()) {
+            back = null;
+        }
+        openChannel(back, back == null || back.equals(Ai.ID) ? null : nameOf(back));
+    }
+
     /** Closes a private chat tab (its messages stay on the server). */
     static void closeTab(UUID peer) {
         if (peer.equals(channel)) {
@@ -177,6 +192,7 @@ final class ChatChannels {
 
     static void resetChannels() {
         channel = null;
+        beforeServer = null;
         routeNext = null;
         Ai.reset();
         commonStash = new ArrayList<>();

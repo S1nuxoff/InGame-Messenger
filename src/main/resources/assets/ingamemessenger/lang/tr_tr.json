@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Sohbette susturuldun. %s",
+  "ingamemessenger.mute.chat_for": "Sohbette %s daha susturuldun. %s",
+  "ingamemessenger.mute.dm": "Özel mesajlarda susturuldun. %s",
+  "ingamemessenger.mute.dm_for": "Özel mesajlarda %s daha susturuldun. %s",
+  "ingamemessenger.mute.lifted": "Yeniden yazabilirsin.",
+  "ingamemessenger.muted.until": "%s saatine kadar susturuldun",
+  "ingamemessenger.muted.forever": "Susturuldun",
   "ingamemessenger.panel.empty_recent": "Gönderdiğin çıkartmalar burada görünür",
   "ingamemessenger.panel.empty_favorites": "Buraya eklemek için bir çıkartmaya sağ tıkla",
   "ingamemessenger.panel.empty": "Bu paket boş",

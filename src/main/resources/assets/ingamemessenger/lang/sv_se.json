@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Du är tystad i chatten. %s",
+  "ingamemessenger.mute.chat_for": "Du är tystad i chatten i %s till. %s",
+  "ingamemessenger.mute.dm": "Du är tystad i privata chattar. %s",
+  "ingamemessenger.mute.dm_for": "Du är tystad i privata chattar i %s till. %s",
+  "ingamemessenger.mute.lifted": "Du kan skriva igen.",
+  "ingamemessenger.muted.until": "Tystad till %s",
+  "ingamemessenger.muted.forever": "Du är tystad",
   "ingamemessenger.panel.empty_recent": "Klistermärken du skickar visas här",
   "ingamemessenger.panel.empty_favorites": "Högerklicka på ett klistermärke för att lägga till det här",
   "ingamemessenger.panel.empty": "Detta paket är tomt",

@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Vous êtes réduit au silence dans le chat. %s",
+  "ingamemessenger.mute.chat_for": "Vous êtes réduit au silence dans le chat encore %s. %s",
+  "ingamemessenger.mute.dm": "Vous êtes réduit au silence dans les messages privés. %s",
+  "ingamemessenger.mute.dm_for": "Vous êtes réduit au silence dans les messages privés encore %s. %s",
+  "ingamemessenger.mute.lifted": "Vous pouvez de nouveau écrire.",
+  "ingamemessenger.muted.until": "Réduit au silence jusqu'à %s",
+  "ingamemessenger.muted.forever": "Vous êtes réduit au silence",
   "ingamemessenger.panel.empty_recent": "Les autocollants que vous envoyez s'affichent ici",
   "ingamemessenger.panel.empty_favorites": "Faites un clic droit sur un autocollant pour l'ajouter ici",
   "ingamemessenger.panel.empty": "Ce pack est vide",

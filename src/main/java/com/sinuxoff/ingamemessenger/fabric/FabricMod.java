@@ -75,6 +75,9 @@ public final class FabricMod implements ModInitializer {
         });
         ServerTickEvents.END_SERVER_TICK.register(InGameMessenger::serverTick);
         ServerMessageEvents.ALLOW_CHAT_MESSAGE.register((message, sender, params) -> {
+            if (!InGameMessenger.mayChat(sender)) {
+                return false;
+            }
             InGameMessenger.chatLine(sender, message./*? if >=1.19.3 {*/decoratedContent/*?} else {*//*serverContent*//*?}*/());
             return true;
         });

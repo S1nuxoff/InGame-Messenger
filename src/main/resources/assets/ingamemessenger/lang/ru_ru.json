@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Ты в муте в общем чате. %s",
+  "ingamemessenger.mute.chat_for": "Ты в муте в общем чате ещё %s. %s",
+  "ingamemessenger.mute.dm": "Ты в муте в личных сообщениях. %s",
+  "ingamemessenger.mute.dm_for": "Ты в муте в личных сообщениях ещё %s. %s",
+  "ingamemessenger.mute.lifted": "Ты снова можешь писать.",
+  "ingamemessenger.muted.until": "Ты в муте до %s",
+  "ingamemessenger.muted.forever": "Ты в муте",
   "ingamemessenger.panel.empty_recent": "Здесь будут стикеры, которые ты отправлял",
   "ingamemessenger.panel.empty_favorites": "ПКМ по стикеру — добавить в избранное",
   "ingamemessenger.panel.empty": "Этот пак пустой",

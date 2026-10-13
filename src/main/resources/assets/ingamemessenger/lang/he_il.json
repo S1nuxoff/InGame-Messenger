@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "הושתקת בצ'אט. %s",
+  "ingamemessenger.mute.chat_for": "הושתקת בצ'אט לעוד %s. %s",
+  "ingamemessenger.mute.dm": "הושתקת בהודעות פרטיות. %s",
+  "ingamemessenger.mute.dm_for": "הושתקת בהודעות פרטיות לעוד %s. %s",
+  "ingamemessenger.mute.lifted": "אפשר לכתוב שוב.",
+  "ingamemessenger.muted.until": "מושתק עד %s",
+  "ingamemessenger.muted.forever": "הושתקת",
   "ingamemessenger.panel.empty_recent": "סטיקרים שאתה שולח יופיעו כאן",
   "ingamemessenger.panel.empty_favorites": "לחץ קליק ימני על סטיקר כדי להוסיף אותו לכאן",
   "ingamemessenger.panel.empty": "החבילה הזו ריקה",

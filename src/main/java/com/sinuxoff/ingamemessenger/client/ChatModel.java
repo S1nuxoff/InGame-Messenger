@@ -13,6 +13,7 @@ import net.minecraft.world.item.Items;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
 import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.core.protocol.Packets;
+import com.sinuxoff.ingamemessenger.core.protocol.Protocol;
 import com.sinuxoff.ingamemessenger.core.server.ChatServer;
 import com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor;
 
@@ -140,6 +141,7 @@ final class ChatModel {
         while (pending.size() > 32) {
             pending.removeFirst();
         }
+        ChatMessages.flushHeld(); // a line may have been waiting for this
     }
 
     /** The id that arrived for this message, -1 if none yet. Old entries are dropped. */
@@ -154,6 +156,29 @@ final class ChatModel {
             }
         }
         return -1;
+    }
+
+    /** A player's line in the server's own format ("[Admin] Name: text"): who sent it and where its text starts. */
+    record PlayerLine(UUID sender, int start) {
+    }
+
+    /** The player's line whose announced text ends plain, or null: chat plugins and mods format lines their own way. */
+    static PlayerLine playerLine(String plain) {
+        long now = System.currentTimeMillis();
+        for (Pending p : pending) {
+            if (p.hash() == 0 || ChatServer.SYSTEM.equals(p.sender()) || now - p.ms() > 5000) {
+                continue;
+            }
+            for (int i = 0; i < plain.length(); i++) {
+                if (Character.isWhitespace(plain.charAt(i))) {
+                    continue;
+                }
+                if (Protocol.print(plain.substring(i)) == p.hash()) {
+                    return new PlayerLine(p.sender(), i);
+                }
+            }
+        }
+        return null;
     }
 
     /** Registers a message and waits for its id if it hasn't arrived. */
@@ -321,6 +346,8 @@ final class ChatModel {
         reactions.clear();
         pending.clear();
         waiting.clear();
+        ChatMessages.resetHeld();
+        Muted.reset();
         lastSender = null;
         lastMs = 0;
         runNamed = false;

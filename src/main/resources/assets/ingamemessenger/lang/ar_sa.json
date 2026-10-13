@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "أنت مكتوم في الدردشة. %s",
+  "ingamemessenger.mute.chat_for": "أنت مكتوم في الدردشة لمدة %s أخرى. %s",
+  "ingamemessenger.mute.dm": "أنت مكتوم في الرسائل الخاصة. %s",
+  "ingamemessenger.mute.dm_for": "أنت مكتوم في الرسائل الخاصة لمدة %s أخرى. %s",
+  "ingamemessenger.mute.lifted": "يمكنك الكتابة مجددًا.",
+  "ingamemessenger.muted.until": "مكتوم حتى %s",
+  "ingamemessenger.muted.forever": "أنت مكتوم",
   "ingamemessenger.panel.empty_recent": "ستظهر الملصقات التي ترسلها هنا",
   "ingamemessenger.panel.empty_favorites": "انقر بزر الماوس الأيمن على ملصق لإضافته هنا",
   "ingamemessenger.panel.empty": "هذه الحزمة فارغة",

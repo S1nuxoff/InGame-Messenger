@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Сіз жалпы чатта үнсіз режимдесіз. %s",
+  "ingamemessenger.mute.chat_for": "Сіз жалпы чатта тағы %s үнсіз режимдесіз. %s",
+  "ingamemessenger.mute.dm": "Сіз жеке хабарламаларда үнсіз режимдесіз. %s",
+  "ingamemessenger.mute.dm_for": "Сіз жеке хабарламаларда тағы %s үнсіз режимдесіз. %s",
+  "ingamemessenger.mute.lifted": "Сіз қайтадан жаза аласыз.",
+  "ingamemessenger.muted.until": "Сіз %s дейін үнсіз режимдесіз",
+  "ingamemessenger.muted.forever": "Сіз үнсіз режимдесіз",
   "ingamemessenger.panel.empty_recent": "Жіберген стикерлеріңіз осында шығады",
   "ingamemessenger.panel.empty_favorites": "Осында қосу үшін стикерді оң жақпен басыңыз",
   "ingamemessenger.panel.empty": "Бұл топтама бос",

@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "你已在聊天中被禁言。%s",
+  "ingamemessenger.mute.chat_for": "你已在聊天中被禁言，還剩 %s。%s",
+  "ingamemessenger.mute.dm": "你已在私人聊天中被禁言。%s",
+  "ingamemessenger.mute.dm_for": "你已在私人聊天中被禁言，還剩 %s。%s",
+  "ingamemessenger.mute.lifted": "你可以再次發言了。",
+  "ingamemessenger.muted.until": "禁言至 %s",
+  "ingamemessenger.muted.forever": "你已被禁言",
   "ingamemessenger.panel.empty_recent": "你傳送的貼圖會顯示在這裡",
   "ingamemessenger.panel.empty_favorites": "對貼圖按右鍵可將其加到這裡",
   "ingamemessenger.panel.empty": "此貼圖包是空的",

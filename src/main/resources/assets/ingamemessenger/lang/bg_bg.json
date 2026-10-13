@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Заглушен сте в общия чат. %s",
+  "ingamemessenger.mute.chat_for": "Заглушен сте в общия чат още %s. %s",
+  "ingamemessenger.mute.dm": "Заглушен сте в личните съобщения. %s",
+  "ingamemessenger.mute.dm_for": "Заглушен сте в личните съобщения още %s. %s",
+  "ingamemessenger.mute.lifted": "Отново можете да пишете.",
+  "ingamemessenger.muted.until": "Заглушен сте до %s",
+  "ingamemessenger.muted.forever": "Заглушен сте",
   "ingamemessenger.panel.empty_recent": "Стикерите, които изпращате, се показват тук",
   "ingamemessenger.panel.empty_favorites": "Кликнете с десния бутон върху стикер, за да го добавите тук",
   "ingamemessenger.panel.empty": "Този пакет е празен",

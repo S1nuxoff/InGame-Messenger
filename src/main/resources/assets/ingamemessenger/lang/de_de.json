@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Du bist im Chat stummgeschaltet. %s",
+  "ingamemessenger.mute.chat_for": "Du bist im Chat noch %s stummgeschaltet. %s",
+  "ingamemessenger.mute.dm": "Du bist in privaten Chats stummgeschaltet. %s",
+  "ingamemessenger.mute.dm_for": "Du bist in privaten Chats noch %s stummgeschaltet. %s",
+  "ingamemessenger.mute.lifted": "Du kannst wieder schreiben.",
+  "ingamemessenger.muted.until": "Stummgeschaltet bis %s",
+  "ingamemessenger.muted.forever": "Du bist stummgeschaltet",
   "ingamemessenger.panel.empty_recent": "Sticker, die du sendest, erscheinen hier",
   "ingamemessenger.panel.empty_favorites": "Rechtsklick auf einen Sticker, um ihn hier hinzuzufügen",
   "ingamemessenger.panel.empty": "Dieses Paket ist leer",

@@ -5,16 +5,21 @@ api-version: '1.20'
 folia-supported: true
 author: S1nuxoff
 website: https://github.com/S1nuxoff/InGame-Messenger
+softdepend: [Essentials, LiteBans, AdvancedBan]
 description: A messenger in the Minecraft chat. Players install the mod on their clients; players without it can still join and chat as usual.
 libraries:
   - com.h2database:h2:${h2}
   - io.github.jaredmdobson:concentus:${concentus}
 commands:
   messenger:
-    description: InGame Messenger settings
-    usage: /messenger reload | typing <true|false> | voice <true|false> | voice length <seconds> | voice keep <days>
-    permission: ingamemessenger.admin
+    description: InGame Messenger moderation and settings
+    usage: /messenger mute <player> [10m|2h|3d|forever] [chat|dm|all] [reason] | unmute <player> [chat|dm|all] | mutes | reload | typing <true|false> | voice <true|false> | voice length <seconds> | voice keep <days>
 permissions:
   ingamemessenger.admin:
-    description: Use /messenger
+    description: Change the messenger's settings (and mute)
+    default: op
+    children:
+      ingamemessenger.mute: true
+  ingamemessenger.mute:
+    description: Mute players in the chat and in private chats
     default: op

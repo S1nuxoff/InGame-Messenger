@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Ești amuțit în chat. %s",
+  "ingamemessenger.mute.chat_for": "Ești amuțit în chat încă %s. %s",
+  "ingamemessenger.mute.dm": "Ești amuțit în mesajele private. %s",
+  "ingamemessenger.mute.dm_for": "Ești amuțit în mesajele private încă %s. %s",
+  "ingamemessenger.mute.lifted": "Poți scrie din nou.",
+  "ingamemessenger.muted.until": "Amuțit până la %s",
+  "ingamemessenger.muted.forever": "Ești amuțit",
   "ingamemessenger.panel.empty_recent": "Stickerele pe care le trimiți apar aici",
   "ingamemessenger.panel.empty_favorites": "Dă clic dreapta pe un sticker pentru a-l adăuga aici",
   "ingamemessenger.panel.empty": "Acest pachet este gol",

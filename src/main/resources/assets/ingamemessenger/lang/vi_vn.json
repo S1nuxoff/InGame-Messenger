@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Bạn bị cấm chat trong kênh chung. %s",
+  "ingamemessenger.mute.chat_for": "Bạn bị cấm chat trong kênh chung thêm %s. %s",
+  "ingamemessenger.mute.dm": "Bạn bị cấm nhắn tin riêng. %s",
+  "ingamemessenger.mute.dm_for": "Bạn bị cấm nhắn tin riêng thêm %s. %s",
+  "ingamemessenger.mute.lifted": "Bạn có thể viết lại.",
+  "ingamemessenger.muted.until": "Bị cấm chat đến %s",
+  "ingamemessenger.muted.forever": "Bạn bị cấm chat",
   "ingamemessenger.panel.empty_recent": "Các nhãn dán bạn gửi sẽ xuất hiện ở đây",
   "ingamemessenger.panel.empty_favorites": "Nhấp chuột phải vào một nhãn dán để thêm vào đây",
   "ingamemessenger.panel.empty": "Gói này trống",

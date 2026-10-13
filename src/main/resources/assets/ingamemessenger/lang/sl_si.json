@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Utišan si v klepetu. %s",
+  "ingamemessenger.mute.chat_for": "Utišan si v klepetu še %s. %s",
+  "ingamemessenger.mute.dm": "Utišan si v zasebnih sporočilih. %s",
+  "ingamemessenger.mute.dm_for": "Utišan si v zasebnih sporočilih še %s. %s",
+  "ingamemessenger.mute.lifted": "Spet lahko pišeš.",
+  "ingamemessenger.muted.until": "Utišan do %s",
+  "ingamemessenger.muted.forever": "Utišan si",
   "ingamemessenger.panel.empty_recent": "Nalepke, ki jih pošlješ, se prikažejo tukaj",
   "ingamemessenger.panel.empty_favorites": "Z desnim klikom klikni nalepko, da jo dodaš sem",
   "ingamemessenger.panel.empty": "Ta paket je prazen",

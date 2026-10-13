@@ -763,6 +763,10 @@ public final class ChatInput {
             replyTo = -1;
             return text.isBlank() ? "" : text.startsWith("/") ? text : "/" + text;
         }
+        if (Muted.here() > 0 && !text.startsWith("/")) { // the server wouldn't take it
+            Minecraft.getInstance().gui.setOverlayMessage(Muted.hint(), false);
+            return "";
+        }
         if (Ai.ID.equals(ChatChannels.channel()) && !text.startsWith("/")) { // Gemini chat: sent from the client to Gemini
             if (!Images.atts.isEmpty()) {
                 Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("ingamemessenger.ai.text_only"), false);
@@ -868,8 +872,9 @@ public final class ChatInput {
                 (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
                 (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()), true);
         if (text.isEmpty() && !VoiceClient.recording()) {
-            Gfx.text(g, mc.font, Component.translatable(commands ? "ingamemessenger.input.command_hint" : "ingamemessenger.input.hint"), inputX(w),
-                    textY(h), 0xFF6C7386, false);
+            boolean muted = !commands && Muted.here() > 0;
+            Gfx.text(g, mc.font, muted ? Muted.hint() : Component.translatable(commands ? "ingamemessenger.input.command_hint" : "ingamemessenger.input.hint"),
+                    inputX(w), textY(h), muted ? 0xFFE0707A : 0xFF6C7386, false);
         }
         // send button: grey when empty, accent when there's something to send; a microphone instead when the input is
         // empty and voice messages are allowed (hold to record)

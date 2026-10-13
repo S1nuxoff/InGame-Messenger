@@ -60,6 +60,18 @@ public final class InGameMessenger {
         }
     }
 
+    /** False (and the player is told) while they're muted in the chat: the line must not go out. */
+    public static boolean mayChat(ServerPlayer player) {
+        ChatServer chat = ServerSide.chat;
+        return chat == null || chat.mutes().mayChat(player.getUUID());
+    }
+
+    /** False (and the player is told) if the command writes where they're muted (/msg, /me...). */
+    public static boolean mayCommand(ServerPlayer player, String command) {
+        ChatServer chat = ServerSide.chat;
+        return chat == null || chat.mutes().mayCommand(player.getUUID(), command);
+    }
+
     public static void playerJoined(ServerPlayer player) {
         ChatServer chat = ServerSide.chat;
         if (chat != null) {
@@ -161,6 +173,8 @@ public final class InGameMessenger {
     };
     public static volatile Consumer<ImageData> onImageData = v -> {
     };
+    public static volatile Consumer<MuteState> onMuteState = v -> {
+    };
 
     public static void toClient(Packet packet) {
         if (packet instanceof Welcome p) {
@@ -213,6 +227,8 @@ public final class InGameMessenger {
             onReadAll.accept(p);
         } else if (packet instanceof PollState p) {
             onPollState.accept(p);
+        } else if (packet instanceof MuteState p) {
+            onMuteState.accept(p);
         } else {
             LOG.warn("Unexpected packet for the client: {}", packet.type().id());
         }

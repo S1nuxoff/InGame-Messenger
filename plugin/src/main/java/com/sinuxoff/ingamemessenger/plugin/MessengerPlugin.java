@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
@@ -44,6 +45,7 @@ import java.util.logging.Level;
  */
 public final class MessengerPlugin extends JavaPlugin implements Listener, PluginMessageListener {
     static final String ADMIN = "ingamemessenger.admin";
+    static final String MUTE = "ingamemessenger.mute";
     private static final String WELCOME = channel(Packets.Welcome.TYPE);
     private static final Map<String, PacketType<?>> INCOMING = new HashMap<>();
 
@@ -56,6 +58,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     }
 
     final Tasks tasks = new Tasks(this);
+    final OtherMutes others = new OtherMutes(getLogger());
     ModSettings settings;
     /** Null while the database couldn't be opened. */
     volatile ChatServer chat;
@@ -102,6 +105,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
             command.setTabCompleter(handler);
         }
         tasks.every(200, c::tick);
+        tasks.everyAsync(40, others::refresh);
         // after /reload: the players already on get Welcome again
         for (Player p : Bukkit.getOnlinePlayers()) {
             joined.add(p.getUniqueId());
@@ -159,6 +163,24 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent e) {
         system(PaperText.ON ? PaperText.death(e) : legacy(e.getDeathMessage()));
+    }
+
+    /** A muted player's chat line doesn't go out (other plugins' mutes are theirs to stop). */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onChatMuted(AsyncPlayerChatEvent e) {
+        ChatServer c = chat;
+        if (c != null && !c.mutes().mayChat(e.getPlayer().getUniqueId())) {
+            e.setCancelled(true);
+        }
+    }
+
+    /** Nor /msg, /me and the like where the mute holds. */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onCommandMuted(PlayerCommandPreprocessEvent e) {
+        ChatServer c = chat;
+        if (c != null && !c.mutes().mayCommand(e.getPlayer().getUniqueId(), e.getMessage())) {
+            e.setCancelled(true);
+        }
     }
 
     /** A chat line about to be broadcast: its id goes out first. */

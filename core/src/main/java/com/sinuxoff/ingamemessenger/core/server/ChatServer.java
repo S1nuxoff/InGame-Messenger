@@ -63,6 +63,7 @@ public final class ChatServer {
     final VoiceInbox voice;
     final ImageInbox images;
     final StickerStore stickers;
+    final Mutes mutes = new Mutes(this);
     private final AtomicInteger nextId = new AtomicInteger(1);
     /** Messages that aren't stored (test chat), with their reactions kept in memory. */
     private final Set<Integer> unstored = ConcurrentHashMap.newKeySet();
@@ -89,6 +90,7 @@ public final class ChatServer {
             try {
                 storage.chat.init();
                 nextId.set(storage.chat.maxId() + 1);
+                mutes.load(storage.chat.mutes());
             } catch (Exception e) {
                 throw new IllegalStateException("Can't open the chat database: " + e, e);
             }
@@ -120,6 +122,10 @@ public final class ChatServer {
         t.start();
     }
 
+    public Mutes mutes() {
+        return mutes;
+    }
+
     public StickerStore stickers() {
         return stickers;
     }
@@ -140,6 +146,7 @@ public final class ChatServer {
     void tick(long now) {
         voice.tick(now);
         images.tick(now);
+        mutes.tick(now);
         unanswered.forEach((id, t) -> {
             if (now - t > 5000 && unanswered.remove(id) != null && platform.settings().installHint()) {
                 platform.say(id, "ingamemessenger.plain.install",
@@ -184,6 +191,7 @@ public final class ChatServer {
         // Features first: the client turns the messenger on with it, and drops what it would send before
         platform.send(id, features());
         platform.send(id, new StickerIndex(stickers.index()));
+        platform.send(id, mutes.state(id));
         db("read marks", () -> {
             String marks = storage.chat.readMarks();
             platform.execute(() -> platform.send(id, new ReadAll(marks)));
@@ -250,6 +258,12 @@ public final class ChatServer {
             return;
         }
         if (!platform.has(player)) {
+            return;
+        }
+        // a muted player can't post where the mute applies (stickers, voice, pictures, polls, private messages)
+        if ((packet instanceof Send || packet instanceof PollCreate || packet instanceof VoiceStart || packet instanceof AlbumStart
+                || packet instanceof ImageStart || packet instanceof ImageLinks) && !mutes.mayWrite(player, audience(player))
+                || packet instanceof DmSend d && !mutes.mayWrite(player, ChatStore.pair(player, d.to()))) {
             return;
         }
         if (packet instanceof Send p) {
@@ -438,7 +452,7 @@ public final class ChatServer {
         }
         db("reaction", () -> {
             Message m = storage.chat.get(id);
-            if (m == null || checkVisible && !canSee(m, who)) {
+            if (m == null || checkVisible && (!canSee(m, who) || !mutes.mayWrite(who, m.pair()))) {
                 return;
             }
             String had = storage.chat.reaction(id, who);
@@ -463,7 +477,7 @@ public final class ChatServer {
         }
         db("edit", () -> {
             Message m = storage.chat.get(e.id());
-            if (m == null || !"t".equals(m.kind()) || !who.equals(m.who())) {
+            if (m == null || !"t".equals(m.kind()) || !who.equals(m.who()) || !mutes.mayWrite(who, m.pair())) {
                 return;
             }
             storage.chat.edit(e.id(), textJson(text));

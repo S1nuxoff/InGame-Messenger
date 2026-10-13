@@ -35,14 +35,115 @@ final class ChatMessages {
             Component nameC = a0 instanceof Component c ? c : Component.literal(String.valueOf(a0));
             Component text = a1 instanceof Component c ? c : Component.literal(String.valueOf(a1));
             showText(chat, ChatModel.uuidOf(nameC), nameC.getString(), text, now, sig, null, Protocol.print(text.getString()));
+        } else if (muteNotice(content)) { // "you're muted" belongs where you tried to write, not in the server chat
+            Minecraft.getInstance().gui.setOverlayMessage(content, false);
         } else {
+            // a chat plugin's format or a server line: which one is known once the server's id for it is in, and
+            // that may come a moment after the line itself
+            held.addLast(new Held(content, sig, now));
+            flushHeld();
+        }
+        return true;
+    }
+
+    /** Our server's mute line (its key, or before 1.19.4 the key as the insertion). */
+    private static boolean muteNotice(Component content) {
+        String key = content.getContents() instanceof TranslatableContents tc ? tc.getKey() : content.getStyle().getInsertion();
+        return key != null && key.startsWith("ingamemessenger.mute.");
+    }
+
+    /** Lines waiting to learn whether they're a player's (see {@link ChatModel#playerLine}). */
+    private record Held(Component content, MessageSignature sig, long ms) {
+    }
+
+    private static final java.util.ArrayDeque<Held> held = new java.util.ArrayDeque<>();
+    /** How long a line waits for its id before it's taken for a server line. */
+    private static final long HOLD_MS = 300;
+
+    /** Shows the held lines that turned out to be a player's, and the server lines that waited long enough. */
+    static void flushHeld() {
+        if (held.isEmpty()) {
+            return;
+        }
+        ChatComponent chat = Minecraft.getInstance().gui.getChat();
+        for (java.util.Iterator<Held> it = held.iterator(); it.hasNext(); ) {
+            Held h = it.next();
+            ChatModel.PlayerLine line = ChatModel.playerLine(h.content().getString());
+            if (line != null) {
+                it.remove();
+                Component text = ChatDecor.dropStart(h.content(), line.start());
+                showText(chat, line.sender(), ChatChannels.nameOf(line.sender()), text, h.ms(), h.sig(), null, Protocol.print(text.getString()));
+            }
+        }
+        long now = System.currentTimeMillis();
+        while (!held.isEmpty() && now - held.peekFirst().ms() >= HOLD_MS) {
+            Held h = held.removeFirst();
+            serverLine(chat, h.content(), h.sig(), h.ms());
+        }
+    }
+
+    static void resetHeld() {
+        held.clear();
+        burstTag = null;
+    }
+
+    /** A line that isn't a player's: into the server chat, joining the one before if it came with it. */
+    private static void serverLine(ChatComponent chat, Component content, MessageSignature sig, long now) {
+        if (!joinBurst(chat, content, now)) {
             ChatModel.lastSender = null;
             GuiMessageTag st = ChatModel.rememberNumbered(new ChatModel.Msg(null, null, false, null, null, 0, true, now, ChatModel.takeTag(ChatServer.SYSTEM, 0),
                     ChatModel.systemIcon(content)), ChatServer.SYSTEM, 0);
             MutableComponent sys = Component.empty();
             ChatDates.liveDate(sys, now);
             ChatModel.note(st, null, ChatDecor.snippet(content.getString()), -1);
-            ChatChannels.postTo(chat, sys.append(content).append("\n "), sig, st, ChatChannels.SERVER);
+            sys.append(content);
+            burstTag = st;
+            burstText = sys;
+            burstMs = now;
+            burstLines = 1;
+            ChatChannels.postTo(chat, sys.copy().append("\n "), sig, st, ChatChannels.SERVER);
+        }
+    }
+
+    /** Lines that came before the server said it has the mod (a join greeting): rebuilt now, oldest first. */
+    static void adoptEarly(ChatComponent chat) {
+        java.util.List<net.minecraft.client.GuiMessage> all = ((ChatComponentAccessor) chat).ingamemessenger$allMessages();
+        java.util.List<net.minecraft.client.GuiMessage> early = new java.util.ArrayList<>();
+        for (int i = all.size() - 1; i >= 0; i--) {
+            net.minecraft.client.GuiMessage gm = all.get(i);
+            if (gm.tag() == null || !ChatModel.msgs.containsKey(gm.tag())) {
+                early.add(gm);
+                all.remove(i);
+            }
+        }
+        for (net.minecraft.client.GuiMessage gm : early) {
+            transform(chat, gm.content(), null, null);
+        }
+        chat.rescaleChat();
+    }
+
+    /** The server's last line, which lines coming right after it join: a command's answer is one bubble. */
+    private static GuiMessageTag burstTag;
+    private static MutableComponent burstText;
+    private static long burstMs;
+    private static int burstLines;
+
+    private static boolean joinBurst(ChatComponent chat, Component content, long now) {
+        if (burstTag == null || now - burstMs > 150 || burstLines >= 40) {
+            return false;
+        }
+        boolean shown = ChatChannels.SERVER.equals(ChatChannels.channel());
+        java.util.List<net.minecraft.client.GuiMessage> list = shown ? ((ChatComponentAccessor) chat).ingamemessenger$allMessages()
+                : ChatChannels.stash.get(ChatChannels.SERVER);
+        if (list == null || list.isEmpty() || list.get(0).tag() != burstTag) { // something else came in between
+            return false;
+        }
+        burstText.append("\n").append(content);
+        burstMs = now;
+        burstLines++;
+        list.set(0, Compat.message(Minecraft.getInstance().gui.getGuiTicks(), burstText.copy().append("\n "), null, burstTag));
+        if (shown) {
+            chat.rescaleChat();
         }
         return true;
     }

@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Вас заглушено в загальному чаті. %s",
+  "ingamemessenger.mute.chat_for": "Вас заглушено в загальному чаті ще на %s. %s",
+  "ingamemessenger.mute.dm": "Вас заглушено в особистих повідомленнях. %s",
+  "ingamemessenger.mute.dm_for": "Вас заглушено в особистих повідомленнях ще на %s. %s",
+  "ingamemessenger.mute.lifted": "Ви знову можете писати.",
+  "ingamemessenger.muted.until": "Вас заглушено до %s",
+  "ingamemessenger.muted.forever": "Вас заглушено",
   "ingamemessenger.panel.empty_recent": "Тут будуть стікери, які ти надсилав",
   "ingamemessenger.panel.empty_favorites": "ПКМ по стікеру — додати в обране",
   "ingamemessenger.panel.empty": "Цей пак порожній",

@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Sinut on mykistetty keskustelussa. %s",
+  "ingamemessenger.mute.chat_for": "Sinut on mykistetty keskustelussa vielä %s. %s",
+  "ingamemessenger.mute.dm": "Sinut on mykistetty yksityisviesteissä. %s",
+  "ingamemessenger.mute.dm_for": "Sinut on mykistetty yksityisviesteissä vielä %s. %s",
+  "ingamemessenger.mute.lifted": "Voit taas kirjoittaa.",
+  "ingamemessenger.muted.until": "Mykistetty klo %s asti",
+  "ingamemessenger.muted.forever": "Sinut on mykistetty",
   "ingamemessenger.panel.empty_recent": "Lähettämäsi tarrat näkyvät täällä",
   "ingamemessenger.panel.empty_favorites": "Klikkaa tarraa hiiren kakkospainikkeella lisätäksesi sen tänne",
   "ingamemessenger.panel.empty": "Tämä paketti on tyhjä",

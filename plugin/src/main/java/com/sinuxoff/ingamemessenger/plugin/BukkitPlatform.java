@@ -51,6 +51,17 @@ final class BukkitPlatform implements ServerPlatform {
     }
 
     @Override
+    public UUID idOf(String name) {
+        Player p = Bukkit.getPlayerExact(name);
+        return p != null ? p.getUniqueId() : null;
+    }
+
+    @Override
+    public boolean mutedElsewhere(UUID id) {
+        return plugin.others.has(id);
+    }
+
+    @Override
     public void send(UUID player, Packet packet) {
         Player p = Bukkit.getPlayer(player);
         if (p != null) {

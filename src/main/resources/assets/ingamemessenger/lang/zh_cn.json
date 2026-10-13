@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "你已在聊天中被禁言。%s",
+  "ingamemessenger.mute.chat_for": "你已在聊天中被禁言，还剩 %s。%s",
+  "ingamemessenger.mute.dm": "你已在私聊中被禁言。%s",
+  "ingamemessenger.mute.dm_for": "你已在私聊中被禁言，还剩 %s。%s",
+  "ingamemessenger.mute.lifted": "你可以再次发言了。",
+  "ingamemessenger.muted.until": "禁言至 %s",
+  "ingamemessenger.muted.forever": "你已被禁言",
   "ingamemessenger.panel.empty_recent": "你发送的贴纸将显示在这里",
   "ingamemessenger.panel.empty_favorites": "右键点击贴纸以添加到这里",
   "ingamemessenger.panel.empty": "此包为空",

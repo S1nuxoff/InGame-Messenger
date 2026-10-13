@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Estás silenciado no chat. %s",
+  "ingamemessenger.mute.chat_for": "Estás silenciado no chat por mais %s. %s",
+  "ingamemessenger.mute.dm": "Estás silenciado nas conversas privadas. %s",
+  "ingamemessenger.mute.dm_for": "Estás silenciado nas conversas privadas por mais %s. %s",
+  "ingamemessenger.mute.lifted": "Podes voltar a escrever.",
+  "ingamemessenger.muted.until": "Silenciado até %s",
+  "ingamemessenger.muted.forever": "Estás silenciado",
   "ingamemessenger.panel.empty_recent": "Os autocolantes que envias aparecem aqui",
   "ingamemessenger.panel.empty_favorites": "Clica com o botão direito num autocolante para o adicionar aqui",
   "ingamemessenger.panel.empty": "Este pacote está vazio",

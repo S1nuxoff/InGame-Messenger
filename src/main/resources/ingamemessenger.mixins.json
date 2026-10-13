@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_${mixin_java}",
   "mixins": [
     "PlayerListMixin",
+    "CommandsMixin",
     "PlayerInfoPacketAccessor"
   ],
   "client": [

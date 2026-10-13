@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "チャットでミュートされています。%s",
+  "ingamemessenger.mute.chat_for": "チャットであと %s ミュートされています。%s",
+  "ingamemessenger.mute.dm": "個人チャットでミュートされています。%s",
+  "ingamemessenger.mute.dm_for": "個人チャットであと %s ミュートされています。%s",
+  "ingamemessenger.mute.lifted": "また書き込めます。",
+  "ingamemessenger.muted.until": "%s までミュート中",
+  "ingamemessenger.muted.forever": "ミュート中",
   "ingamemessenger.panel.empty_recent": "送信したステッカーはここに表示されます",
   "ingamemessenger.panel.empty_favorites": "ステッカーを右クリックしてここに追加します",
   "ingamemessenger.panel.empty": "このパックは空です",

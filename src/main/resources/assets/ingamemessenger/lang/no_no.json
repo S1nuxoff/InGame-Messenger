@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Du er dempet i chatten. %s",
+  "ingamemessenger.mute.chat_for": "Du er dempet i chatten i %s til. %s",
+  "ingamemessenger.mute.dm": "Du er dempet i private chatter. %s",
+  "ingamemessenger.mute.dm_for": "Du er dempet i private chatter i %s til. %s",
+  "ingamemessenger.mute.lifted": "Du kan skrive igjen.",
+  "ingamemessenger.muted.until": "Dempet til %s",
+  "ingamemessenger.muted.forever": "Du er dempet",
   "ingamemessenger.panel.empty_recent": "Klistremerkene du sender vises her",
   "ingamemessenger.panel.empty_favorites": "Høyreklikk på et klistremerke for å legge det til her",
   "ingamemessenger.panel.empty": "Denne pakken er tom",

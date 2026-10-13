@@ -83,8 +83,9 @@ public final class Session {
 
     static void onFeatures() {
         Object c = Minecraft.getInstance().getConnection();
-        if (c != null && c == matched) {
+        if (c != null && c == matched && welcomed != c) {
             welcomed = c;
+            ChatMessages.adoptEarly(Minecraft.getInstance().gui.getChat());
         }
     }
 

@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Esate nutildytas pokalbyje. %s",
+  "ingamemessenger.mute.chat_for": "Esate nutildytas pokalbyje dar %s. %s",
+  "ingamemessenger.mute.dm": "Esate nutildytas privačiose žinutėse. %s",
+  "ingamemessenger.mute.dm_for": "Esate nutildytas privačiose žinutėse dar %s. %s",
+  "ingamemessenger.mute.lifted": "Vėl galite rašyti.",
+  "ingamemessenger.muted.until": "Nutildytas iki %s",
+  "ingamemessenger.muted.forever": "Esate nutildytas",
   "ingamemessenger.panel.empty_recent": "Tavo siunčiami lipdukai bus rodomi čia",
   "ingamemessenger.panel.empty_favorites": "Dešiniuoju pelės mygtuku spustelėk lipduką, kad pridėtum jį čia",
   "ingamemessenger.panel.empty": "Šis paketas tuščias",

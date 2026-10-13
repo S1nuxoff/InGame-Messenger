@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Έχεις σίγαση στη συνομιλία. %s",
+  "ingamemessenger.mute.chat_for": "Έχεις σίγαση στη συνομιλία για ακόμη %s. %s",
+  "ingamemessenger.mute.dm": "Έχεις σίγαση στα ιδιωτικά μηνύματα. %s",
+  "ingamemessenger.mute.dm_for": "Έχεις σίγαση στα ιδιωτικά μηνύματα για ακόμη %s. %s",
+  "ingamemessenger.mute.lifted": "Μπορείς να γράψεις ξανά.",
+  "ingamemessenger.muted.until": "Σίγαση έως %s",
+  "ingamemessenger.muted.forever": "Έχεις σίγαση",
   "ingamemessenger.panel.empty_recent": "Τα αυτοκόλλητα που στέλνετε εμφανίζονται εδώ",
   "ingamemessenger.panel.empty_favorites": "Κάντε δεξί κλικ σε ένα αυτοκόλλητο για να το προσθέσετε εδώ",
   "ingamemessenger.panel.empty": "Αυτό το πακέτο είναι άδειο",

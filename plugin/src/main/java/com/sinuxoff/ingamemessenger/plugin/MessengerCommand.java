@@ -7,7 +7,7 @@ import com.sinuxoff.ingamemessenger.core.server.ChatServer;
 
 import java.util.List;
 
-/** /messenger for operators: reload, typing, voice. The same as the mod's command. */
+/** /messenger: mute, unmute, mutes for moderators; reload, typing, voice for admins. The same as the mod's command. */
 final class MessengerCommand implements TabExecutor {
     private final MessengerPlugin plugin;
 
@@ -17,6 +17,20 @@ final class MessengerCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length > 0 && MUTES.contains(args[0])) {
+            if (!sender.hasPermission(MessengerPlugin.MUTE)) {
+                sender.sendMessage("InGame Messenger: no permission (" + MessengerPlugin.MUTE + ")");
+                return true;
+            }
+            ChatServer chat = plugin.chat;
+            sender.sendMessage("InGame Messenger: " + (chat == null ? "off (no database)"
+                    : chat.mutes().command(sender.getName(), args[0], List.of(args).subList(1, args.length))));
+            return true;
+        }
+        if (!sender.hasPermission(MessengerPlugin.ADMIN)) {
+            sender.sendMessage("InGame Messenger: no permission (" + MessengerPlugin.ADMIN + ")");
+            return true;
+        }
         String what = run(args);
         if (what == null) {
             return false; // shows the usage
@@ -24,6 +38,8 @@ final class MessengerCommand implements TabExecutor {
         sender.sendMessage("InGame Messenger: " + what);
         return true;
     }
+
+    private static final List<String> MUTES = List.of("mute", "unmute", "mutes");
 
     private String run(String[] a) {
         ChatServer chat = plugin.chat;
@@ -81,11 +97,18 @@ final class MessengerCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] a) {
+        boolean admin = sender.hasPermission(MessengerPlugin.ADMIN), mod = sender.hasPermission(MessengerPlugin.MUTE);
+        boolean muting = a.length > 1 && (a[0].equals("mute") || a[0].equals("unmute")) && mod;
         List<String> options = switch (a.length) {
-            case 1 -> List.of("reload", "typing", "voice");
-            case 2 -> a[0].equals("typing") ? List.of("true", "false")
-                    : a[0].equals("voice") ? List.of("true", "false", "length", "keep") : List.of();
-            default -> List.of();
+            case 1 -> java.util.stream.Stream.concat((admin ? List.of("reload", "typing", "voice") : List.<String>of()).stream(),
+                    (mod ? MUTES : List.<String>of()).stream()).toList();
+            case 2 -> muting ? org.bukkit.Bukkit.getOnlinePlayers().stream().map(org.bukkit.entity.Player::getName).toList()
+                    : !admin ? List.<String>of() : a[0].equals("typing") ? List.of("true", "false")
+                    : a[0].equals("voice") ? List.of("true", "false", "length", "keep") : List.<String>of();
+            case 3 -> muting && a[0].equals("mute") ? List.of("10m", "1h", "1d", "forever", "chat", "dm", "all")
+                    : muting ? List.of("chat", "dm", "all") : List.<String>of();
+            case 4 -> muting && a[0].equals("mute") ? List.of("chat", "dm", "all") : List.<String>of();
+            default -> List.<String>of();
         };
         String last = a.length == 0 ? "" : a[a.length - 1];
         return options.stream().filter(o -> o.startsWith(last)).toList();

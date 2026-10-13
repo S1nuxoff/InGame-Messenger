@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Kamu dibisukan di obrolan. %s",
+  "ingamemessenger.mute.chat_for": "Kamu dibisukan di obrolan selama %s lagi. %s",
+  "ingamemessenger.mute.dm": "Kamu dibisukan di obrolan pribadi. %s",
+  "ingamemessenger.mute.dm_for": "Kamu dibisukan di obrolan pribadi selama %s lagi. %s",
+  "ingamemessenger.mute.lifted": "Kamu bisa menulis lagi.",
+  "ingamemessenger.muted.until": "Dibisukan sampai %s",
+  "ingamemessenger.muted.forever": "Kamu dibisukan",
   "ingamemessenger.panel.empty_recent": "Stiker yang kamu kirim akan muncul di sini",
   "ingamemessenger.panel.empty_favorites": "Klik kanan stiker untuk menambahkannya di sini",
   "ingamemessenger.panel.empty": "Paket ini kosong",

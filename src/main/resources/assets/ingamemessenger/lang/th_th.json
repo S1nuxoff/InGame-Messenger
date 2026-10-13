@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "คุณถูกปิดเสียงในแชท %s",
+  "ingamemessenger.mute.chat_for": "คุณถูกปิดเสียงในแชทอีก %s %s",
+  "ingamemessenger.mute.dm": "คุณถูกปิดเสียงในแชทส่วนตัว %s",
+  "ingamemessenger.mute.dm_for": "คุณถูกปิดเสียงในแชทส่วนตัวอีก %s %s",
+  "ingamemessenger.mute.lifted": "คุณพิมพ์ได้อีกครั้งแล้ว",
+  "ingamemessenger.muted.until": "ถูกปิดเสียงถึง %s",
+  "ingamemessenger.muted.forever": "คุณถูกปิดเสียง",
   "ingamemessenger.panel.empty_recent": "สติกเกอร์ที่คุณส่งจะแสดงที่นี่",
   "ingamemessenger.panel.empty_favorites": "คลิกขวาที่สติกเกอร์เพื่อเพิ่มไว้ที่นี่",
   "ingamemessenger.panel.empty": "แพ็กนี้ว่างเปล่า",

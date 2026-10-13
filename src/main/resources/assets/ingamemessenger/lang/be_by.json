@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Вы ў муце ў агульным чаце. %s",
+  "ingamemessenger.mute.chat_for": "Вы ў муце ў агульным чаце яшчэ %s. %s",
+  "ingamemessenger.mute.dm": "Вы ў муце ў асабістых паведамленнях. %s",
+  "ingamemessenger.mute.dm_for": "Вы ў муце ў асабістых паведамленнях яшчэ %s. %s",
+  "ingamemessenger.mute.lifted": "Вы зноў можаце пісаць.",
+  "ingamemessenger.muted.until": "Вы ў муце да %s",
+  "ingamemessenger.muted.forever": "Вы ў муце",
   "ingamemessenger.panel.empty_recent": "Стыкеры, якія ты дасылаеш, з'явяцца тут",
   "ingamemessenger.panel.empty_favorites": "Пстрыкні правай кнопкай па стыкеры, каб дадаць яго сюды",
   "ingamemessenger.panel.empty": "Гэты пакунак пусты",

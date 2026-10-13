@@ -37,6 +37,16 @@ final class ClientGate implements ServerPlatform {
     }
 
     @Override
+    public UUID idOf(String name) {
+        return platform.idOf(name);
+    }
+
+    @Override
+    public boolean mutedElsewhere(UUID id) {
+        return platform.mutedElsewhere(id);
+    }
+
+    @Override
     public void send(UUID player, Packet packet) {
         if (clients.contains(player)) {
             platform.send(player, packet);

@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Utišan si u chatu. %s",
+  "ingamemessenger.mute.chat_for": "Utišan si u chatu još %s. %s",
+  "ingamemessenger.mute.dm": "Utišan si u privatnim porukama. %s",
+  "ingamemessenger.mute.dm_for": "Utišan si u privatnim porukama još %s. %s",
+  "ingamemessenger.mute.lifted": "Ponovno možeš pisati.",
+  "ingamemessenger.muted.until": "Utišan do %s",
+  "ingamemessenger.muted.forever": "Utišan si",
   "ingamemessenger.panel.empty_recent": "Naljepnice koje šalješ pojavljuju se ovdje",
   "ingamemessenger.panel.empty_favorites": "Klikni desnim klikom na naljepnicu da ju dodaš ovdje",
   "ingamemessenger.panel.empty": "Ovaj paket je prazan",

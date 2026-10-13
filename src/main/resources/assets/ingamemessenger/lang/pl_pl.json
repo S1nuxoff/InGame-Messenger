@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Jesteś wyciszony na czacie. %s",
+  "ingamemessenger.mute.chat_for": "Jesteś wyciszony na czacie jeszcze przez %s. %s",
+  "ingamemessenger.mute.dm": "Jesteś wyciszony w wiadomościach prywatnych. %s",
+  "ingamemessenger.mute.dm_for": "Jesteś wyciszony w wiadomościach prywatnych jeszcze przez %s. %s",
+  "ingamemessenger.mute.lifted": "Znowu możesz pisać.",
+  "ingamemessenger.muted.until": "Wyciszony do %s",
+  "ingamemessenger.muted.forever": "Jesteś wyciszony",
   "ingamemessenger.panel.empty_recent": "Wysyłane naklejki pojawią się tutaj",
   "ingamemessenger.panel.empty_favorites": "Kliknij naklejkę prawym przyciskiem, aby ją tutaj dodać",
   "ingamemessenger.panel.empty": "Ta paczka jest pusta",

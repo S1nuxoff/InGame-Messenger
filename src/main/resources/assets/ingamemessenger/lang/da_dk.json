@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Du er gjort tavs i chatten. %s",
+  "ingamemessenger.mute.chat_for": "Du er gjort tavs i chatten i %s mere. %s",
+  "ingamemessenger.mute.dm": "Du er gjort tavs i private chats. %s",
+  "ingamemessenger.mute.dm_for": "Du er gjort tavs i private chats i %s mere. %s",
+  "ingamemessenger.mute.lifted": "Du kan skrive igen.",
+  "ingamemessenger.muted.until": "Tavs indtil %s",
+  "ingamemessenger.muted.forever": "Du er gjort tavs",
   "ingamemessenger.panel.empty_recent": "Klistermærker du sender vises her",
   "ingamemessenger.panel.empty_favorites": "Højreklik på et klistermærke for at tilføje det her",
   "ingamemessenger.panel.empty": "Denne pakke er tom",

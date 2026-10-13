@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Sind on vestluses vaigistatud. %s",
+  "ingamemessenger.mute.chat_for": "Sind on vestluses vaigistatud veel %s. %s",
+  "ingamemessenger.mute.dm": "Sind on privaatsõnumites vaigistatud. %s",
+  "ingamemessenger.mute.dm_for": "Sind on privaatsõnumites vaigistatud veel %s. %s",
+  "ingamemessenger.mute.lifted": "Saad jälle kirjutada.",
+  "ingamemessenger.muted.until": "Vaigistatud kuni %s",
+  "ingamemessenger.muted.forever": "Sind on vaigistatud",
   "ingamemessenger.panel.empty_recent": "Sinu saadetud kleebised ilmuvad siia",
   "ingamemessenger.panel.empty_favorites": "Paremklõpsake kleebisel, et see siia lisada",
   "ingamemessenger.panel.empty": "See pakk on tühi",

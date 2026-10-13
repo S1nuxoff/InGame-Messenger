@@ -1,4 +1,11 @@
 {
+  "ingamemessenger.mute.chat": "Tu esi apklusināts tērzēšanā. %s",
+  "ingamemessenger.mute.chat_for": "Tu esi apklusināts tērzēšanā vēl %s. %s",
+  "ingamemessenger.mute.dm": "Tu esi apklusināts privātajās ziņās. %s",
+  "ingamemessenger.mute.dm_for": "Tu esi apklusināts privātajās ziņās vēl %s. %s",
+  "ingamemessenger.mute.lifted": "Tu atkal vari rakstīt.",
+  "ingamemessenger.muted.until": "Apklusināts līdz %s",
+  "ingamemessenger.muted.forever": "Tu esi apklusināts",
   "ingamemessenger.panel.empty_recent": "Uzlīmes, kuras tu nosūti, parādīsies šeit",
   "ingamemessenger.panel.empty_favorites": "Noklikšķini ar labo pogu uz uzlīmes, lai pievienotu to šeit",
   "ingamemessenger.panel.empty": "Šī paka ir tukša",

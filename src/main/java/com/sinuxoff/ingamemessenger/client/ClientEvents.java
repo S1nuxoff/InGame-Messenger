@@ -76,6 +76,7 @@ public final class ClientEvents {
             ChatPages.startHistory();
         });
         InGameMessenger.onPollState = v -> Minecraft.getInstance().execute(() -> ChatPolls.onPollState(v));
+        InGameMessenger.onMuteState = v -> Minecraft.getInstance().execute(() -> Muted.on(v));
         InGameMessenger.onReactions = r -> Minecraft.getInstance().execute(() -> ChatModel.onReactions(r));
     }
 
@@ -85,6 +86,7 @@ public final class ClientEvents {
     public static void tickStart() {
         VoiceClient.tick();
         Images.tick();
+        ChatMessages.flushHeld();
         Minecraft mc = Minecraft.getInstance();
         if (!Session.on()) { // Minecraft's own chat
             chatDownAt = -1;
@@ -196,11 +198,20 @@ public final class ClientEvents {
 
     // Chat screen
 
+    private static Screen lastChatScreen;
+
     /** Opened or resized: room for the smiley button, and the pinned panel. */
     public static void screenInit(Screen screen0) {
         if (screen0 instanceof ChatScreen screen && Session.on()) {
             var input = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input();
             ChatInput.place(input, screen.width, screen.height);
+            if (screen != lastChatScreen) { // opened, not resized
+                lastChatScreen = screen;
+                // the chat key opens a chat for talking; the server chat (commands) is where "/" leads
+                if (ChatChannels.SERVER.equals(ChatChannels.channel()) && !input.getValue().startsWith("/")) {
+                    ChatChannels.leaveServer();
+                }
+            }
             if (Prefs.pinned() && !Panel.open) {
                 Panel.openFresh();
             }
