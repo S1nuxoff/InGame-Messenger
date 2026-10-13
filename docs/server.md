@@ -302,8 +302,8 @@ that the server doesn't use InGame Messenger. Players can turn these notes off w
 A few seconds after a player without the mod joins, they get one line saying the server uses InGame Messenger and
 that installing it shows stickers, voice messages, pictures and polls.
 
-The server and the client should run the same loader. A client on another loader can join, but the messenger may stay
-off for it, with a note in the chat.
+The client and the server don't need the same loader: a NeoForge, Fabric or Forge client gets the messenger on a
+NeoForge, Fabric or Forge server and on the plugin alike.
 
 Players without the mod still see what others send through the messenger, as plain chat lines:
 

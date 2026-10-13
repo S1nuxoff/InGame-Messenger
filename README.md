@@ -69,6 +69,8 @@ together.
   Slovak, Slovenian, Spanish (Spain and Mexico), Swedish, Thai, Turkish, Ukrainian and Vietnamese.
 
 **For server owners**
+- Runs as a mod on NeoForge, Fabric and Forge, or as a plugin on Paper, Spigot, Purpur and Folia.
+- Players without the mod can still join: they see stickers, voice messages, pictures and polls as short text lines.
 - History is stored in a database: H2 by default (a file in the world folder, nothing to configure), or MySQL,
   MariaDB and PostgreSQL. Drivers for external databases are downloaded automatically on first start.
 - Voice messages and pictures are stored in the world folder or in any S3-compatible storage (AWS S3, Cloudflare R2,
@@ -107,7 +109,7 @@ Quilt, Velocity and BungeeCord, and older Minecraft versions are planned.
 
 1. Download the jar that matches your Minecraft version and mod loader.
 2. Put it in the `mods` folder of your game. On Fabric, also install Fabric API.
-3. Join a server that has the mod.
+3. Join a server that has the mod or the plugin. Its loader doesn't have to match yours.
 
 You can keep the mod installed everywhere: on servers without it the chat stays the normal Minecraft chat. Servers
 with the mod let in players without it too; they see stickers, voice messages and pictures as short text lines.
@@ -162,7 +164,8 @@ Requires JDK 21 or newer. JDK 25 is downloaded automatically for the 26.x builds
 ```
 
 Jars are written to `versions/<minecraft>-<loader>/build/libs/`. To build a single target, for example
-`./gradlew :1.21.1-neoforge:build`. `./gradlew :core:test` runs the unit tests.
+`./gradlew :1.21.1-neoforge:build`. `./gradlew :plugin:build` builds the server plugin into `plugin/build/libs/`.
+`./gradlew :core:test` runs the unit tests.
 
 The project uses [Stonecutter](https://stonecutter.kikugie.dev/) to build every Minecraft version and loader from one
 source tree. See [CONTRIBUTING.md](CONTRIBUTING.md) for how the code is organized.

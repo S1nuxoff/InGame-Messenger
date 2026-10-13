@@ -7,6 +7,7 @@ Thanks for helping. This document explains how the project is organized and what
 Open an issue with:
 
 - Minecraft version, mod loader and its version, InGame Messenger version;
+- what the server runs: NeoForge, Fabric or Forge, or the plugin on Paper, Spigot, Purpur or Folia;
 - whether it happens on the client, the server or both;
 - steps to reproduce;
 - the relevant part of `logs/latest.log` (client and/or server) or the crash report.

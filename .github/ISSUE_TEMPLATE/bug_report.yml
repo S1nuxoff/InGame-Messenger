@@ -19,17 +19,33 @@ body:
   - type: dropdown
     id: loader
     attributes:
-      label: Mod loader
+      label: Mod loader on the client
       options:
         - NeoForge
         - Fabric
+        - Forge
+        - No mod on the client
+    validations:
+      required: true
+  - type: dropdown
+    id: server
+    attributes:
+      label: Server
+      options:
+        - NeoForge
+        - Fabric
+        - Forge
+        - Paper / Purpur (plugin)
+        - Spigot (plugin)
+        - Folia (plugin)
+        - Singleplayer
     validations:
       required: true
   - type: input
     id: loader-version
     attributes:
       label: Loader version
-      placeholder: NeoForge 21.1.251 / Fabric Loader 0.19.5
+      placeholder: NeoForge 21.1.251 / Fabric Loader 0.19.5 / Paper 1.21.1-133
   - type: dropdown
     id: side
     attributes:

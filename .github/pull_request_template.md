@@ -4,4 +4,4 @@
 
 ## Testing
 
-<!-- Which Minecraft versions and loaders you tried in game, and whether ./gradlew :core:test buildAll passes. -->
+<!-- Which Minecraft versions, loaders and server platforms you tried in game, and whether ./gradlew :core:test buildAll :plugin:build passes. -->
