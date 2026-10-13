@@ -101,7 +101,10 @@ Forge builds are made for one Minecraft release each, as Forge itself is.
 One plugin jar covers every version in the table. Folia is marked where Folia itself has a release. Players join a
 server with the plugin with the mod on any loader.
 
-Quilt, Velocity and BungeeCord, and older Minecraft versions are planned.
+Velocity and BungeeCord work too: install the mod or the plugin on the servers behind the proxy, nothing on the proxy.
+Each server keeps its own chat. See [Proxies](docs/server.md#proxies-velocity-bungeecord).
+
+Quilt and older Minecraft versions are planned.
 
 ## Installation
 

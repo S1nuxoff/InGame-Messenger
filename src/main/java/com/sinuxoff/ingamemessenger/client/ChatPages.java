@@ -24,6 +24,12 @@ final class ChatPages {
     private static int oldestMid = Integer.MAX_VALUE;
     static boolean hasOlder = true, loading;
 
+    static void reset() {
+        oldestMid = Integer.MAX_VALUE;
+        hasOlder = true;
+        loading = false;
+    }
+
     static void startHistory() {
         oldestMid = Integer.MAX_VALUE;
         hasOlder = true;

@@ -13,6 +13,7 @@ storage, sticker packs and commands.
 - [Pictures](#pictures)
 - [Sticker and emoji packs](#sticker-and-emoji-packs)
 - [Players without the mod](#players-without-the-mod)
+- [Proxies (Velocity, BungeeCord)](#proxies-velocity-bungeecord)
 - [Commands](#commands)
 - [Backups](#backups)
 - [Troubleshooting](#troubleshooting)
@@ -322,6 +323,24 @@ Their own messages are ordinary chat messages, so players with the mod see them 
 On joining, the server and the client exchange their protocol versions. The messenger turns on only when they match;
 the protocol changes only with releases that change the network format, so different releases often still work
 together.
+
+## Proxies (Velocity, BungeeCord)
+
+Install the mod or the plugin on every server behind the proxy that should have the messenger. Nothing goes on the
+proxy itself: it passes the messenger's packets through as they are.
+
+Each server keeps its own chat, the way the normal chat works on a network: in the lobby players see the lobby's
+chat, in a game only that game's chat. When a player moves to another server, their chat is cleared and the new
+server's history is loaded. Sticker packs, settings and the database are also per server; copy `stickers/` and
+`emoji/` to every server that should have the same packs. If several servers use one MySQL, MariaDB or PostgreSQL
+database, give each its own `tablePrefix`.
+
+A server behind the proxy can run the mod or the plugin, and players can move between servers on different loaders
+and platforms.
+
+NeoForge clients can't join a NeoForge server behind Velocity: NeoForge sends its own command argument types, which
+Velocity can't read, and the connection drops. This happens without InGame Messenger too and needs a proxy
+compatibility mod on the NeoForge server. Clients on other loaders join such a server normally.
 
 ## Commands
 

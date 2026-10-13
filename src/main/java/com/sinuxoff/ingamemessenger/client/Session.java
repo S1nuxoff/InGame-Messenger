@@ -26,6 +26,8 @@ public final class Session {
     /** The connection that got any Welcome. */
     private static Object answered;
     private static Object current;
+    /** The last connection we were on. */
+    private static Object last;
     private static int ticks;
 
     private Session() {
@@ -44,7 +46,27 @@ public final class Session {
         return c != null && c == welcomed;
     }
 
+    /**
+     * Each server has its own chat. On a new connection (another server, also one behind the same proxy) the chat
+     * and what we know about the last server's messages are dropped, before anything of the new one is shown.
+     */
+    static void sync() {
+        Object c = Minecraft.getInstance().getConnection();
+        if (c == null || c == last) {
+            return;
+        }
+        if (last != null) {
+            Minecraft.getInstance().gui.getChat().clearMessages(false);
+            ChatModel.reset();
+            ChatPages.reset();
+            ChatReads.reset();
+            ClientEvents.loggedOut();
+        }
+        last = c;
+    }
+
     static void onWelcome(Welcome w) {
+        sync();
         Minecraft mc = Minecraft.getInstance();
         Object c = mc.getConnection();
         if (c == null) {
@@ -67,6 +89,7 @@ public final class Session {
     }
 
     static void tick() {
+        sync();
         Minecraft mc = Minecraft.getInstance();
         Object c = mc.getConnection();
         if (c != current) {

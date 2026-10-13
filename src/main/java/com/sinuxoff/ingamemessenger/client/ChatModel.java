@@ -312,6 +312,37 @@ final class ChatModel {
     static String pendingFull;
     static boolean pendingEdited;
 
+    /** Another server: its message ids mean other messages. */
+    static void reset() {
+        mentioned.clear();
+        msgs.clear();
+        order.clear();
+        byMid.clear();
+        reactions.clear();
+        pending.clear();
+        waiting.clear();
+        lastSender = null;
+        lastMs = 0;
+        runNamed = false;
+        datedOf.clear();
+        hiddenDate.clear();
+        fullTextOf.clear();
+        editedSet.clear();
+        lastSeenAt.clear();
+        textXOf.clear();
+        pendingDay = lastLiveDay = Long.MIN_VALUE;
+        pendingFull = null;
+        pendingEdited = false;
+        ChatAlbums.albumOf.clear();
+        ChatPolls.pollOf.clear();
+        ChatVoiceNotes.voiceOf.clear();
+        ChatLocations.locOf.clear();
+        ChatReplies.infoOf.clear();
+        ChatReplies.replyOf.clear();
+        ChatReplies.deletedMids.clear();
+        ChatReplies.flashMid = -1;
+    }
+
     /** True if the line's text is shifted right of the face. */
     public static boolean shifted(GuiMessageTag tag) {
         return tag != null && msgs.containsKey(tag);

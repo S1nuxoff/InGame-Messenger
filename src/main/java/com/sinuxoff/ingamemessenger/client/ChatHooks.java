@@ -45,6 +45,7 @@ public final class ChatHooks {
 
     /** True if the message was rebuilt (and the original must be dropped). */
     public static boolean transform(ChatComponent chat, Component content, MessageSignature sig, GuiMessageTag tag) {
+        Session.sync();
         // the server's "install the mod" line: we have it, even if the server can't tell
         if (content.getContents() instanceof TranslatableContents t && t.getKey().equals("ingamemessenger.plain.install")) {
             return true;

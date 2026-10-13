@@ -24,6 +24,12 @@ final class ChatReads {
     private static int readSent = -1;
     private static long readSentMs;
 
+    static void reset() {
+        seen.clear();
+        readSent = -1;
+        readSentMs = 0;
+    }
+
     static void onReadState(Packets.ReadState r) {
         seen.put(r.who(), new Seen(r.name(), r.mid()));
     }
