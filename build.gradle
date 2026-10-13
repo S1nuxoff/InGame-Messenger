@@ -121,8 +121,9 @@ sourceSets.main {
     }
 }
 
-// the Java the jar needs, and the newest one the mixin configs may name (Mixin knows up to 21)
-def props = [version: version, minecraft_range: minecraft_range, loader_range: loader_range, pack_meta: findProperty('pack_meta') ?: '',
+// the mod's version says which build it is (0.1.0+1.21.1-fabric); the Java the jar needs, and the newest one the
+// mixin configs may name (Mixin knows up to 21)
+def props = [version: "${version}+${project.name}", minecraft_range: minecraft_range, loader_range: loader_range, pack_meta: findProperty('pack_meta') ?: '',
              java: java_version, mixin_java: Math.min(java_version as int, 21)]
 
 if (loader == 'neoforge') {
