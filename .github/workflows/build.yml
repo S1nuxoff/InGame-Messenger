@@ -1,9 +1,16 @@
 name: Build
 
+# builds a version tag (git tag v0.1.0 && git push origin v0.1.0), pull requests, or on demand from the Actions tab
 on:
   push:
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
+
+# a newer run for the same tag or pull request cancels the older one
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
