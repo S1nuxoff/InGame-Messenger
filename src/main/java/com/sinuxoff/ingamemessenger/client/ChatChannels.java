@@ -28,6 +28,9 @@ final class ChatChannels {
     }
 
     static UUID channel; // null = public chat
+    /** The server's own chat: everything that isn't from a player (command answers, joins, deaths, broadcasts), and
+     * where commands are typed. */
+    static final UUID SERVER = new UUID(0, 0x5E);
     static List<GuiMessage> commonStash = new ArrayList<>();
     static final Map<UUID, List<GuiMessage>> stash = new HashMap<>();
     /** Open private chat tabs and their names, oldest first. */
@@ -67,7 +70,7 @@ final class ChatChannels {
      */
     static void postTo(ChatComponent chat, Component text, MessageSignature sig, GuiMessageTag tag, UUID ch) {
         Minecraft mc = Minecraft.getInstance();
-        if (ch != null) {
+        if (ch != null && !ch.equals(SERVER)) {
             chanOf.put(tag, ch);
             if (!ch.equals(Ai.ID)) {
                 dmTabs.putIfAbsent(ch, nameOf(ch));
@@ -86,7 +89,7 @@ final class ChatChannels {
                 dmUnread.merge(ch, 1, Integer::sum);
             }
         }
-        if (ch != null && !mineMsg && (!ch.equals(channel) || !(ChatMotion.chatOpen(mc)))) {
+        if (ch != null && !ch.equals(SERVER) && !mineMsg && (!ch.equals(channel) || !(ChatMotion.chatOpen(mc)))) {
             mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
                     net.minecraft.sounds.SoundEvents.NOTE_BLOCK_CHIME/*? if >=1.19.3 {*/.value()/*?}*/, 1.4f, 0.8f));
         }
@@ -115,6 +118,14 @@ final class ChatChannels {
         if (java.util.Objects.equals(peer, channel) || peer != null && me != null && peer.equals(me.getUUID())) {
             return;
         }
+        // a command isn't a message, nor a message a command: the input is cleared going in or out of the server
+        // chat (unless a "/" just brought us in)
+        if (mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen cs) {
+            var input = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) cs).ingamemessenger$input();
+            if (SERVER.equals(channel) || SERVER.equals(peer) && !input.getValue().startsWith("/")) {
+                input.setValue("");
+            }
+        }
         ChatComponent chat = mc.gui.getChat();
         ChatComponentAccessor acc = (ChatComponentAccessor) chat;
         List<GuiMessage> all = acc.ingamemessenger$allMessages();
@@ -130,7 +141,7 @@ final class ChatChannels {
             commonStash = new ArrayList<>();
             commonUnread = 0;
         } else {
-            if (!peer.equals(Ai.ID)) {
+            if (!peer.equals(Ai.ID) && !peer.equals(SERVER)) {
                 dmTabs.putIfAbsent(peer, name);
             }
             List<GuiMessage> waiting = stash.remove(peer);
@@ -141,13 +152,13 @@ final class ChatChannels {
         }
         channel = peer;
         Net.toServer(
-                new Packets.ChatTarget(peer == null || peer.equals(Ai.ID) ? new UUID(0, 0) : peer));
+                new Packets.ChatTarget(peer == null || peer.equals(Ai.ID) || peer.equals(SERVER) ? new UUID(0, 0) : peer));
         chat.rescaleChat();
         acc.ingamemessenger$setScroll(0);
         ChatMotion.scrollPos = ChatMotion.scrollTarget = ChatMotion.scrollFrac = 0;
         if (Ai.ID.equals(peer)) {
             Ai.opened();
-        } else if (peer != null && dmLoaded.add(peer)) {
+        } else if (peer != null && !peer.equals(SERVER) && dmLoaded.add(peer)) {
             dmLoading.add(peer);
             Net.toServer(new Packets.DmHistoryReq(peer, 0));
         }

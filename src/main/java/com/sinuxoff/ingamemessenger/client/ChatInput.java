@@ -67,7 +67,7 @@ public final class ChatInput {
     }
 
     private static boolean pinShown() {
-        return !VoiceClient.recording() && editId < 0 && !Ai.ID.equals(ChatChannels.channel());
+        return !VoiceClient.recording() && editId < 0 && !Ai.ID.equals(ChatChannels.channel()) && !ChatChannels.SERVER.equals(ChatChannels.channel());
     }
 
     static boolean overPin(double mx, double my, int sw, int sh) {
@@ -118,6 +118,7 @@ public final class ChatInput {
         java.util.List<Item> want = new java.util.ArrayList<>();
         want.add(new Item(null, Component.translatable("ingamemessenger.dm.common").getString(), 0));
         want.add(new Item(Ai.ID, Ai.NAME, 0));
+        want.add(new Item(ChatChannels.SERVER, Component.translatable("ingamemessenger.dm.server").getString(), 0));
         ChatChannels.dmTabs.forEach((id, name) -> want.add(new Item(id, name, 0)));
         int y = top + 2;
         Item hover = null;
@@ -134,9 +135,9 @@ public final class ChatInput {
             } else if (over) {
                 Panel.round(g, cx - 2, y, ICON + 4, ICON + 4, 7, 0x30FFFFFF);
             }
-            if (it.peer() == null) {
+            if (it.peer() == null || it.peer().equals(ChatChannels.SERVER)) {
                 Panel.round(g, cx, y + 2, ICON, ICON, 6, on ? 0xFF7B68FF : 0xFF2A3040);
-                Panel.drawIcon(g, "chats", cx + 3, y + 5, ICON - 6, 0xFFFFFFFF);
+                Panel.drawIcon(g, it.peer() == null ? "chats" : "server", cx + 3, y + 5, ICON - 6, 0xFFFFFFFF);
             } else {
                 ChatRenderer.drawFace(g, it.peer(), it.name(), cx + 1, y + 3, ICON - 2, 1f);
             }
@@ -153,7 +154,7 @@ public final class ChatInput {
             }
             items.add(new Item(it.peer(), it.name(), y));
             y += ITEM;
-            if (k == 1) { // separator between the shared chats (public, Gemini) and the private ones
+            if (k == 2) { // separator between the shared chats (public, Gemini, server) and the private ones
                 g.fill(cx + 3, y + 1, cx + ICON - 3, y + 2, 0x30FFFFFF);
                 y += 4;
             }
@@ -318,7 +319,7 @@ public final class ChatInput {
         }
         for (Item it : items) {
             if (my >= it.y() && my < it.y() + ITEM) {
-                if (button == 1 && it.peer() != null && !it.peer().equals(Ai.ID)) {
+                if (button == 1 && it.peer() != null && !it.peer().equals(Ai.ID) && !it.peer().equals(ChatChannels.SERVER)) {
                     ChatChannels.closeTab(it.peer());
                 } else if (button == 0) {
                     ChatChannels.openChannel(it.peer(), it.name());
@@ -539,9 +540,13 @@ public final class ChatInput {
         } else {
             java.util.UUID ch = ChatChannels.channel();
             String title = ch == null ? Component.translatable("ingamemessenger.dm.common").getString()
-                    : Ai.ID.equals(ch) ? Ai.NAME : ChatChannels.nameOf(ch);
+                    : Ai.ID.equals(ch) ? Ai.NAME : ChatChannels.SERVER.equals(ch) ? Component.translatable("ingamemessenger.dm.server").getString()
+                    : ChatChannels.nameOf(ch);
             int tx = r[0] + 6;
-            if (ch != null) {
+            if (ChatChannels.SERVER.equals(ch)) {
+                Panel.drawIcon(g, "server", tx, r[1] + 3, 10, 0xFFC8CCD8);
+                tx += 14;
+            } else if (ch != null) {
                 ChatRenderer.drawFace(g, ch, title, tx, r[1] + 3, 10, 1f);
                 tx += 14;
             }
@@ -749,6 +754,10 @@ public final class ChatInput {
             }
             return "";
         }
+        if (ChatChannels.SERVER.equals(ChatChannels.channel())) { // the server chat only takes commands
+            replyTo = -1;
+            return text.isBlank() ? "" : text.startsWith("/") ? text : "/" + text;
+        }
         if (Ai.ID.equals(ChatChannels.channel()) && !text.startsWith("/")) { // Gemini chat: sent from the client to Gemini
             if (!Images.atts.isEmpty()) {
                 Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("ingamemessenger.ai.text_only"), false);
@@ -830,6 +839,19 @@ public final class ChatInput {
         int w = screen.width, h = screen.height;
         int x = fieldX(w), y = fieldY(h), fw = fieldW(w);
         String text = ((ChatScreenAccessor) screen).ingamemessenger$input().getValue();
+        // a command started in another chat goes on in the server chat, which takes commands without the "/"
+        boolean commands = ChatChannels.SERVER.equals(ChatChannels.channel());
+        if (text.startsWith("/") && editId < 0 && !searching && !commands) {
+            ChatChannels.openChannel(ChatChannels.SERVER, null);
+            commands = true;
+            text = text.substring(1);
+            ((ChatScreenAccessor) screen).ingamemessenger$input().setValue(text);
+        }
+        var suggest = (com.sinuxoff.ingamemessenger.mixin.CommandSuggestionsAccessor) ((ChatScreenAccessor) screen).ingamemessenger$suggestions();
+        if (suggest.ingamemessenger$commandsOnly() != commands) {
+            suggest.ingamemessenger$setCommandsOnly(commands);
+            ((ChatScreenAccessor) screen).ingamemessenger$suggestions().updateCommandInfo();
+        }
         Panel.round(g, x - 1, y - 1, fw + 2, H + 2, H / 2 + 1, 0x24FFFFFF); // thin light border
         Panel.round(g, x, y, fw, H, H / 2, 0x9C161A23);
         drawBar(g, w, h, (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
@@ -841,7 +863,8 @@ public final class ChatInput {
                 (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
                 (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()), true);
         if (text.isEmpty() && !VoiceClient.recording()) {
-            Gfx.text(g, mc.font, Component.translatable("ingamemessenger.input.hint"), inputX(w), textY(h), 0xFF6C7386, false);
+            Gfx.text(g, mc.font, Component.translatable(commands ? "ingamemessenger.input.command_hint" : "ingamemessenger.input.hint"), inputX(w),
+                    textY(h), 0xFF6C7386, false);
         }
         // send button: grey when empty, accent when there's something to send; a microphone instead when the input is
         // empty and voice messages are allowed (hold to record)
@@ -1122,8 +1145,13 @@ public final class ChatInput {
 
     /** Rounded dark glass panel with a thin light border. */
     public static void glassBox(GuiGraphics g, int x, int y, int w, int h) {
+        glassBox(g, x, y, w, h, 0xC8);
+    }
+
+    /** With this much cover (0-255): the suggestion list hides the chat behind it. */
+    public static void glassBox(GuiGraphics g, int x, int y, int w, int h, int alpha) {
         Panel.round(g, x - 1, y - 1, w + 2, h + 2, 7, 0x30FFFFFF);
-        Panel.round(g, x, y, w, h, 6, 0xC8161A23);
+        Panel.round(g, x, y, w, h, 6, alpha << 24 | 0x161A23);
     }
 
     /** Bar under the selected suggestion. */
@@ -1143,13 +1171,19 @@ public final class ChatInput {
             w = Math.max(w, font.width(l));
         }
         int sw = screen.width;
+        float k = Math.min(1f, (sw - 18f) / w); // a long one is made smaller to fit the screen
+        int sw2 = Math.round(w * k);
         int x = width >= sw ? inputX(sw) : pos; // vanilla spans errors across the screen; here they start at the text
-        x = Math.max(4, Math.min(x, sw - w - 8));
-        int h = lines.size() * 11 + 6, y = listBottom(screen.height) - 3 - h;
-        glassBox(g, x - 5, y, w + 10, h);
+        x = Math.max(9, Math.min(x, sw - sw2 - 9));
+        int h = Math.round(lines.size() * 11 * k) + 6, y = listBottom(screen.height) - 3 - h;
+        glassBox(g, x - 5, y, sw2 + 10, h);
+        Gfx.push(g);
+        Gfx.move(g, x, y + 4);
+        Gfx.scale(g, k, k);
         for (int i = 0; i < lines.size(); i++) {
-            Gfx.text(g, font, lines.get(i), x, y + 4 + i * 11, -1);
+            Gfx.text(g, font, lines.get(i), 0, i * 11, -1);
         }
+        Gfx.pop(g);
     }
 
     // Emoji in the input. Each emoji is a single private-use character that our font renders as a blank of the emoji's

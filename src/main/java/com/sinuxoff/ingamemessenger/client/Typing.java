@@ -40,7 +40,8 @@ final class Typing {
         boolean want = false;
         if (mc.screen instanceof ChatScreen chat && serverOn && Prefs.showMyTyping() && mc.getConnection() != null) {
             String v = ((ChatScreenAccessor) chat).ingamemessenger$input().getValue();
-            want = !v.isBlank() && !v.startsWith("/") && !ChatInput.searching() && !Ai.ID.equals(ChatChannels.channel());
+            want = !v.isBlank() && !v.startsWith("/") && !ChatInput.searching() && !Ai.ID.equals(ChatChannels.channel())
+                    && !ChatChannels.SERVER.equals(ChatChannels.channel());
         }
         long now = System.currentTimeMillis();
         if (want && (!sent || now - sentMs > KEEP_ALIVE)) {

@@ -83,14 +83,19 @@ final class ChatPages {
         boolean active = java.util.Objects.equals(ch, ChatChannels.channel);
         List<GuiMessage> all = active ? acc.ingamemessenger$allMessages() : ch == null ? ChatChannels.commonStash : ChatChannels.stash.computeIfAbsent(ch, k -> new ArrayList<>());
         java.util.Set<Integer> present = new java.util.HashSet<>();
-        for (GuiMessage gm : all) {
+        List<GuiMessage> known = new ArrayList<>(all);
+        if (ch == null) { // its server lines may be in the server chat already
+            known.addAll(ChatChannels.SERVER.equals(ChatChannels.channel) ? acc.ingamemessenger$allMessages()
+                    : ChatChannels.stash.getOrDefault(ChatChannels.SERVER, List.of()));
+        }
+        for (GuiMessage gm : known) {
             ChatModel.Msg m = gm.tag() == null ? null : ChatModel.msgs.get(gm.tag());
             if (m != null && m.mid() >= 0) {
                 present.add(m.mid());
             }
         }
-        List<GuiMessage> built = new ArrayList<>();
-        long pageDay = Long.MIN_VALUE;
+        List<GuiMessage> built = new ArrayList<>(), serverBuilt = new ArrayList<>();
+        long pageDay = Long.MIN_VALUE, serverDay = Long.MIN_VALUE;
         int tick = mc.gui.getGuiTicks() - 400;
         UUID runSender = null;
         long runMs = 0;
@@ -118,6 +123,16 @@ final class ChatPages {
                 String kind = o.get("k").getAsString();
                 UUID who = o.has("u") ? UUID.fromString(o.get("u").getAsString()) : null;
                 String name = o.has("n") ? o.get("n").getAsString() : null;
+                // the public history's server lines go to the server chat, with their own dates, not breaking the
+                // players' runs
+                boolean toServer = ch == null && name == null;
+                long keepDay = pageDay;
+                UUID keepRun = runSender;
+                long keepMs = runMs;
+                boolean keepHasName = runHasName;
+                if (toServer) {
+                    pageDay = serverDay;
+                }
                 MutableComponent out = Component.empty();
                 ChatModel.Msg m;
                 boolean me = false;
@@ -302,14 +317,40 @@ final class ChatPages {
                 if (me) {
                     ChatModel.mentioned.add(ht);
                 }
-                built.add(Compat.message(tick, out, null, ht));
+                (toServer ? serverBuilt : built).add(Compat.message(tick, out, null, ht));
+                if (toServer) {
+                    serverDay = pageDay;
+                    pageDay = keepDay;
+                    runSender = keepRun;
+                    runMs = keepMs;
+                    runHasName = keepHasName;
+                }
             } catch (RuntimeException e) {
                 InGameMessenger.LOG.warn("Bad chat history entry: {}", e.toString());
+            }
+        }
+        if (!serverBuilt.isEmpty()) {
+            boolean shown = ChatChannels.SERVER.equals(ChatChannels.channel);
+            merge(shown ? acc.ingamemessenger$allMessages() : ChatChannels.stash.computeIfAbsent(ChatChannels.SERVER, k -> new ArrayList<>()),
+                    serverBuilt);
+            if (shown) {
+                chat.rescaleChat();
             }
         }
         if (built.isEmpty()) {
             return;
         }
+        merge(all, built);
+        if (!active) {
+            return;
+        }
+        int scroll = acc.ingamemessenger$scroll();
+        chat.rescaleChat();
+        acc.ingamemessenger$setScroll(Math.max(0, Math.min(scroll, acc.ingamemessenger$lines().size() - 1)));
+    }
+
+    /** Puts a history page (oldest first) below the messages a chat already has. */
+    private static void merge(List<GuiMessage> all, List<GuiMessage> built) {
         // no repeated date separator if the next message is on the same day
         if (!all.isEmpty()) {
             GuiMessage after = all.get(all.size() - 1);
@@ -325,11 +366,5 @@ final class ChatPages {
         while (all.size() > ChatModel.MAX_KEPT) {
             all.remove(all.size() - 1);
         }
-        if (!active) {
-            return;
-        }
-        int scroll = acc.ingamemessenger$scroll();
-        chat.rescaleChat();
-        acc.ingamemessenger$setScroll(Math.max(0, Math.min(scroll, acc.ingamemessenger$lines().size() - 1)));
     }
 }

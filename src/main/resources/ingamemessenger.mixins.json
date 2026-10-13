@@ -15,6 +15,7 @@
     "ChatTextClipMixin",
     "TextureFilterMixin",
     "ChatScreenAccessor",
+    "CommandSuggestionsAccessor",
     "EditBoxAccessor",
     "ChatScreenMixin",
     "CommandSuggestionsMixin",

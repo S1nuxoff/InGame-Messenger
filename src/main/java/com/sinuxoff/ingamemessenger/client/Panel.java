@@ -139,7 +139,7 @@ final class Panel {
     }
 
     private static boolean overButton(double mx, double my, int sw, int sh) {
-        return !centered && mx >= btnX(sw) - 2 && mx < btnX(sw) + BTN + 2 && my >= btnY(sh) - 2 && my < btnY(sh) + BTN + 2;
+        return !centered && !ChatChannels.SERVER.equals(ChatChannels.channel()) && mx >= btnX(sw) - 2 && mx < btnX(sw) + BTN + 2 && my >= btnY(sh) - 2 && my < btnY(sh) + BTN + 2;
     }
 
     /** True if the mouse is over the panel or the smiley (the chat below shouldn't react). */
@@ -349,7 +349,7 @@ final class Panel {
         lastFrameMs = now;
         Gfx.push(g);
         Gfx.raise(g, 300);
-        if (!centered && !VoiceClient.recording()) { // smiley in the input (hidden while recording)
+        if (!centered && !VoiceClient.recording() && !ChatChannels.SERVER.equals(ChatChannels.channel())) { // smiley in the input (not while recording, not for commands)
             icon(g, ICON_BUTTON, btnX(sw), btnY(sh), BTN, open || overButton(mx, my, sw, sh) ? 1f : 0.7f);
         }
         if (!open || command && !centered) {

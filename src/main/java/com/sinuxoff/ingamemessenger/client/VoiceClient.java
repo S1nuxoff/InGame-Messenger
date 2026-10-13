@@ -40,7 +40,7 @@ final class VoiceClient {
 
     /** Whether to show the microphone button. */
     static boolean available() {
-        return serverOn || Ai.ID.equals(ChatChannels.channel());
+        return (serverOn || Ai.ID.equals(ChatChannels.channel())) && !ChatChannels.SERVER.equals(ChatChannels.channel());
     }
 
     // Recording

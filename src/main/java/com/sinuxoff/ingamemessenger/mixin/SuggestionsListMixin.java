@@ -42,7 +42,7 @@ public abstract class SuggestionsListMixin {
         GuiGraphics g = new GuiGraphics(pose);
     *///?}
         if (ingamemessenger$chat()) {
-            ChatInput.glassBox(g, rect.getX() - 4, rect.getY() - 4, rect.getWidth() + 8, rect.getHeight() + 7);
+            ChatInput.glassBox(g, rect.getX() - 4, rect.getY() - 4, rect.getWidth() + 8, rect.getHeight() + 7, 0xF4);
         }
     }
 

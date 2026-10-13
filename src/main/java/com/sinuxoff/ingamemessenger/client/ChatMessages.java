@@ -42,7 +42,7 @@ final class ChatMessages {
             MutableComponent sys = Component.empty();
             ChatDates.liveDate(sys, now);
             ChatModel.note(st, null, ChatDecor.snippet(content.getString()), -1);
-            ChatChannels.post(chat, sys.append(content).append("\n "), sig, st);
+            ChatChannels.postTo(chat, sys.append(content).append("\n "), sig, st, ChatChannels.SERVER);
         }
         return true;
     }
