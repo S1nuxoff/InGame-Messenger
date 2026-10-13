@@ -80,17 +80,17 @@ together.
 
 ## Supported versions
 
-| Minecraft          | NeoForge | Fabric | Forge    | Java |
-|--------------------|:--------:|:------:|:--------:|:----:|
-| 1.21.1             |    ✓     |   ✓    |    ✓     |  21  |
-| 1.21.4             |    ✓     |   ✓    |    ✓     |  21  |
-| 1.21.5             |    ✓     |   ✓    |    ✓     |  21  |
-| 1.21.6 – 1.21.8    |    ✓     |   ✓    | 1.21.8 only |  21  |
-| 1.21.9 – 1.21.10   |    ✓     |   ✓    | 1.21.10 only |  21  |
-| 1.21.11            |    ✓     |   ✓    |    ✓     |  21  |
-| 26.1 – 26.1.2      |    ✓     |   ✓    | 26.1.2 only |  25  |
-| 26.2               |    ✓     |   ✓    |    ✓     |  25  |
-| 26.3               |    ✓     |   ✓    |    ✓     |  25  |
+| Minecraft          | NeoForge | Fabric |    Forge     | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
+|--------------------|:--------:|:------:|:------------:|:------------------------------:|:--------------:|:----:|
+| 1.21.1             |    ✓     |   ✓    |      ✓       |               ✓                |       —        |  21  |
+| 1.21.4             |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  21  |
+| 1.21.5             |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  21  |
+| 1.21.6 – 1.21.8    |    ✓     |   ✓    | 1.21.8 only  |               ✓                |       ✓        |  21  |
+| 1.21.9 – 1.21.10   |    ✓     |   ✓    | 1.21.10 only |               ✓                |       —        |  21  |
+| 1.21.11            |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  21  |
+| 26.1 – 26.1.2      |    ✓     |   ✓    | 26.1.2 only  |               ✓                |       ✓        |  25  |
+| 26.2               |    ✓     |   ✓    |      ✓       |               ✓                |       ✓        |  25  |
+| 26.3               |    ✓     |   ✓    |      ✓       |               ✓                |       —        |  25  |
 
 Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
 
@@ -98,8 +98,8 @@ Forge builds are made for one Minecraft release each, as Forge itself is.
 
 ### Server plugin
 
-One plugin jar runs on Paper, Spigot and Purpur 1.21.1 and newer, and on Folia from 1.21.4. It needs Java 21. Players
-join it with the mod on any loader.
+One plugin jar covers every version in the table. Folia is marked where Folia itself has a release. Players join a
+server with the plugin with the mod on any loader.
 
 Quilt, Velocity and BungeeCord, and older Minecraft versions are planned.
 
