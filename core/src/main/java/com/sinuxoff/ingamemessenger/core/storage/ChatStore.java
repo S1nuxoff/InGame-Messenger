@@ -91,10 +91,11 @@ public final class ChatStore {
         }
     }
 
-    /** MySQL has no CREATE INDEX IF NOT EXISTS, so an existing index just fails. */
+    /** MySQL has no CREATE INDEX IF NOT EXISTS, so there an existing index just fails. */
     private void index(String name, String table, String columns) {
+        String ifNew = db.dialect == Dialect.MYSQL ? "" : "IF NOT EXISTS ";
         try (Statement s = c().createStatement()) {
-            s.execute("CREATE INDEX " + name + " ON " + table + " (" + columns + ")");
+            s.execute("CREATE INDEX " + ifNew + name + " ON " + table + " (" + columns + ")");
         } catch (SQLException ignored) {
         }
     }
