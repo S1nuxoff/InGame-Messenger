@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Kedagi pole võrgus",
   "ingamemessenger.dm.new_chat": "Kirjuta kellelegi",
   "ingamemessenger.tab.ai": "TI",
+  "ingamemessenger.ai.enabled": "Gemini vestluste loendis",
   "ingamemessenger.ai.title": "Räägi Geminiga — vajab sinu enda võtit (tasuta)",
   "ingamemessenger.ai.step1": "1. Klõpsa allpool \"Open Google AI Studio\"",
   "ingamemessenger.ai.step2": "2. Logi sisse oma Google'i kontoga",

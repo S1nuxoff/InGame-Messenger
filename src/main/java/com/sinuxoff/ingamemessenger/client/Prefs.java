@@ -53,6 +53,8 @@ final class Prefs {
     private static int micGainDb = 0, noiseGate = 24;
     private static String geminiKey = "";
     private static boolean geminiMemory = true;
+    /** Gemini in the chat list; off until turned on in the settings (on for those who already set a key). */
+    private static boolean geminiOn;
 
     private Prefs() {
     }
@@ -98,6 +100,7 @@ final class Prefs {
             noiseGate = clamp(getInt(o, "noiseGate", noiseGate), 0, 100);
             geminiKey = getString(o, "geminiKey", geminiKey);
             geminiMemory = getBool(o, "geminiMemory", geminiMemory);
+            geminiOn = getBool(o, "geminiOn", !geminiKey.isBlank());
         } catch (Exception e) {
             InGameMessenger.LOG.warn("Can't read {}: {}", f, e.toString());
         }
@@ -130,6 +133,7 @@ final class Prefs {
         o.addProperty("noiseGate", noiseGate);
         o.addProperty("geminiKey", geminiKey);
         o.addProperty("geminiMemory", geminiMemory);
+        o.addProperty("geminiOn", geminiOn);
         try {
             Files.writeString(file(), GSON.toJson(o));
         } catch (Exception e) {
@@ -486,6 +490,17 @@ final class Prefs {
     static void toggleGeminiMemory() {
         load();
         geminiMemory = !geminiMemory;
+        save();
+    }
+
+    static boolean geminiOn() {
+        load();
+        return geminiOn;
+    }
+
+    static void toggleGeminiOn() {
+        load();
+        geminiOn = !geminiOn;
         save();
     }
 }

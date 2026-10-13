@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "誰もオンラインではありません",
   "ingamemessenger.dm.new_chat": "誰かにメッセージを書く",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "チャット一覧に Gemini を表示",
   "ingamemessenger.ai.title": "Gemini とチャット — 独自のキーが必要です (無料)",
   "ingamemessenger.ai.step1": "1. 下の \"Open Google AI Studio\" をクリック",
   "ingamemessenger.ai.step2": "2. Google アカウントでログイン",

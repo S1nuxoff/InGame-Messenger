@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Ingen pålogget",
   "ingamemessenger.dm.new_chat": "Skriv til noen",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "Gemini i chattelisten",
   "ingamemessenger.ai.title": "Chat med Gemini — krever din egen nøkkel (gratis)",
   "ingamemessenger.ai.step1": "1. Klikk på \"Open Google AI Studio\" nedenfor",
   "ingamemessenger.ai.step2": "2. Logg inn med Google-kontoen din",

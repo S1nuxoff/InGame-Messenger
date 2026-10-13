@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Kimse çevrimiçi değil",
   "ingamemessenger.dm.new_chat": "Birisine yaz",
   "ingamemessenger.tab.ai": "Yapay Zeka",
+  "ingamemessenger.ai.enabled": "Sohbet listesinde Gemini",
   "ingamemessenger.ai.title": "Gemini ile sohbet et — kendi anahtarın gereklidir (ücretsiz)",
   "ingamemessenger.ai.step1": "1. Aşağıdaki \"Open Google AI Studio\" bağlantısına tıkla",
   "ingamemessenger.ai.step2": "2. Google hesabınla giriş yap",

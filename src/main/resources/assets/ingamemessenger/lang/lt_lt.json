@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Nėra prisijungusių",
   "ingamemessenger.dm.new_chat": "Parašyti kažkam",
   "ingamemessenger.tab.ai": "DI",
+  "ingamemessenger.ai.enabled": "Gemini pokalbių sąraše",
   "ingamemessenger.ai.title": "Pokalbis su Gemini — reikia tavo paties rakto (nemokamai)",
   "ingamemessenger.ai.step1": "1. Žemiau spustelėk „Open Google AI Studio“",
   "ingamemessenger.ai.step2": "2. Prisijunk su savo Google paskyra",

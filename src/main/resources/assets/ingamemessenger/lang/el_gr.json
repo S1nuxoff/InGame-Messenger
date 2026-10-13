@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Κανείς συνδεδεμένος",
   "ingamemessenger.dm.new_chat": "Γράψτε σε κάποιον",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "Gemini στη λίστα συνομιλιών",
   "ingamemessenger.ai.title": "Συνομιλία με το Gemini — απαιτεί το δικό σας κλειδί (δωρεάν)",
   "ingamemessenger.ai.step1": "1. Κάντε κλικ στο \"Open Google AI Studio\" παρακάτω",
   "ingamemessenger.ai.step2": "2. Συνδεθείτε με τον λογαριασμό σας Google",

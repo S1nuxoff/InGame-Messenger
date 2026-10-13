@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Nimeni online",
   "ingamemessenger.dm.new_chat": "Scrie cuiva",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "Gemini în lista de conversații",
   "ingamemessenger.ai.title": "Discută cu Gemini — necesită propria ta cheie (gratuit)",
   "ingamemessenger.ai.step1": "1. Dă clic pe \"Open Google AI Studio\" mai jos",
   "ingamemessenger.ai.step2": "2. Conectează-te cu contul tău Google",

@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "没有人在读",
   "ingamemessenger.dm.new_chat": "写给某人",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "在聊天列表中显示 Gemini",
   "ingamemessenger.ai.title": "与 Gemini 聊天 — 需要你自己的密钥 (免费)",
   "ingamemessenger.ai.step1": "1. 点击下方的 \"Open Google AI Studio\"",
   "ingamemessenger.ai.step2": "2. 使用你的 Google 账号登录",

@@ -117,7 +117,12 @@ public final class ChatInput {
         }
         java.util.List<Item> want = new java.util.ArrayList<>();
         want.add(new Item(null, Component.translatable("ingamemessenger.dm.common").getString(), 0));
-        want.add(new Item(Ai.ID, Ai.NAME, 0));
+        if (Prefs.geminiOn()) {
+            want.add(new Item(Ai.ID, Ai.NAME, 0));
+        } else if (Ai.ID.equals(ChatChannels.channel())) { // turned off while open
+            ChatChannels.openChannel(null, null);
+        }
+        int shared = want.size() + 1;
         want.add(new Item(ChatChannels.SERVER, Component.translatable("ingamemessenger.dm.server").getString(), 0));
         ChatChannels.dmTabs.forEach((id, name) -> want.add(new Item(id, name, 0)));
         int y = top + 2;
@@ -154,7 +159,7 @@ public final class ChatInput {
             }
             items.add(new Item(it.peer(), it.name(), y));
             y += ITEM;
-            if (k == 2) { // separator between the shared chats (public, Gemini, server) and the private ones
+            if (k == shared - 1) { // separator between the shared chats (public, Gemini, server) and the private ones
                 g.fill(cx + 3, y + 1, cx + ICON - 3, y + 2, 0x30FFFFFF);
                 y += 4;
             }

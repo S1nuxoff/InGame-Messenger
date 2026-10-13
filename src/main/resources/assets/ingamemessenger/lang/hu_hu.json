@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Senki sincs online",
   "ingamemessenger.dm.new_chat": "Írj valakinek",
   "ingamemessenger.tab.ai": "MI",
+  "ingamemessenger.ai.enabled": "Gemini a csevegőlistában",
   "ingamemessenger.ai.title": "Chatelj a Geminivel — saját kulcs szükséges (ingyenes)",
   "ingamemessenger.ai.step1": "1. Kattints az \"Open Google AI Studio\" gombra lent",
   "ingamemessenger.ai.step2": "2. Jelentkezz be a Google-fiókoddal",

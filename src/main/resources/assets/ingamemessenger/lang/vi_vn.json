@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Không có ai trực tuyến",
   "ingamemessenger.dm.new_chat": "Viết tin nhắn cho ai đó",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "Gemini trong danh sách trò chuyện",
   "ingamemessenger.ai.title": "Trò chuyện với Gemini — cần khóa riêng của bạn (miễn phí)",
   "ingamemessenger.ai.step1": "1. Nhấp vào \"Open Google AI Studio\" bên dưới",
   "ingamemessenger.ai.step2": "2. Đăng nhập bằng tài khoản Google của bạn",

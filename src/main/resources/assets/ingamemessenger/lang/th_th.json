@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "ไม่มีใครออนไลน์",
   "ingamemessenger.dm.new_chat": "เขียนข้อความถึงใครบางคน",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "แสดง Gemini ในรายการแชท",
   "ingamemessenger.ai.title": "แชทกับ Gemini — ต้องใช้คีย์ของคุณเอง (ฟรี)",
   "ingamemessenger.ai.step1": "1. คลิก \"Open Google AI Studio\" ด้านล่าง",
   "ingamemessenger.ai.step2": "2. เข้าสู่ระบบด้วยบัญชี Google ของคุณ",

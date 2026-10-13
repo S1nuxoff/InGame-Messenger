@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Kukaan ei ole paikalla",
   "ingamemessenger.dm.new_chat": "Kirjoita jollekin",
   "ingamemessenger.tab.ai": "Tekoäly",
+  "ingamemessenger.ai.enabled": "Gemini keskustelulistassa",
   "ingamemessenger.ai.title": "Keskustele Geminin kanssa — vaatii oman avaimen (ilmainen)",
   "ingamemessenger.ai.step1": "1. Klikkaa \"Open Google AI Studio\" alta",
   "ingamemessenger.ai.step2": "2. Kirjaudu Google-tililläsi",

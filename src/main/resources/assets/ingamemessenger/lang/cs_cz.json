@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Nikdo online",
   "ingamemessenger.dm.new_chat": "Napsat někomu",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "Gemini v seznamu chatů",
   "ingamemessenger.ai.title": "Chat s Gemini — vyžaduje tvůj vlastní klíč (zdarma)",
   "ingamemessenger.ai.step1": "1. Klikni níže na \"Open Google AI Studio\"",
   "ingamemessenger.ai.step2": "2. Přihlas se svým Google účtem",

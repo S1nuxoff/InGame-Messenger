@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "لا أحد متصل",
   "ingamemessenger.dm.new_chat": "اكتب لشخص ما",
   "ingamemessenger.tab.ai": "الذكاء الاصطناعي",
+  "ingamemessenger.ai.enabled": "Gemini في قائمة المحادثات",
   "ingamemessenger.ai.title": "الدردشة مع Gemini — يتطلب مفتاحك الخاص (مجانًا)",
   "ingamemessenger.ai.step1": "1. انقر على \"Open Google AI Studio\" أدناه",
   "ingamemessenger.ai.step2": "2. قم بتسجيل الدخول بحساب Google الخاص بك",

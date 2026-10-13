@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Нікого немає в мережі",
   "ingamemessenger.dm.new_chat": "Написати комусь",
   "ingamemessenger.tab.ai": "ШІ",
+  "ingamemessenger.ai.enabled": "Gemini у списку чатів",
   "ingamemessenger.ai.title": "Чат із Gemini — потрібен свій ключ (безкоштовно)",
   "ingamemessenger.ai.step1": "1. Натисни «Відкрити Google AI Studio» нижче",
   "ingamemessenger.ai.step2": "2. Увійди своїм Google-акаунтом",

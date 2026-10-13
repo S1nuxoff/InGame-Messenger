@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Neviena nav tiešsaistē",
   "ingamemessenger.dm.new_chat": "Uzrakstīt kādam",
   "ingamemessenger.tab.ai": "MI",
+  "ingamemessenger.ai.enabled": "Gemini tērzēšanu sarakstā",
   "ingamemessenger.ai.title": "Tērzēt ar Gemini — nepieciešama tava paša atslēga (bezmaksas)",
   "ingamemessenger.ai.step1": "1. Noklikšķini uz \"Open Google AI Studio\" zemāk",
   "ingamemessenger.ai.step2": "2. Pieraksties ar savu Google kontu",

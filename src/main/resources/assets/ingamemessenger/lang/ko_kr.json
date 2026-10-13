@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "아무도 온라인 상태가 아님",
   "ingamemessenger.dm.new_chat": "누군가에게 쓰기",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "채팅 목록에 Gemini 표시",
   "ingamemessenger.ai.title": "Gemini와 채팅 — 자신의 키가 필요합니다(무료)",
   "ingamemessenger.ai.step1": "1. 아래 \"Open Google AI Studio\"를 클릭하세요",
   "ingamemessenger.ai.step2": "2. Google 계정으로 로그인하세요",

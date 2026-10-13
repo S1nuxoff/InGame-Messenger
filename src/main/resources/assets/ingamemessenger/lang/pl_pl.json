@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Nikogo online",
   "ingamemessenger.dm.new_chat": "Napisz do kogoś",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "Gemini na liście czatów",
   "ingamemessenger.ai.title": "Czat z Gemini — wymaga własnego klucza (za darmo)",
   "ingamemessenger.ai.step1": "1. Kliknij \"Open Google AI Studio\" poniżej",
   "ingamemessenger.ai.step2": "2. Zaloguj się kontem Google",

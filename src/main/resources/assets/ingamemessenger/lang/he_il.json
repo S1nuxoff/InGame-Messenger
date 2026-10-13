@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "אף אחד לא מחובר",
   "ingamemessenger.dm.new_chat": "כתוב למישהו",
   "ingamemessenger.tab.ai": "בינה מלאכותית",
+  "ingamemessenger.ai.enabled": "Gemini ברשימת הצ'אטים",
   "ingamemessenger.ai.title": "צ'אט עם Gemini — דורש מפתח משלך (חינם)",
   "ingamemessenger.ai.step1": "1. לחץ על \"Open Google AI Studio\" למטה",
   "ingamemessenger.ai.step2": "2. היכנס עם חשבון Google שלך",

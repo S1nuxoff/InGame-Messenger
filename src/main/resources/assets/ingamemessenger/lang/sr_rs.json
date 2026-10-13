@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Niko nije na mreži",
   "ingamemessenger.dm.new_chat": "Napiši nekome",
   "ingamemessenger.tab.ai": "UI",
+  "ingamemessenger.ai.enabled": "Gemini на листи ћаскања",
   "ingamemessenger.ai.title": "Čet sa Gemini — potreban je tvoj sopstveni ključ (besplatno)",
   "ingamemessenger.ai.step1": "1. Klikni na \"Open Google AI Studio\" ispod",
   "ingamemessenger.ai.step2": "2. Prijavi se svojim Google nalogom",

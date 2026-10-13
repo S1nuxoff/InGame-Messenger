@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Tidak ada yang online",
   "ingamemessenger.dm.new_chat": "Tulis ke seseorang",
   "ingamemessenger.tab.ai": "AI",
+  "ingamemessenger.ai.enabled": "Gemini di daftar obrolan",
   "ingamemessenger.ai.title": "Mengobrol dengan Gemini — memerlukan kuncimu sendiri (gratis)",
   "ingamemessenger.ai.step1": "1. Klik \"Open Google AI Studio\" di bawah",
   "ingamemessenger.ai.step2": "2. Masuk dengan akun Google-mu",

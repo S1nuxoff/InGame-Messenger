@@ -14,6 +14,8 @@ import net.minecraft.network.chat.Component;
 /** Settings window with four tabs: Chat, Sound, Packs (the server's packs) and AI (Gemini key). */
 final class SettingsScreen extends BaseScreen {
     private static final int WIN_W = 326, COL = 310, MAX_H = 392, ROW = 22, GAP = 5;
+    /** The AI tab's text and key go below its on/off switch. */
+    private static final int AI_TOP = ROW + GAP + 4;
     private static final int TITLE_COLOR = 0xF2F3F7, DARK = 0x8E95A6;
     private static final int TEXT = 0xFFFFFF, MUTED = 0xA0A0A0;
     private static final int CHAT = 0, PACKS = 1, AI = 2, SOUND = 3, TABS = 4;
@@ -127,7 +129,9 @@ final class SettingsScreen extends BaseScreen {
             addRenderableWidget(new Glass.Slider(x, y, COL, 28, 0, Prefs.MAX_VOICE_VOLUME, Prefs.voiceVolume(),
                     v -> Component.translatable("ingamemessenger.screen.voice_volume", v), Prefs::setVoiceVolume));
         } else if (tab == AI) {
-            int y = contentY() + 104;
+            addRenderableWidget(new Glass.Switch(x, contentY(), COL, ROW, () -> Component.translatable("ingamemessenger.ai.enabled"),
+                    Prefs::geminiOn, () -> true, Prefs::toggleGeminiOn));
+            int y = contentY() + AI_TOP + 104;
             EditBox key = new EditBox(font, x + 8, y + 6, COL - 16, 10, Component.translatable("ingamemessenger.ai.key"));
             key.setBordered(false);
             key.setMaxLength(120);
@@ -229,7 +233,7 @@ final class SettingsScreen extends BaseScreen {
             return;
         }
         if (tab == AI) {
-            int y = contentY();
+            int y = contentY() + AI_TOP;
             Gfx.text(g, font, Component.translatable("ingamemessenger.ai.title"), x, y, TITLE_COLOR, false);
             for (int i = 1; i <= 5; i++) {
                 Gfx.text(g, font, Component.translatable("ingamemessenger.ai.step" + i), x, y + 4 + i * 14, i == 5 ? DARK : 0xC8CCD8, false);

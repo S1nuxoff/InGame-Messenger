@@ -90,6 +90,7 @@
   "ingamemessenger.dm.nobody": "Желіде ешкім жоқ",
   "ingamemessenger.dm.new_chat": "Біреуге жазу",
   "ingamemessenger.tab.ai": "ЖИ",
+  "ingamemessenger.ai.enabled": "Gemini чаттар тізімінде",
   "ingamemessenger.ai.title": "Gemini-мен чат — өз кілтіңіз керек (тегін)",
   "ingamemessenger.ai.step1": "1. Төмендегі \"Open Google AI Studio\" түймесін басыңыз",
   "ingamemessenger.ai.step2": "2. Google аккаунтыңызбен кіріңіз",
