@@ -196,7 +196,7 @@ final class ChatReplies {
     static void notifyReply(String who) {
         Minecraft mc = Minecraft.getInstance();
         mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
-                net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL.value(), 1.2f, 0.9f));
+                net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL/*? if >=1.19.3 {*/.value()/*?}*/, 1.2f, 0.9f));
         mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.replied", who).withStyle(s -> s.withColor(ChatDecor.MENTION_ME)), false);
     }
 

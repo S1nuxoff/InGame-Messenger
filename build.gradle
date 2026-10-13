@@ -8,6 +8,34 @@ stonecutter.constants.match(loader, 'fabric', 'neoforge', 'forge')
 
 // names Mojang changed: the sources keep the old ones, Stonecutter writes the new ones for the newer versions
 def since = { String v -> stonecutter.current.parsed.matches(">=$v") }
+def before = { String v -> stonecutter.current.parsed.matches("<$v") }
+// before 1.19.3 the matrices are Mojang's own, not JOML's
+stonecutter.replacements.string(before('1.19.3')) {
+    replace('org.joml.Matrix4f', 'com.mojang.math.Matrix4f')
+}
+// before 1.19.3 widgets have public x / y fields instead of getters and setters, and no HolderLookup.Provider
+stonecutter.replacements.string(before('1.19.3')) {
+    replace('input.getX()', 'input.x')
+    replace('input.getY()', 'input.y')
+    replace('line.setY(textY(h))', 'line.y = (textY(h))')
+    replace('input.setY(textY(sh))', 'input.y = (textY(sh))')
+    replace('net.minecraft.core.HolderLookup.Provider', 'net.minecraft.core.RegistryAccess')
+    replace('net.minecraft.core.registries.BuiltInRegistries.', 'net.minecraft.core.Registry.')
+}
+// before 1.19 text components are made with their classes' constructors
+stonecutter.replacements.string(before('1.19')) {
+    // the qualified ones get two spaces: each replacement must stay reversible
+    replace('net.minecraft.network.chat.Component.translatable(', 'new  net.minecraft.network.chat.TranslatableComponent(')
+    replace('net.minecraft.network.chat.Component.literal(', 'new  net.minecraft.network.chat.TextComponent(')
+    replace('net.minecraft.network.chat.Component.empty()', 'new  net.minecraft.network.chat.TextComponent("")')
+    replace('Component.translatable(', 'new net.minecraft.network.chat.TranslatableComponent(')
+    replace('Component.literal(', 'new net.minecraft.network.chat.TextComponent(')
+    replace('Component.empty()', 'new net.minecraft.network.chat.TextComponent("")')
+}
+// before 1.20 the level is a field
+stonecutter.replacements.string(before('1.20')) {
+    replace('.level().dimension()', '.level.dimension()')
+}
 stonecutter.replacements.regex(since('1.21.11')) {
     replace(/\bResourceLocation\b/, 'Identifier', /\bIdentifier\b/, 'ResourceLocation')
 }
@@ -93,7 +121,9 @@ sourceSets.main {
     }
 }
 
-def props = [version: version, minecraft_range: minecraft_range, loader_range: loader_range, pack_meta: findProperty('pack_meta') ?: '']
+// the Java the jar needs, and the newest one the mixin configs may name (Mixin knows up to 21)
+def props = [version: version, minecraft_range: minecraft_range, loader_range: loader_range, pack_meta: findProperty('pack_meta') ?: '',
+             java: java_version, mixin_java: Math.min(java_version as int, 21)]
 
 if (loader == 'neoforge') {
     neoForge {
@@ -119,7 +149,7 @@ if (loader == 'neoforge') {
     }
     tasks.named('processResources', ProcessResources) {
         inputs.properties props
-        filesMatching('META-INF/neoforge.mods.toml') { expand props }
+        filesMatching(['META-INF/neoforge.mods.toml', '*.mixins.json']) { expand props }
     }
 } else if (loader == 'forge') {
     minecraft {
@@ -159,7 +189,38 @@ if (loader == 'neoforge') {
     }
     tasks.named('processResources', ProcessResources) {
         inputs.properties props
-        filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) { expand props }
+        filesMatching(['META-INF/mods.toml', 'pack.mcmeta', '*.mixins.json']) { expand props }
+    }
+    // Forge before 1.20.6 runs on SRG names: the jar is renamed from Mojang's names, and the mixins get a refmap
+    if (findProperty('mcp_version')) {
+        apply plugin: 'net.minecraftforge.renamer'
+        renamer.mappings("net.minecraft:mappings_official:${mcp_version}:map2srg@tsrg.gz")
+        def mixins = renamer.enableMixinRefmaps {
+            config 'ingamemessenger.mixins.json'
+            config 'ingamemessenger.hooks.mixins.json'
+            refMap = 'ingamemessenger.refmap.json'
+        }
+        mixins.jar(tasks.named('jarJar', Jar))
+        dependencies {
+            annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+            // MixinExtras' own injectors (@WrapOperation...) need its processor too, or they miss the refmap
+            annotationProcessor "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+        }
+        tasks.named('processResources', ProcessResources) {
+            inputs.property('refmap', 'ingamemessenger.refmap.json')
+            filesMatching('*.mixins.json') {
+                filter { it.replace('"compatibilityLevel"', '"refmap": "ingamemessenger.refmap.json", "compatibilityLevel"') }
+            }
+        }
+        tasks.named('jarJar') {
+            archiveClassifier = 'mojmap'
+        }
+        // the mixins' own shadows and overwrites are renamed too, with what the processor found
+        def srgJar = renamer.classes(tasks.named('jarJar', Jar)) {
+            map.setFrom(mixins.generatedMappings)
+            archiveClassifier = ''
+        }
+        tasks.named('assemble') { dependsOn srgJar }
     }
 } else {
     dependencies {
@@ -178,10 +239,11 @@ if (loader == 'neoforge') {
     }
     tasks.named('processResources', ProcessResources) {
         inputs.properties props
-        filesMatching('fabric.mod.json') { expand props }
+        filesMatching(['fabric.mod.json', '*.mixins.json']) { expand props }
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xmaxerrs', '1000']
 }

@@ -1,6 +1,10 @@
 package com.sinuxoff.ingamemessenger.client;
 
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 

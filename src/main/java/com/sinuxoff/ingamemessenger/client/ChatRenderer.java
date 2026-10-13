@@ -3,7 +3,11 @@ package com.sinuxoff.ingamemessenger.client;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -528,11 +532,14 @@ final class ChatRenderer {
         }
         var conn = Minecraft.getInstance().getConnection();
         PlayerInfo info = conn == null ? null : id != null ? conn.getPlayerInfo(id) : name != null ? conn.getPlayerInfo(name) : null;
-        var skin = info != null ? info.getSkin()
-                : DefaultPlayerSkin.get(id != null ? id : UUID.nameUUIDFromBytes(String.valueOf(name).getBytes()));
-            // face and hat layer, with rounded corners
+        UUID skinId = id != null ? id : UUID.nameUUIDFromBytes(String.valueOf(name).getBytes());
+        //? if >=1.20.2 {
+        var face = Compat.skinTexture(info != null ? info.getSkin() : DefaultPlayerSkin.get(skinId));
+        //?} else {
+        /*var face = info != null ? info.getSkinLocation() : DefaultPlayerSkin.getDefaultSkin(skinId);
+        *///?}
+        // face and hat layer, with rounded corners
         float r = size * 0.3f, k = 1 / 64f;
-        var face = Compat.skinTexture(skin);
         Gfx.pixelated(face);
         Library.roundedTex(g, face, x, y, size, size, r, 8 * k, 8 * k, 16 * k, 16 * k, alpha);
         Library.roundedTex(g, face, x, y, size, size, r, 40 * k, 8 * k, 48 * k, 16 * k, alpha);

@@ -1,7 +1,13 @@
 package com.sinuxoff.ingamemessenger.hooks;
 
+//? if >=1.21 {
 import net.minecraft.client.DeltaTracker;
+//?}
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,7 +39,7 @@ public abstract class GuiMixin {
             ci.cancel();
         }
     }
-    *///?} else {
+    *///?} else if >=1.21 {
     @Inject(method = "render", at = @At("HEAD"))
     private void ingamemessenger$start(GuiGraphics g, DeltaTracker delta, CallbackInfo ci) {
         ClientEvents.hudStart(g, delta.getGameTimeDeltaPartialTick(false));
@@ -50,5 +56,41 @@ public abstract class GuiMixin {
             ci.cancel();
         }
     }
-    //?}
+    //?} else if >=1.20 {
+    /*@Inject(method = "render", at = @At("HEAD"))
+    private void ingamemessenger$start(GuiGraphics g, float partialTick, CallbackInfo ci) {
+        ClientEvents.hudStart(g, partialTick);
+    }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    private void ingamemessenger$end(GuiGraphics g, float partialTick, CallbackInfo ci) {
+        ClientEvents.hudEnd(g);
+    }
+
+    @Inject(method = {"renderHotbar", "renderPlayerHealth", "renderVehicleHealth", "renderExperienceBar", "renderJumpMeter",
+            "renderSelectedItemName"}, at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$hotbar(CallbackInfo ci) {
+        if (ClientEvents.hideHotbar()) {
+            ci.cancel();
+        }
+    }
+    *///?} else {
+    /*@Inject(method = "render", at = @At("HEAD"))
+    private void ingamemessenger$start(com.mojang.blaze3d.vertex.PoseStack pose, float partialTick, CallbackInfo ci) {
+        ClientEvents.hudStart(new GuiGraphics(pose), partialTick);
+    }
+
+    @Inject(method = "render", at = @At("TAIL"))
+    private void ingamemessenger$end(com.mojang.blaze3d.vertex.PoseStack pose, float partialTick, CallbackInfo ci) {
+        ClientEvents.hudEnd(new GuiGraphics(pose));
+    }
+
+    @Inject(method = {"renderHotbar", "renderPlayerHealth", "renderVehicleHealth", "renderExperienceBar", "renderJumpMeter",
+            "renderSelectedItemName"}, at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$hotbar(CallbackInfo ci) {
+        if (ClientEvents.hideHotbar()) {
+            ci.cancel();
+        }
+    }
+    *///?}
 }

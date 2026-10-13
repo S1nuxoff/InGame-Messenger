@@ -24,7 +24,11 @@ final class AiContext {
     static String system() {
         Minecraft mc = Minecraft.getInstance();
         var p = mc.player;
+        //? if >=1.19.4 {
         String lang = mc.getLanguageManager().getSelected();
+        //?} else {
+        /*String lang = mc.getLanguageManager().getSelected().getCode();
+        *///?}
         StringBuilder b = new StringBuilder();
         b.append("You are Gemini, an assistant inside the Minecraft chat (the InGame Messenger mod), talking with the player ")
                 .append(p != null ? p.getGameProfile().getName() : "?").append(".\n")
@@ -82,13 +86,18 @@ final class AiContext {
                 p.getHealth(), p.getMaxHealth(), p.getArmorValue(), p.getFoodData().getFoodLevel(), p.getFoodData().getSaturationLevel(),
                 p.experienceLevel, p.getAirSupply(), p.getMaxAirSupply()));
         b.append("Game mode: ").append(mc.gameMode != null ? mc.gameMode.getPlayerMode().getName() : "?")
-                .append(", difficulty: ").append(level.getDifficulty().getSerializedName()).append('\n');
+                .append(", difficulty: ").append(level.getDifficulty()./*? if >=1.19.3 {*/getSerializedName/*?} else {*//*getKey*//*?}*/()).append('\n');
         if (!p.getActiveEffects().isEmpty()) {
             StringBuilder e = new StringBuilder();
             for (var eff : p.getActiveEffects()) {
-                e.append(e.length() > 0 ? ", " : "").append(eff.getEffect().value().getDisplayName().getString())
+                //? if >=1.20.5 {
+                var effect = eff.getEffect().value();
+                //?} else {
+                /*var effect = eff.getEffect();
+                *///?}
+                e.append(e.length() > 0 ? ", " : "").append(effect.getDisplayName().getString())
                         .append(eff.getAmplifier() > 0 ? " " + (eff.getAmplifier() + 1) : "")
-                        .append(eff.isInfiniteDuration() ? "" : " (" + eff.getDuration() / 20 + "s)");
+                        .append(/*? if >=1.19.4 {*/eff.isInfiniteDuration()/*?} else {*//*false*//*?}*/ ? "" : " (" + eff.getDuration() / 20 + "s)");
             }
             b.append("Effects: ").append(e).append('\n');
         }

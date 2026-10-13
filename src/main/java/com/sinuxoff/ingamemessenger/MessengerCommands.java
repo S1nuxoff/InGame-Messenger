@@ -52,7 +52,15 @@ final class MessengerCommands {
                             return changed(ctx.getSource(), d == 0 ? "voice messages kept forever" : "voice messages kept " + d + " days");
                         }))));
         if (DEV) {
-            root.then(Commands.literal("test").executes(ctx -> {
+            root.then(Commands.literal("clients").executes(ctx -> {
+                        StringBuilder b = new StringBuilder();
+                        for (var p : ctx.getSource().getServer().getPlayerList().getPlayers()) {
+                            b.append(b.length() > 0 ? ", " : "").append(p.getGameProfile().getName())
+                                    .append(InGameMessenger.hasClient(p) ? ": messenger" : ": plain chat");
+                        }
+                        return done(ctx.getSource(), b.length() > 0 ? b.toString() : "nobody on");
+                    }))
+                    .then(Commands.literal("test").executes(ctx -> {
                         TestChat.start(ctx.getSource().getServer(), ctx.getSource().getTextName());
                         return done(ctx.getSource(), "test chat started");
                     }))
@@ -78,7 +86,11 @@ final class MessengerCommands {
     }
 
     private static int done(CommandSourceStack src, String what) {
+        //? if >=1.20 {
         src.sendSuccess(() -> Component.literal("InGame Messenger: " + what), true);
+        //?} else {
+        /*src.sendSuccess(Component.literal("InGame Messenger: " + what), true);
+        *///?}
         return 1;
     }
 }

@@ -27,6 +27,15 @@ final class MessengerCommand implements TabExecutor {
 
     private String run(String[] a) {
         ChatServer chat = plugin.chat;
+        // test servers: who has the messenger
+        if (a.length == 1 && a[0].equals("clients") && Boolean.getBoolean("ingamemessenger.dev") && chat != null) {
+            StringBuilder b = new StringBuilder();
+            for (var p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                b.append(b.length() > 0 ? ", " : "").append(p.getName())
+                        .append(chat.hasClient(p.getUniqueId()) ? ": messenger" : ": plain chat");
+            }
+            return b.length() > 0 ? b.toString() : "nobody on";
+        }
         if (a.length == 1 && a[0].equals("reload")) {
             plugin.settings.reload();
             if (chat != null) {

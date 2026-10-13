@@ -8,7 +8,7 @@ A messenger inside the Minecraft chat.
 
 [![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1%20to%2026.3-62B47A)](#supported-versions)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.19.2%20to%2026.3-62B47A)](#supported-versions)
 [![NeoForge](https://img.shields.io/badge/NeoForge-supported-E68C37)](#supported-versions)
 [![Fabric](https://img.shields.io/badge/Fabric-supported-C6BBA5)](#supported-versions)
 [![Quilt](https://img.shields.io/badge/Quilt-supported-8A5CF5)](#supported-versions)
@@ -21,7 +21,7 @@ A messenger inside the Minecraft chat.
 
 InGame Messenger replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
 custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. It runs on
-NeoForge, Fabric, Quilt and Forge, from Minecraft 1.21.1 to 26.3, and the server side also runs as a plugin on Paper,
+NeoForge, Fabric, Quilt and Forge, from Minecraft 1.19.2 to 26.3, and the server side also runs as a plugin on Paper,
 Spigot, Purpur and Folia.
 
 Players install the mod; the server runs either the mod or the plugin. Clients and servers on different loaders work
@@ -83,6 +83,8 @@ together.
 
 | Minecraft          | NeoForge | Fabric | Quilt |    Forge     | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
 |--------------------|:--------:|:------:|:-----:|:------------:|:------------------------------:|:--------------:|:----:|
+| 1.19.2             |    —     |   ✓    |   ✓   |      ✓       |               —                |       —        |  17  |
+| 1.20.1             |    —     |   ✓    |   ✓   |      ✓       |               ✓                |       —        |  17  |
 | 1.21.1             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       —        |  21  |
 | 1.21.4             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
 | 1.21.5             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
@@ -101,13 +103,13 @@ Forge builds are made for one Minecraft release each, as Forge itself is.
 
 ### Server plugin
 
-One plugin jar covers every version in the table. Folia is marked where Folia itself has a release. Players join a
+One plugin jar covers every version in the table from 1.20.1. Folia is marked where Folia itself has a release. Players join a
 server with the plugin with the mod on any loader.
 
 Velocity and BungeeCord work too: install the mod or the plugin on the servers behind the proxy, nothing on the proxy.
 Each server keeps its own chat. See [Proxies](docs/server.md#proxies-velocity-bungeecord).
 
-Older Minecraft versions are planned.
+Minecraft 1.18.2 and 1.16.5 are planned.
 
 ## Installation
 

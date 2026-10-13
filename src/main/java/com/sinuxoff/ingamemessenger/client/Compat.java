@@ -37,7 +37,7 @@ public final class Compat {
         //? if >=26.1 {
         /*return new GuiMessage(m.addedTime(), text, m.signature(), m.source(), m.tag());
         *///?} else {
-        return new GuiMessage(m.addedTime(), text, m.signature(), m.tag());
+        return new GuiMessage(m.addedTime(), text, m./*? if >=1.19.3 {*/signature/*?} else {*//*headerSignature*//*?}*/(), m.tag());
         //?}
     }
 
@@ -46,7 +46,7 @@ public final class Compat {
         //? if >=26.1 {
         /*return new GuiMessage(m.addedTime(), text, m.signature(), m.source(), tag);
         *///?} else {
-        return new GuiMessage(m.addedTime(), text, m.signature(), tag);
+        return new GuiMessage(m.addedTime(), text, m./*? if >=1.19.3 {*/signature/*?} else {*//*headerSignature*//*?}*/(), tag);
         //?}
     }
 
@@ -55,12 +55,20 @@ public final class Compat {
         java.util.List<net.minecraft.advancements.DisplayInfo> out = new java.util.ArrayList<>();
         //? if >=26.3 {
         /*var tree = conn.getAdvancements().tree();
-        *///?} else {
+        *///?} else if >=1.20.2 {
         var tree = conn.getAdvancements().getTree();
         //?}
+        //? if >=1.20.2 {
         for (var node : tree.nodes()) {
             node.holder().value().display().ifPresent(out::add);
         }
+        //?} else {
+        /*for (var adv : conn.getAdvancements().getAdvancements().getAllAdvancements()) {
+            if (adv.getDisplay() != null) {
+                out.add(adv.getDisplay());
+            }
+        }
+        *///?}
         return out;
     }
 
@@ -129,7 +137,7 @@ public final class Compat {
     /*public static net.minecraft.resources.ResourceLocation skinTexture(net.minecraft.world.entity.player.PlayerSkin skin) {
         return skin.body().texturePath();
     }
-    *///?} else {
+    *///?} else if >=1.20.2 {
     public static net.minecraft.resources.ResourceLocation skinTexture(net.minecraft.client.resources.PlayerSkin skin) {
         return skin.texture();
     }

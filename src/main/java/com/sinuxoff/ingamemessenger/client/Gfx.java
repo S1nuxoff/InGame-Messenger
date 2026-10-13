@@ -2,7 +2,11 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -252,7 +256,7 @@ public final class Gfx {
                 b.addVertex(m, qxy[k * 2], qxy[k * 2 + 1], 0).setUv(quv[k * 2], quv[k * 2 + 1]).setColor(col[k]);
             }
         });
-        *///?} else {
+        *///?} else if >=1.21 {
         Matrix4f m = g.pose().last().pose();
         g.flush();
         com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, tex);
@@ -266,7 +270,21 @@ public final class Gfx {
         com.mojang.blaze3d.systems.RenderSystem.disableCull();
         com.mojang.blaze3d.vertex.BufferUploader.drawWithShader(b.buildOrThrow());
         com.mojang.blaze3d.systems.RenderSystem.enableCull();
-        //?}
+        //?} else {
+        /*Matrix4f m = g.pose().last().pose();
+        g.flush();
+        com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, tex);
+        com.mojang.blaze3d.systems.RenderSystem.setShader(net.minecraft.client.renderer.GameRenderer::getPositionTexColorShader);
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+        com.mojang.blaze3d.vertex.BufferBuilder b = com.mojang.blaze3d.vertex.Tesselator.getInstance().getBuilder();
+        b.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.TRIANGLE_FAN, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR);
+        for (int k = 0; k < n; k++) {
+            b.vertex(m, xy[k * 2], xy[k * 2 + 1], 0).uv(uv[k * 2], uv[k * 2 + 1]).color(255, 255, 255, a).endVertex();
+        }
+        com.mojang.blaze3d.systems.RenderSystem.disableCull();
+        com.mojang.blaze3d.vertex.BufferUploader.drawWithShader(b.end());
+        com.mojang.blaze3d.systems.RenderSystem.enableCull();
+        *///?}
     }
 
     /** Quads with a color per corner (gradients): four points per quad in xy, one color per point in argb. */
@@ -282,7 +300,7 @@ public final class Gfx {
                 b.addVertex(m, xy[k * 2], xy[k * 2 + 1], 0).setColor(argb[k]);
             }
         });
-        *///?} else {
+        *///?} else if >=1.21 {
         Matrix4f m = g.pose().last().pose();
         g.flush();
         com.mojang.blaze3d.systems.RenderSystem.enableBlend();
@@ -294,7 +312,20 @@ public final class Gfx {
             b.addVertex(m, xy[k * 2], xy[k * 2 + 1], 0).setColor(argb[k]);
         }
         com.mojang.blaze3d.vertex.BufferUploader.drawWithShader(b.buildOrThrow());
-        //?}
+        //?} else {
+        /*Matrix4f m = g.pose().last().pose();
+        g.flush();
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+        com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
+        com.mojang.blaze3d.systems.RenderSystem.setShader(net.minecraft.client.renderer.GameRenderer::getPositionColorShader);
+        com.mojang.blaze3d.vertex.BufferBuilder b = com.mojang.blaze3d.vertex.Tesselator.getInstance().getBuilder();
+        b.begin(com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS, com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR);
+        for (int k = 0; k < n; k++) {
+            int c = argb[k];
+            b.vertex(m, xy[k * 2], xy[k * 2 + 1], 0).color(c >> 16 & 255, c >> 8 & 255, c & 255, c >>> 24).endVertex();
+        }
+        com.mojang.blaze3d.vertex.BufferUploader.drawWithShader(b.end());
+        *///?}
     }
 
     //? if >=1.21.6 {
@@ -420,7 +451,7 @@ public final class Gfx {
         *///?} else if >=1.21.4 {
         /*Minecraft.getInstance().gameRenderer.processBlurEffect();
         Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
-        *///?} else {
+        *///?} else if >=1.20.5 {
         Minecraft.getInstance().gameRenderer.processBlurEffect(partialTick);
         Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
         //?}
@@ -455,8 +486,10 @@ public final class Gfx {
     static float partialTick() {
         //? if >=1.21.4 {
         /*return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
-        *///?} else {
+        *///?} else if >=1.21 {
         return Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
-        //?}
+        //?} else {
+        /*return Minecraft.getInstance().getFrameTime();
+        *///?}
     }
 }

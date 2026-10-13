@@ -21,6 +21,15 @@ public final class InGameMessenger {
     public static final String MOD_ID = "ingamemessenger";
     public static final Logger LOG = LoggerFactory.getLogger("InGameMessenger");
 
+    /** A resource location in the mod's namespace. */
+    public static net.minecraft.resources.ResourceLocation id(String path) {
+        //? if >=1.21 {
+        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        //?} else {
+        /*return new net.minecraft.resources.ResourceLocation(MOD_ID, path);
+        *///?}
+    }
+
     private InGameMessenger() {
     }
 
@@ -154,33 +163,58 @@ public final class InGameMessenger {
     };
 
     public static void toClient(Packet packet) {
-        switch (packet) {
-            case Welcome p -> onWelcome.accept(p);
-            case StickerIndex p -> onStickerIndex.accept(p);
-            case StickerData p -> onStickerData.accept(p);
-            case Show p -> onShow.accept(p);
-            case Tag p -> onTag.accept(p);
-            case Reactions p -> onReactions.accept(p);
-            case HistoryPage p -> onHistory.accept(p);
-            case TypingState p -> onTypingState.accept(p);
-            case Features p -> onFeatures.accept(p);
-            case VoiceShow p -> onVoiceShow.accept(p);
-            case Edited p -> onEdited.accept(p);
-            case Deleted p -> onDeleted.accept(p);
-            case VoiceData p -> onVoiceData.accept(p);
-            case ImageShow p -> onImageShow.accept(p);
-            case ImageData p -> onImageData.accept(p);
-            case SearchRes p -> onSearch.accept(p);
-            case PollShow p -> onPollShow.accept(p);
-            case ReadState p -> onReadState.accept(p);
-            case DmShow p -> onDmShow.accept(p);
-            case Route p -> onRoute.accept(p);
-            case DmHistory p -> onDmHistory.accept(p);
-            case DmReadState p -> onDmReadState.accept(p);
-            case DmChats p -> onDmChats.accept(p);
-            case ReadAll p -> onReadAll.accept(p);
-            case PollState p -> onPollState.accept(p);
-            default -> LOG.warn("Unexpected packet for the client: {}", packet.type().id());
+        if (packet instanceof Welcome p) {
+            onWelcome.accept(p);
+        } else if (packet instanceof StickerIndex p) {
+            onStickerIndex.accept(p);
+        } else if (packet instanceof StickerData p) {
+            onStickerData.accept(p);
+        } else if (packet instanceof Show p) {
+            onShow.accept(p);
+        } else if (packet instanceof Tag p) {
+            onTag.accept(p);
+        } else if (packet instanceof Reactions p) {
+            onReactions.accept(p);
+        } else if (packet instanceof HistoryPage p) {
+            onHistory.accept(p);
+        } else if (packet instanceof TypingState p) {
+            onTypingState.accept(p);
+        } else if (packet instanceof Features p) {
+            onFeatures.accept(p);
+        } else if (packet instanceof VoiceShow p) {
+            onVoiceShow.accept(p);
+        } else if (packet instanceof Edited p) {
+            onEdited.accept(p);
+        } else if (packet instanceof Deleted p) {
+            onDeleted.accept(p);
+        } else if (packet instanceof VoiceData p) {
+            onVoiceData.accept(p);
+        } else if (packet instanceof ImageShow p) {
+            onImageShow.accept(p);
+        } else if (packet instanceof ImageData p) {
+            onImageData.accept(p);
+        } else if (packet instanceof SearchRes p) {
+            onSearch.accept(p);
+        } else if (packet instanceof PollShow p) {
+            onPollShow.accept(p);
+        } else if (packet instanceof ReadState p) {
+            onReadState.accept(p);
+        } else if (packet instanceof DmShow p) {
+            onDmShow.accept(p);
+        } else if (packet instanceof Route p) {
+            onRoute.accept(p);
+        } else if (packet instanceof DmHistory p) {
+            onDmHistory.accept(p);
+        } else if (packet instanceof DmReadState p) {
+            onDmReadState.accept(p);
+        } else if (packet instanceof DmChats p) {
+            onDmChats.accept(p);
+        } else if (packet instanceof ReadAll p) {
+            onReadAll.accept(p);
+        } else if (packet instanceof PollState p) {
+            onPollState.accept(p);
+        } else {
+            LOG.warn("Unexpected packet for the client: {}", packet.type().id());
         }
     }
 }

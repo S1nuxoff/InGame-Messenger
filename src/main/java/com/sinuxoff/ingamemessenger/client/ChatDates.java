@@ -1,7 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -36,7 +40,11 @@ final class ChatDates {
         if (day == today - 1) {
             return Component.translatable("ingamemessenger.date.yesterday").getString();
         }
+        //? if >=1.19.4 {
         String lang = Minecraft.getInstance().getLanguageManager().getSelected();
+        //?} else {
+        /*String lang = Minecraft.getInstance().getLanguageManager().getSelected().getCode();
+        *///?}
         var locale = java.util.Locale.forLanguageTag(lang.replace('_', '-'));
         var date = java.time.LocalDate.ofEpochDay(day);
         String pattern = date.getYear() == java.time.LocalDate.now().getYear() ? "d MMMM" : "d MMMM yyyy";

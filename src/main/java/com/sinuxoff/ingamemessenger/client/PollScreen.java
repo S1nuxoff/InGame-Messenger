@@ -1,6 +1,10 @@
 package com.sinuxoff.ingamemessenger.client;
 
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -88,7 +92,11 @@ final class PollScreen extends BaseScreen {
         EditBox b = new EditBox(font, x + 8, y + 6, w - 16, 10, Component.translatable(hint));
         b.setBordered(false);
         b.setMaxLength(max);
+        //? if >=1.19.4 {
         b.setHint(Component.translatable(hint).withStyle(s -> s.withColor(0x6C7386)));
+        //?} else {
+        /*b.setSuggestion(Component.translatable(hint).getString());
+        *///?}
         addRenderableWidget(b);
         return b;
     }

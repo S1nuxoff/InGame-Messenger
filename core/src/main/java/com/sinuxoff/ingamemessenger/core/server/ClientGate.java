@@ -45,25 +45,23 @@ final class ClientGate implements ServerPlatform {
         if (!platform.settings().plainLines()) {
             return;
         }
-        switch (packet) {
-            case Show p -> say(player, "ingamemessenger.plain.sticker", "<%s> [sticker]", p.name());
-            case VoiceShow p -> say(player, "ingamemessenger.plain.voice", "<%s> [voice message, %s s]",
+        if (packet instanceof Show p) {
+            say(player, "ingamemessenger.plain.sticker", "<%s> [sticker]", p.name());
+        } else if (packet instanceof VoiceShow p) {
+            say(player, "ingamemessenger.plain.voice", "<%s> [voice message, %s s]",
                     p.name(), String.valueOf(Math.max(1, Math.round(p.durationMs() / 1000f))));
-            case ImageShow p -> {
-                int n = p.data().split("\n").length;
-                if (n == 1) {
-                    say(player, "ingamemessenger.plain.picture", "<%s> [picture] %s", p.name(), p.caption());
-                } else {
-                    say(player, "ingamemessenger.plain.pictures", "<%s> [%s pictures] %s", p.name(), String.valueOf(n), p.caption());
-                }
+        } else if (packet instanceof ImageShow p) {
+            int n = p.data().split("\n").length;
+            if (n == 1) {
+                say(player, "ingamemessenger.plain.picture", "<%s> [picture] %s", p.name(), p.caption());
+            } else {
+                say(player, "ingamemessenger.plain.pictures", "<%s> [%s pictures] %s", p.name(), String.valueOf(n), p.caption());
             }
-            case PollShow p -> say(player, "ingamemessenger.plain.poll", "<%s> [poll] %s", p.name(), question(p.json()));
-            case DmShow p -> {
-                if (player.equals(p.to())) {
-                    say(player, "ingamemessenger.plain.dm", "[%s -> you] %s", p.fromName(), p.text());
-                }
-            }
-            default -> {
+        } else if (packet instanceof PollShow p) {
+            say(player, "ingamemessenger.plain.poll", "<%s> [poll] %s", p.name(), question(p.json()));
+        } else if (packet instanceof DmShow p) {
+            if (player.equals(p.to())) {
+                say(player, "ingamemessenger.plain.dm", "[%s -> you] %s", p.fromName(), p.text());
             }
         }
     }

@@ -6,7 +6,9 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+//? if >=1.20.2 {
 import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
+//?}
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -67,7 +69,15 @@ public final class ForgeMod {
         bus.addListener((RegisterCommandsEvent e) -> InGameMessenger.registerCommands(e.getDispatcher()));
         bus.addListener((ServerStartedEvent e) -> InGameMessenger.serverStarted(e.getServer()));
         bus.addListener((ServerStoppedEvent e) -> InGameMessenger.serverStopped());
+        //? if >=1.20.2 {
         bus.addListener((TickEvent.ServerTickEvent.Post e) -> InGameMessenger.serverTick(e.getServer()));
+        //?} else {
+        /*bus.addListener((TickEvent.ServerTickEvent e) -> {
+            if (e.phase == TickEvent.Phase.END) {
+                InGameMessenger.serverTick(e.getServer());
+            }
+        });
+        *///?}
         bus.addListener(net.minecraftforge.eventbus.api.EventPriority.LOWEST, false,
                 (ServerChatEvent e) -> InGameMessenger.chatLine(e.getPlayer(), e.getMessage()));
         bus.addListener((PlayerEvent.PlayerLoggedInEvent e) -> {
@@ -75,7 +85,9 @@ public final class ForgeMod {
                 InGameMessenger.playerJoined(p);
             }
         });
+        //? if >=1.20.2 {
         bus.addListener(ForgeMod::channelsChanged);
+        //?}
         bus.addListener((PlayerEvent.PlayerLoggedOutEvent e) -> {
             if (e.getEntity() instanceof ServerPlayer p) {
                 InGameMessenger.playerLeft(p);
@@ -87,11 +99,12 @@ public final class ForgeMod {
         }
     }
 
+    //? if >=1.20.2 {
     /** Fabric clients list their play channels only after joining, too late for the first Welcome. */
     private static void channelsChanged(ChannelRegistrationChangeEvent e) {
         var server = Platform.get().server();
         if (server == null || e.getType() != ChannelRegistrationChangeEvent.Type.REGISTER
-                || !e.getChannels().contains(Net.type(Packets.Welcome.TYPE).id())) {
+                || !e.getChannels().contains(Net.id(Packets.Welcome.TYPE))) {
             return;
         }
         server.execute(() -> {
@@ -102,4 +115,5 @@ public final class ForgeMod {
             }
         });
     }
+    //?}
 }

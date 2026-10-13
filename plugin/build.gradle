@@ -21,11 +21,13 @@ dependencies {
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
+    // built for Java 17 (servers from 1.20.1) against the 1.21 API, using nothing 1.20 lacks
+    disableAutoTargetJvm()
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.release = 21
+    options.release = 17
 }
 
 processResources {

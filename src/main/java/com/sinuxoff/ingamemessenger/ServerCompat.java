@@ -47,9 +47,11 @@ public final class ServerCompat {
         /*return net.minecraft.network.chat.ComponentSerialization.CODEC
                 .encodeStart(registries.createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE), c)
                 .getOrThrow().toString();
-        *///?} else {
+        *///?} else if >=1.20.5 {
         return net.minecraft.network.chat.Component.Serializer.toJson(c, registries);
-        //?}
+        //?} else {
+        /*return net.minecraft.network.chat.Component.Serializer.toJson(c);
+        *///?}
     }
 
     public static net.minecraft.network.chat.Component fromJson(String json, net.minecraft.core.HolderLookup.Provider registries) {
@@ -57,9 +59,11 @@ public final class ServerCompat {
         /*return net.minecraft.network.chat.ComponentSerialization.CODEC
                 .parse(registries.createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE), com.google.gson.JsonParser.parseString(json))
                 .result().orElse(null);
-        *///?} else {
+        *///?} else if >=1.20.5 {
         return net.minecraft.network.chat.Component.Serializer.fromJson(json, registries);
-        //?}
+        //?} else {
+        /*return net.minecraft.network.chat.Component.Serializer.fromJson(json);
+        *///?}
     }
 
     /** Last known name of a possibly offline player, or null. */

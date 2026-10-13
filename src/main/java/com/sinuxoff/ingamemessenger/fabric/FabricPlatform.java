@@ -82,8 +82,12 @@ final class FabricPlatform implements Platform {
 
     @Override
     public void sendToPlayer(ServerPlayer player, Packet packet) {
-        if (FabricMod.canSend(player, Net.type(packet.type()))) {
+        if (FabricMod.canSend(player, Net.id(packet.type()))) {
+            //? if >=1.20.5 {
             ServerPlayNetworking.send(player, new Net.Payload(packet));
+            //?} else {
+            /*ServerPlayNetworking.send(player, Net.id(packet.type()), Net.buf(packet));
+            *///?}
         }
     }
 }

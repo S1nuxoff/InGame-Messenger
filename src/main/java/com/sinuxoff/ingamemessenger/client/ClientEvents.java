@@ -3,7 +3,11 @@ package com.sinuxoff.ingamemessenger.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import com.sinuxoff.ingamemessenger.InGameMessenger;

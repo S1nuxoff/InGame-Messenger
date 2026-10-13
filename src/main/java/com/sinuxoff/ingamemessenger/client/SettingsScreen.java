@@ -1,7 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
@@ -128,7 +132,11 @@ final class SettingsScreen extends BaseScreen {
             key.setBordered(false);
             key.setMaxLength(120);
             key.setValue(Prefs.geminiKey());
+            //? if >=1.19.4 {
             key.setHint(Component.translatable("ingamemessenger.ai.key_hint").withStyle(s -> s.withColor(0x707070)));
+            //?} else {
+            /*key.setSuggestion(Component.translatable("ingamemessenger.ai.key_hint").getString());
+            *///?}
             Compat.showAs(key, (str, pos) -> net.minecraft.util.FormattedCharSequence.forward(
                     key.isFocused() ? str : str.replaceAll(".", "\u2022"), net.minecraft.network.chat.Style.EMPTY));
             key.setResponder(Prefs::setGeminiKey);
@@ -146,7 +154,11 @@ final class SettingsScreen extends BaseScreen {
                     Ai::forget));
         } else {
             list = new PackList(minecraft, COL, Math.max(30, t + winH() - 34 - listY()), listY());
+            //? if >=1.20.2 {
             list.setX(x);
+            //?} else {
+            /*list.setLeftPos(x);
+            *///?}
             addRenderableWidget(list);
             list.fill();
             shownVersion = Library.allPacks().hashCode();
@@ -246,7 +258,7 @@ final class SettingsScreen extends BaseScreen {
         double scrolled = list.getScrollAmount();
         //?}
         if (max > 0) {
-            int lh = list.getHeight(), barH = Math.max(14, lh * lh / (lh + max));
+            int lh = list.h(), barH = Math.max(14, lh * lh / (lh + max));
             int barY = listY() + (int) ((lh - barH) * scrolled / max);
             Panel.round(g, x + COL - 5, barY + 2, 3, barH - 4, 1, 0x60FFFFFF);
         }
@@ -260,7 +272,7 @@ final class SettingsScreen extends BaseScreen {
         g.fill(0, 0, width, height, 0x50000000);
         Panel.window(g, (width - WIN_W) / 2, top() - 2, WIN_W, winH() + 2);
         if (tab == PACKS && list != null) {
-            Panel.inset(g, left() - 1, listY() - 1, COL + 2, list.getHeight() + 2);
+            Panel.inset(g, left() - 1, listY() - 1, COL + 2, list.h() + 2);
         } else if (tab == CHAT) {
             Panel.round(g, left(), mutedY(), COL, ROW, 7, Glass.FILL);
         }
@@ -353,7 +365,21 @@ final class SettingsScreen extends BaseScreen {
 
     private final class PackList extends ObjectSelectionList<PackEntry> {
         PackList(Minecraft mc, int width, int height, int y) {
+            //? if >=1.20.2 {
             super(mc, width, height, y, 26);
+            //?} else {
+            /*super(mc, width, height, y, y + height, 26);
+            setRenderBackground(false);
+            setRenderTopAndBottom(false);
+            *///?}
+        }
+
+        int h() {
+            //? if >=1.20.2 {
+            return getHeight();
+            //?} else {
+            /*return height;
+            *///?}
         }
 
         void fill() {
@@ -377,7 +403,7 @@ final class SettingsScreen extends BaseScreen {
         @Override
         protected void extractListSeparators(GuiGraphics g) {
         }
-        *///?} else {
+        *///?} else if >=1.20.5 {
         @Override
         protected void renderListBackground(GuiGraphics g) {
         }
@@ -426,13 +452,19 @@ final class SettingsScreen extends BaseScreen {
         public void renderContent(GuiGraphics g, int mx, int my, boolean hovering, float pt) {
             draw(g, getContentY(), getContentX(), getContentWidth(), getContentHeight(), mx, my, hovering);
         }
-        *///?} else {
+        *///?} else if >=1.20 {
         @Override
         public void render(GuiGraphics g, int index, int top, int left, int width, int height, int mx, int my,
                            boolean hovering, float pt) {
             draw(g, top, left, width, height, mx, my, hovering);
         }
-        //?}
+        //?} else {
+        /*@Override
+        public void render(com.mojang.blaze3d.vertex.PoseStack pose, int index, int top, int left, int width, int height, int mx, int my,
+                           boolean hovering, float pt) {
+            draw(new GuiGraphics(pose), top, left, width, height, mx, my, hovering);
+        }
+        *///?}
 
         private void draw(GuiGraphics g, int top, int left, int width, int height, int mx, int my, boolean hovering) {
             if (hovering) {

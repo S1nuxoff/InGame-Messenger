@@ -2,7 +2,11 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.Font;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
@@ -47,7 +51,8 @@ public final class ChatHooks {
     public static boolean transform(ChatComponent chat, Component content, MessageSignature sig, GuiMessageTag tag) {
         Session.sync();
         // the server's "install the mod" line: we have it, even if the server can't tell
-        if (content.getContents() instanceof TranslatableContents t && t.getKey().equals("ingamemessenger.plain.install")) {
+        if (content.getContents() instanceof TranslatableContents t && t.getKey().equals("ingamemessenger.plain.install")
+                || "ingamemessenger.plain.install".equals(content.getStyle().getInsertion())) {
             return true;
         }
         return on() && ChatMessages.transform(chat, content, sig, tag);

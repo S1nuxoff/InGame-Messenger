@@ -114,8 +114,15 @@ final class ServerSide implements ServerPlatform {
     public void say(UUID player, String translationKey, String fallback, String... args) {
         ServerPlayer p = server.getPlayerList().getPlayer(player);
         if (p != null) {
+            //? if >=1.19.4 {
             p.sendSystemMessage(Component.translatableWithFallback(translationKey, fallback, (Object[]) args)
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
+            //?} else {
+            /*// no fallback before 1.19.4: these lines are for players without the mod, who couldn't translate the key;
+            // the key rides along as the insertion, so a client with the mod still knows the line
+            p.sendSystemMessage(Component.literal(String.format(fallback, (Object[]) args))
+                    .withStyle(s -> s.withColor(net.minecraft.ChatFormatting.GRAY).withInsertion(translationKey)));
+            *///?}
         }
     }
 

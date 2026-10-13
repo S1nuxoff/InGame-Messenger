@@ -5,7 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
@@ -430,8 +434,8 @@ final class Library {
             int texW = img.getWidth(), texH = img.getHeight();
             dt.setPixels(null); // uploaded: no need to keep a copy in memory
             ResourceLocation rl = IMG.equals(s.pack())
-                    ? ResourceLocation.fromNamespaceAndPath(InGameMessenger.MOD_ID, "dyn/img/" + Integer.toHexString(s.id().hashCode()) + "_" + s.id().length())
-                    : ResourceLocation.fromNamespaceAndPath(InGameMessenger.MOD_ID, "dyn/" + s.pack().toLowerCase() + "/"
+                    ? InGameMessenger.id("dyn/img/" + Integer.toHexString(s.id().hashCode()) + "_" + s.id().length())
+                    : InGameMessenger.id("dyn/" + s.pack().toLowerCase() + "/"
                     + s.id().toLowerCase().replaceAll("[^a-z0-9_./-]", "_") + (task.thumb ? "_t" : ""));
             Minecraft.getInstance().getTextureManager().register(rl, dt);
             int frames = task.thumb ? 1 : Math.max(1, s.frames());

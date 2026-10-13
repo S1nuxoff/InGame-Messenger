@@ -110,7 +110,7 @@ final class Images {
                 mc.execute(() -> {
                     DynamicTexture dt = Compat.texture("pic", img);
                     Gfx.smooth(dt);
-                    ResourceLocation rl = ResourceLocation.fromNamespaceAndPath("ingamemessenger", "att/" + Long.toHexString(System.nanoTime()));
+                    ResourceLocation rl = InGameMessenger.id("att/" + Long.toHexString(System.nanoTime()));
                     mc.getTextureManager().register(rl, dt);
                     a.thumb = new Thumb(rl, img.getWidth(), img.getHeight());
                     a.w = made.width();
@@ -464,8 +464,7 @@ final class Images {
                     Minecraft.getInstance().execute(() -> {
                         DynamicTexture dt = Compat.texture("pic", img);
                         Gfx.smooth(dt);
-                        ResourceLocation rl = ResourceLocation.fromNamespaceAndPath("ingamemessenger",
-                                "shot/" + Integer.toHexString(s.file().toString().hashCode()) + "_" + Long.toHexString(s.modified()));
+                        ResourceLocation rl = InGameMessenger.id("shot/" + Integer.toHexString(s.file().toString().hashCode()) + "_" + Long.toHexString(s.modified()));
                         Minecraft.getInstance().getTextureManager().register(rl, dt);
                         thumbs.put(s.file(), new Thumb(rl, img.getWidth(), img.getHeight()));
                     });

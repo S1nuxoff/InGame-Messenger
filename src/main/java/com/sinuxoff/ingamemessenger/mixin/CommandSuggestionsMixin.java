@@ -1,6 +1,10 @@
 package com.sinuxoff.ingamemessenger.mixin;
 
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -45,7 +49,12 @@ public abstract class CommandSuggestionsMixin {
     *///?} else {
     @Inject(method = "renderUsage", at = @At("HEAD"), cancellable = true)
     //?}
+    //? if >=1.20 {
     private void ingamemessenger$usage(GuiGraphics g, CallbackInfo ci) {
+    //?} else {
+    /*private void ingamemessenger$usage(com.mojang.blaze3d.vertex.PoseStack pose, CallbackInfo ci) {
+        GuiGraphics g = new GuiGraphics(pose);
+    *///?}
         if (anchorToBottom && screen instanceof ChatScreen && com.sinuxoff.ingamemessenger.client.ChatHooks.on()) {
             ci.cancel();
             ChatInput.renderUsage(g, screen, commandUsage, commandUsagePosition, commandUsageWidth);

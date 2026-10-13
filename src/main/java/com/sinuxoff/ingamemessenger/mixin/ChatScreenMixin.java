@@ -2,7 +2,11 @@ package com.sinuxoff.ingamemessenger.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -65,7 +69,7 @@ public abstract class ChatScreenMixin {
             ChatInput.drawField(g, (ChatScreen) (Object) this);
         }
     }
-    *///?} else {
+    *///?} else if >=1.20 {
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
     private void ingamemessenger$field(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
@@ -75,7 +79,17 @@ public abstract class ChatScreenMixin {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
-    //?}
+    //?} else {
+    /*@WrapOperation(method = "render", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/screens/ChatScreen;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V", ordinal = 0))
+    private void ingamemessenger$field(com.mojang.blaze3d.vertex.PoseStack pose, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (ChatHooks.on()) {
+            ChatInput.drawField(new GuiGraphics(pose), (ChatScreen) (Object) this);
+        } else {
+            op.call(pose, x1, y1, x2, y2, color);
+        }
+    }
+    *///?}
 
     /** Emoji in the input are turned into their codes when sending. */
     @org.spongepowered.asm.mixin.injection.ModifyVariable(method = "handleChatInput", at = @At("HEAD"), argsOnly = true)

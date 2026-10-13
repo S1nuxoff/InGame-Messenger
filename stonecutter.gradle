@@ -7,6 +7,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.148' apply false
     id 'net.minecraftforge.gradle' version '7.0.40' apply false
     id 'net.minecraftforge.jarjar' version '0.2.3' apply false
+    id 'net.minecraftforge.renamer' version '1.1.8' apply false   // Forge before 1.20.6 runs on SRG names
 }
 
 stonecutter.active '1.21.1-neoforge' /* [SC] DO NOT EDIT */

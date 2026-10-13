@@ -2,7 +2,11 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -31,8 +35,8 @@ final class ChatUi {
 
     static {
         for (int i = 0; i < Protocol.BUILT_IN_REACTIONS; i++) {
-            EMOJI[i] = ResourceLocation.fromNamespaceAndPath("ingamemessenger", "textures/gui/emoji/" + i + ".png");
-            EMOJI_SMALL[i] = ResourceLocation.fromNamespaceAndPath("ingamemessenger", "textures/gui/emoji/" + i + "_s.png");
+            EMOJI[i] = InGameMessenger.id("textures/gui/emoji/" + i + ".png");
+            EMOJI_SMALL[i] = InGameMessenger.id("textures/gui/emoji/" + i + "_s.png");
         }
     }
 

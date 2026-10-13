@@ -1,7 +1,12 @@
 package com.sinuxoff.ingamemessenger.client;
 
+import com.sinuxoff.ingamemessenger.InGameMessenger;
 import net.minecraft.client.Minecraft;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -123,7 +128,7 @@ final class ChatDecor {
     /** Inline emoji are written ":pack/id:"; in the text they become a blank glyph of the emoji's width. */
     private static final String EMOJI_CHAR = "\uE000", EMOJI_MARK = "ingamemessenger:emoji:";
     private static final net.minecraft.resources.ResourceLocation EMOJI_FONT =
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("ingamemessenger", "emoji");
+            InGameMessenger.id("emoji");
     private static final java.util.regex.Pattern DECOR =
             java.util.regex.Pattern.compile("@([A-Za-z0-9_]{1,16})|:([A-Za-z0-9_\\-]{1,64})/([A-Za-z0-9_\\-]{1,64}):");
 
@@ -176,7 +181,7 @@ final class ChatDecor {
     static void notifyMention(String who) {
         Minecraft mc = Minecraft.getInstance();
         mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
-                net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL.value(), 1.2f, 0.9f));
+                net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL/*? if >=1.19.3 {*/.value()/*?}*/, 1.2f, 0.9f));
         mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.mention", who).withStyle(s -> s.withColor(MENTION_ME)), false);
     }
 }

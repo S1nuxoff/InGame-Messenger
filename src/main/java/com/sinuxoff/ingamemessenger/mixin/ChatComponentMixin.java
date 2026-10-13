@@ -8,7 +8,11 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.Font;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -54,6 +58,7 @@ public abstract class ChatComponentMixin {
     }
 
     /** Keeps far more lines than vanilla's 100, for the history. */
+    //? if >=1.20.2 {
     @org.spongepowered.asm.mixin.injection.ModifyConstant(method = "addMessageToQueue",
             constant = @org.spongepowered.asm.mixin.injection.Constant(intValue = 100))
     private int ingamemessenger$keepMessages(int max) {
@@ -65,6 +70,19 @@ public abstract class ChatComponentMixin {
     private int ingamemessenger$keepLines(int max) {
         return ChatHooks.keptLines(max);
     }
+    //?} else {
+    /*@org.spongepowered.asm.mixin.injection.ModifyConstant(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;ILnet/minecraft/client/GuiMessageTag;Z)V",
+            constant = @org.spongepowered.asm.mixin.injection.Constant(intValue = 100, ordinal = 0))
+    private int ingamemessenger$keepLines(int max) {
+        return ChatHooks.keptLines(max);
+    }
+
+    @org.spongepowered.asm.mixin.injection.ModifyConstant(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;ILnet/minecraft/client/GuiMessageTag;Z)V",
+            constant = @org.spongepowered.asm.mixin.injection.Constant(intValue = 100, ordinal = 1))
+    private int ingamemessenger$keepMessages(int max) {
+        return ChatHooks.keptMessages(max);
+    }
+    *///?}
 
     /** Our chat scale on top of Minecraft's. */
     @Inject(method = "getScale()D", at = @At("RETURN"), cancellable = true)
@@ -134,7 +152,7 @@ public abstract class ChatComponentMixin {
     private void ingamemessenger$render(GuiGraphics g, Font font, int ticks, int mx, int my, boolean focused, boolean cursor, CallbackInfo ci) {
         ingamemessenger$after(g, ticks, focused);
     }
-    *///?} else {
+    *///?} else if >=1.20.2 {
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     private void ingamemessenger$bubbles(GuiGraphics g, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         ingamemessenger$before(g, tickCount, focused, ci);
@@ -144,7 +162,49 @@ public abstract class ChatComponentMixin {
     private void ingamemessenger$render(GuiGraphics g, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         ingamemessenger$after(g, tickCount, focused);
     }
-    //?}
+    //?} else if >=1.20 {
+    /*@org.spongepowered.asm.mixin.Shadow
+    private boolean isChatFocused() {
+        throw new AssertionError();
+    }
+
+    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$bubbles(GuiGraphics g, int tickCount, int mouseX, int mouseY, CallbackInfo ci) {
+        ingamemessenger$before(g, tickCount, isChatFocused(), ci);
+    }
+
+    @Inject(method = "render", at = @At("RETURN"))
+    private void ingamemessenger$render(GuiGraphics g, int tickCount, int mouseX, int mouseY, CallbackInfo ci) {
+        ingamemessenger$after(g, tickCount, isChatFocused());
+    }
+    *///?} else {
+    /*@org.spongepowered.asm.mixin.Shadow
+    private boolean isChatFocused() {
+        throw new AssertionError();
+    }
+
+    // before 1.20 the chat is drawn from 48 above the screen's bottom; ours is laid out on the whole screen
+    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$bubbles(com.mojang.blaze3d.vertex.PoseStack pose, int tickCount, CallbackInfo ci) {
+        int off = net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledHeight() - 48;
+        pose.pushPose();
+        pose.translate(0, -off, 0);
+        ingamemessenger$before(new GuiGraphics(pose), tickCount, isChatFocused(), ci);
+        if (ci.isCancelled()) {
+            pose.popPose();
+            return;
+        }
+        pose.pushPose();
+        pose.translate(0, off, 0);
+    }
+
+    @Inject(method = "render", at = @At("RETURN"))
+    private void ingamemessenger$render(com.mojang.blaze3d.vertex.PoseStack pose, int tickCount, CallbackInfo ci) {
+        pose.popPose();
+        ingamemessenger$after(new GuiGraphics(pose), tickCount, isChatFocused());
+        pose.popPose();
+    }
+    *///?}
 
     private void ingamemessenger$before(GuiGraphics g, int ticks, boolean focused, CallbackInfo ci) {
         if (!ChatHooks.on()) {
@@ -253,14 +313,22 @@ public abstract class ChatComponentMixin {
     }
 
     /** Messenger messages wrap narrower, leaving room for the face. */
+    //? if >=1.20.2 {
     @WrapOperation(method = "addMessageToDisplayQueue", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/components/ComponentRenderUtils;wrapComponents(Lnet/minecraft/network/chat/FormattedText;ILnet/minecraft/client/gui/Font;)Ljava/util/List;"))
     private List<FormattedCharSequence> ingamemessenger$wrap(FormattedText text, int width, Font font, Operation<List<FormattedCharSequence>> op,
                                                      @Local(argsOnly = true) GuiMessage msg) {
-        if (!ChatHooks.shifted(msg.tag())) {
+        GuiMessageTag tag = msg.tag();
+    //?} else {
+    /*@WrapOperation(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;ILnet/minecraft/client/GuiMessageTag;Z)V", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/components/ComponentRenderUtils;wrapComponents(Lnet/minecraft/network/chat/FormattedText;ILnet/minecraft/client/gui/Font;)Ljava/util/List;"))
+    private List<FormattedCharSequence> ingamemessenger$wrap(FormattedText text, int width, Font font, Operation<List<FormattedCharSequence>> op,
+                                                     @Local(argsOnly = true) GuiMessageTag tag) {
+    *///?}
+        if (!ChatHooks.shifted(tag)) {
             return op.call(text, width, font);
         }
-        return ingamemessenger$messengerLines(op.call(text, width - ChatHooks.AV - 40, font), msg.tag());
+        return ingamemessenger$messengerLines(op.call(text, width - ChatHooks.AV - 40, font), tag);
     }
 
     //? if >=1.21.6 {
@@ -288,7 +356,7 @@ public abstract class ChatComponentMixin {
                                @Local(argsOnly = true) GuiMessage.Line line) {
         ingamemessenger$line(g, font, text, x, y, color, line, (dx, c) -> op.call(g, font, text, dx, y, c));
     }
-    *///?} else {
+    *///?} else if >=1.20 {
     /** Vanilla's dark row is replaced by the bubbles. */
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
@@ -299,12 +367,28 @@ public abstract class ChatComponentMixin {
     }
 
     /** No square scroll bar, we draw a slim one. */
+    //? if >=1.20.2 {
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIIII)V"))
     private void ingamemessenger$scrollBar(GuiGraphics g, int x1, int y1, int x2, int y2, int z, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, z, color);
         }
     }
+    //?} else {
+    /*@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 3))
+    private void ingamemessenger$scrollBar(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(g, x1, y1, x2, y2, color);
+        }
+    }
+
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 4))
+    private void ingamemessenger$scrollBarEdge(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(g, x1, y1, x2, y2, color);
+        }
+    }
+    *///?}
 
     /** No tag bar next to bubbles. */
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
@@ -323,7 +407,46 @@ public abstract class ChatComponentMixin {
         ingamemessenger$line(g, font, text, x, y, color, line, (dx, c) -> op.call(g, font, text, dx, y, c));
         return 0;
     }
-    //?}
+    //?} else {
+    /*// before 1.20 the chat draws on a PoseStack: its fills are GuiComponent's, its text Font.drawShadow
+    private static final String FILL = "Lnet/minecraft/client/gui/components/ChatComponent;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V";
+
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = FILL, ordinal = 0))
+    private void ingamemessenger$row(com.mojang.blaze3d.vertex.PoseStack pose, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(pose, x1, y1, x2, y2, color);
+        }
+    }
+
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = FILL, ordinal = 1))
+    private void ingamemessenger$tagBar(com.mojang.blaze3d.vertex.PoseStack pose, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(pose, x1, y1, x2, y2, color);
+        }
+    }
+
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = FILL, ordinal = 3))
+    private void ingamemessenger$scrollBar(com.mojang.blaze3d.vertex.PoseStack pose, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(pose, x1, y1, x2, y2, color);
+        }
+    }
+
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = FILL, ordinal = 4))
+    private void ingamemessenger$scrollBarEdge(com.mojang.blaze3d.vertex.PoseStack pose, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+        if (!ChatHooks.on()) {
+            op.call(pose, x1, y1, x2, y2, color);
+        }
+    }
+
+    @WrapOperation(method = "render", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/Font;drawShadow(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/util/FormattedCharSequence;FFI)I"))
+    private int ingamemessenger$text(Font font, com.mojang.blaze3d.vertex.PoseStack pose, FormattedCharSequence text, float x, float y, int color,
+                              Operation<Integer> op, @Local GuiMessage.Line line) {
+        ingamemessenger$line(new GuiGraphics(pose), font, text, (int) x, (int) y, color, line, (dx, c) -> op.call(font, pose, text, (float) dx, y, c));
+        return 0;
+    }
+    *///?}
 
     /** Draws a line's text: faded in when new, right of the face, moving with the chat. */
     private static void ingamemessenger$line(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color, GuiMessage.Line line,

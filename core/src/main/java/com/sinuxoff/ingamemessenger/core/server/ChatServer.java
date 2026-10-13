@@ -252,58 +252,71 @@ public final class ChatServer {
         if (!platform.has(player)) {
             return;
         }
-        switch (packet) {
-            case Send p -> sticker(player, name, p);
-            case StickerGet p -> {
-                byte[] data = stickers.image(p.pack(), p.id(), p.thumb());
-                platform.send(player, new StickerData(p.pack(), p.id(), p.thumb(), data == null ? new byte[0] : data));
+        if (packet instanceof Send p) {
+            sticker(player, name, p);
+        } else if (packet instanceof StickerGet p) {
+            byte[] data = stickers.image(p.pack(), p.id(), p.thumb());
+            platform.send(player, new StickerData(p.pack(), p.id(), p.thumb(), data == null ? new byte[0] : data));
+        } else if (packet instanceof React p) {
+            if (EMOJI.matcher(p.emoji()).matches() && cooled(lastReact, player, 150)) {
+                react(player, name, p.id(), p.emoji(), true);
             }
-            case React p -> {
-                if (EMOJI.matcher(p.emoji()).matches() && cooled(lastReact, player, 150)) {
-                    react(player, name, p.id(), p.emoji(), true);
-                }
+        } else if (packet instanceof EditMsg p) {
+            edit(player, p);
+        } else if (packet instanceof DeleteMsg p) {
+            delete(player, p);
+        } else if (packet instanceof ChatTarget p) {
+            if (p.other().equals(NONE) || p.other().equals(player)) {
+                target.remove(player);
+            } else {
+                target.put(player, p.other());
             }
-            case EditMsg p -> edit(player, p);
-            case DeleteMsg p -> delete(player, p);
-            case ChatTarget p -> {
-                if (p.other().equals(NONE) || p.other().equals(player)) {
-                    target.remove(player);
-                } else {
-                    target.put(player, p.other());
-                }
+        } else if (packet instanceof Typing p) {
+            typingFrom(player, name, p.on());
+        } else if (packet instanceof HistoryRequest p) {
+            if (cooled(lastHistory, player, 250)) {
+                db("history page", () -> {
+                    ChatStore.Page page = storage.chat.page(p.before(), player, null);
+                    platform.execute(() -> platform.send(player, new HistoryPage(page.more(), page.json())));
+                });
             }
-            case Typing p -> typingFrom(player, name, p.on());
-            case HistoryRequest p -> {
-                if (cooled(lastHistory, player, 250)) {
-                    db("history page", () -> {
-                        ChatStore.Page page = storage.chat.page(p.before(), player, null);
-                        platform.execute(() -> platform.send(player, new HistoryPage(page.more(), page.json())));
-                    });
-                }
+        } else if (packet instanceof SearchReq p) {
+            if (cooled(lastSearch, player, 250)) {
+                db("search", () -> {
+                    String found = storage.chat.search(p.query(), 40);
+                    platform.execute(() -> platform.send(player, new SearchRes(p.query(), found)));
+                });
             }
-            case SearchReq p -> {
-                if (cooled(lastSearch, player, 250)) {
-                    db("search", () -> {
-                        String found = storage.chat.search(p.query(), 40);
-                        platform.execute(() -> platform.send(player, new SearchRes(p.query(), found)));
-                    });
-                }
-            }
-            case ReadUpTo p -> markRead(player, name, p.mid());
-            case PollCreate p -> poll(player, name, p);
-            case PollVote p -> vote(player, p);
-            case DmSend p -> dms.send(player, name, p);
-            case DmHistoryReq p -> dms.history(player, p);
-            case DmRead p -> dms.read(player, p.other(), p.upTo());
-            case VoiceStart p -> voice.start(player, p);
-            case VoiceChunk p -> voice.chunk(player, name, p);
-            case VoiceGet p -> voice.get(player, p);
-            case AlbumStart p -> images.album(player, p);
-            case ImageStart p -> images.start(player, p);
-            case ImageChunk p -> images.chunk(player, name, p);
-            case ImageLinks p -> images.links(player, name, p);
-            case ImageGet p -> images.get(player, p);
-            default -> platform.warn("Unexpected packet from " + name + ": " + packet.type().id());
+        } else if (packet instanceof ReadUpTo p) {
+            markRead(player, name, p.mid());
+        } else if (packet instanceof PollCreate p) {
+            poll(player, name, p);
+        } else if (packet instanceof PollVote p) {
+            vote(player, p);
+        } else if (packet instanceof DmSend p) {
+            dms.send(player, name, p);
+        } else if (packet instanceof DmHistoryReq p) {
+            dms.history(player, p);
+        } else if (packet instanceof DmRead p) {
+            dms.read(player, p.other(), p.upTo());
+        } else if (packet instanceof VoiceStart p) {
+            voice.start(player, p);
+        } else if (packet instanceof VoiceChunk p) {
+            voice.chunk(player, name, p);
+        } else if (packet instanceof VoiceGet p) {
+            voice.get(player, p);
+        } else if (packet instanceof AlbumStart p) {
+            images.album(player, p);
+        } else if (packet instanceof ImageStart p) {
+            images.start(player, p);
+        } else if (packet instanceof ImageChunk p) {
+            images.chunk(player, name, p);
+        } else if (packet instanceof ImageLinks p) {
+            images.links(player, name, p);
+        } else if (packet instanceof ImageGet p) {
+            images.get(player, p);
+        } else {
+            platform.warn("Unexpected packet from " + name + ": " + packet.type().id());
         }
     }
 

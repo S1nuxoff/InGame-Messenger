@@ -1,7 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -46,16 +50,37 @@ final class Glass {
         /*protected final void extractContents(GuiGraphics g, int mx, int my, float pt) {
         *///?} else if >=1.21.11 {
         /*protected final void renderContents(GuiGraphics g, int mx, int my, float pt) {
-        *///?} else {
+        *///?} else if >=1.19.4 {
         protected final void renderWidget(GuiGraphics g, int mx, int my, float pt) {
-        //?}
+        //?} else {
+        /*public final void renderButton(com.mojang.blaze3d.vertex.PoseStack pose, int mx, int my, float pt) {
+            GuiGraphics g = new GuiGraphics(pose);
+        *///?}
             draw(g, mx, my, pt);
         }
 
         @Override
+        //? if >=1.19.3 {
         protected void updateWidgetNarration(NarrationElementOutput out) {
+        //?} else {
+        /*public void updateNarration(NarrationElementOutput out) {
+        *///?}
             defaultButtonNarrationText(out);
         }
+
+        //? if <1.19.3 {
+        /*int getX() {
+            return x;
+        }
+
+        int getY() {
+            return y;
+        }
+
+        boolean isHovered() {
+            return isHovered;
+        }
+        *///?}
     }
 
     /** Rounded button; primary ones use the accent color. The label can be dynamic. */
@@ -93,6 +118,20 @@ final class Glass {
 
     /** Integer slider: rounded track filled with the accent, round knob, label above. */
     static final class Slider extends AbstractSliderButton {
+        //? if <1.19.3 {
+        /*int getX() {
+            return x;
+        }
+
+        int getY() {
+            return y;
+        }
+
+        boolean isHovered() {
+            return isHovered;
+        }
+        *///?}
+
         private final int min, max;
         private final IntFunction<Component> label;
         private final IntConsumer set;
@@ -122,9 +161,12 @@ final class Glass {
         @Override
         //? if >=26.1 {
         /*public void extractWidgetRenderState(GuiGraphics g, int mx, int my, float pt) {
-        *///?} else {
+        *///?} else if >=1.19.4 {
         public void renderWidget(GuiGraphics g, int mx, int my, float pt) {
-        //?}
+        //?} else {
+        /*public void renderButton(com.mojang.blaze3d.vertex.PoseStack pose, int mx, int my, float pt) {
+            GuiGraphics g = new GuiGraphics(pose);
+        *///?}
             boolean hover = isHovered();
             int x = getX(), y = getY();
             Panel.round(g, x, y, width, height, 7, hover ? FILL_HOVER : FILL);

@@ -3,15 +3,21 @@ package com.sinuxoff.ingamemessenger;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
+//? if >=1.19.3 {
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
+//?}
+//? if >=1.19.3 {
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+//?}
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.GameType;
 import com.sinuxoff.ingamemessenger.core.protocol.Protocol;
 import com.sinuxoff.ingamemessenger.core.server.ChatServer;
+//? if >=1.19.3 {
 import com.sinuxoff.ingamemessenger.mixin.PlayerInfoPacketAccessor;
+//?}
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -104,6 +110,7 @@ final class FakeBots {
         }
     };
 
+    //? if >=1.19.3 {
     private static ClientboundPlayerInfoUpdatePacket addPacket() {
         var pk = new ClientboundPlayerInfoUpdatePacket(EnumSet.of(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER,
                 ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LISTED, ClientboundPlayerInfoUpdatePacket.Action.UPDATE_LATENCY,
@@ -119,12 +126,15 @@ final class FakeBots {
         ((PlayerInfoPacketAccessor) pk).ingamemessenger$setEntries(entries);
         return pk;
     }
+    //?}
 
     static int add(MinecraftServer server) {
         for (String n : NAMES) {
             bots.putIfAbsent(n, new GameProfile(UUIDUtil.createOfflinePlayerUUID(n), n));
         }
+        //? if >=1.19.3 {
         server.getPlayerList().broadcastAll(addPacket());
+        //?}
         return bots.size();
     }
 
@@ -135,14 +145,18 @@ final class FakeBots {
         List<UUID> ids = new ArrayList<>();
         bots.values().forEach(p -> ids.add(ServerCompat.id(p)));
         bots.clear();
+        //? if >=1.19.3 {
         server.getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(ids));
+        //?}
     }
 
     /** New players see the bots too. */
     static void joined(ServerPlayer p) {
+        //? if >=1.19.3 {
         if (!bots.isEmpty()) {
             p.connection.send(addPacket());
         }
+        //?}
     }
 
     private static ChatServer chat() {

@@ -1,6 +1,10 @@
 package com.sinuxoff.ingamemessenger.client;
 
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else {
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+*///?}
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -63,12 +67,13 @@ public abstract class BaseScreen extends Screen {
     protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
         super.extractBackground(g, mx, my, pt);
     }
-    *///?} else {
+    *///?} else if >=1.20 {
     @Override
     public final void render(GuiGraphics g, int mx, int my, float pt) {
         draw(g, mx, my, pt);
     }
 
+    //? if >=1.20.2 {
     /** Vanilla background and widgets. */
     protected final void drawScreen(GuiGraphics g, int mx, int my, float pt) {
         super.render(g, mx, my, pt);
@@ -82,7 +87,33 @@ public abstract class BaseScreen extends Screen {
     protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
         super.renderBackground(g, mx, my, pt);
     }
-    //?}
+    //?} else {
+    /*// before 1.20.2 render doesn't draw the background itself
+    protected final void drawScreen(GuiGraphics g, int mx, int my, float pt) {
+        drawBackground(g, mx, my, pt);
+        super.render(g, mx, my, pt);
+    }
+
+    protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
+        super.renderBackground(g);
+    }
+    *///?}
+    //?} else {
+    /*// before 1.20 screens draw on a PoseStack, wrapped in our GuiGraphics
+    @Override
+    public final void render(com.mojang.blaze3d.vertex.PoseStack pose, int mx, int my, float pt) {
+        draw(new GuiGraphics(pose), mx, my, pt);
+    }
+
+    protected final void drawScreen(GuiGraphics g, int mx, int my, float pt) {
+        drawBackground(g, mx, my, pt);
+        super.render(g.pose(), mx, my, pt);
+    }
+
+    protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
+        super.renderBackground(g.pose());
+    }
+    *///?}
 
     //? if >=1.21.9 {
     /*@Override

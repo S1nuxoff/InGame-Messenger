@@ -18,13 +18,24 @@ public final class FabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         FabricMod.PLATFORM.toServer = p -> {
-            if (ClientPlayNetworking.canSend(Net.type(p.type())) || Net.serverHasMod.getAsBoolean()) {
+            if (ClientPlayNetworking.canSend(Net.id(p.type())) || Net.serverHasMod.getAsBoolean()) {
+                //? if >=1.20.5 {
                 ClientPlayNetworking.send(new Net.Payload(p));
+                //?} else {
+                /*ClientPlayNetworking.send(Net.id(p.type()), Net.buf(p));
+                *///?}
             }
         };
         for (PacketType<?> t : Packets.ALL) {
             if (t.direction() == PacketType.Direction.TO_CLIENT) {
+                //? if >=1.20.5 {
                 ClientPlayNetworking.registerGlobalReceiver(Net.type(t), (p, ctx) -> InGameMessenger.toClient(p.packet()));
+                //?} else {
+                /*ClientPlayNetworking.registerGlobalReceiver(Net.id(t), (client, handler, buf, sender) -> {
+                    var p = Net.read(t, buf);
+                    client.execute(() -> InGameMessenger.toClient(p));
+                });
+                *///?}
             }
         }
         ClientEvents.init();
@@ -42,7 +53,12 @@ public final class FabricClient implements ClientModInitializer {
             //? if >=26.1 {
             /*ScreenEvents.afterExtract(screen).register((s, g, mx, my, delta) -> ClientEvents.screenRender(s, g, mx, my));
             *///?} else {
+            //? if >=1.20 {
             ScreenEvents.afterRender(screen).register((s, g, mx, my, delta) -> ClientEvents.screenRender(s, g, mx, my));
+            //?} else {
+            /*ScreenEvents.afterRender(screen).register((s, pose, mx, my, delta) ->
+                    ClientEvents.screenRender(s, new com.sinuxoff.ingamemessenger.client.compat.GuiGraphics(pose), mx, my));
+            *///?}
             //?}
             //? if >=1.21.9 {
             /*ScreenKeyboardEvents.allowKeyPress(screen).register((s, e) -> !ClientEvents.keyPressed(s, e.key()));

@@ -1,8 +1,13 @@
 package com.sinuxoff.ingamemessenger;
 
+//? if >=1.20.5 {
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+//?} else {
+/*import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
+*///?}
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,12 +20,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 
-/** Core packets as Minecraft custom payloads, one channel per packet type ("ingamemessenger:id"). */
+/**
+ * Core packets as Minecraft custom payloads, one channel per packet type ("ingamemessenger:id"). The payload carries
+ * the core's bytes unchanged.
+ */
 public final class Net {
+    private static final Map<PacketType<?>, ResourceLocation> IDS = new HashMap<>();
+
+    static {
+        for (PacketType<?> t : Packets.ALL) {
+            IDS.put(t, InGameMessenger.id(t.id()));
+        }
+    }
+
+    private Net() {
+    }
+
+    /** The channel of a packet type. */
+    public static ResourceLocation id(PacketType<?> t) {
+        return IDS.get(t);
+    }
+
+    //? if >=1.20.5 {
     public record Payload(Packet packet) implements CustomPacketPayload {
         @Override
         public Type<Payload> type() {
-            return TYPES.get(packet.type());
+            return Net.type(packet.type());
         }
     }
 
@@ -28,18 +53,14 @@ public final class Net {
 
     static {
         for (PacketType<?> t : Packets.ALL) {
-            TYPES.put(t, new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Protocol.NAMESPACE, t.id())));
+            TYPES.put(t, new CustomPacketPayload.Type<>(IDS.get(t)));
         }
-    }
-
-    private Net() {
     }
 
     public static CustomPacketPayload.Type<Payload> type(PacketType<?> t) {
         return TYPES.get(t);
     }
 
-    /** Passes the core's bytes through unchanged. */
     public static StreamCodec<ByteBuf, Payload> codec(PacketType<?> t) {
         return StreamCodec.of((buf, p) -> buf.writeBytes(Protocol.encode(p.packet())), buf -> {
             byte[] data = new byte[buf.readableBytes()];
@@ -47,6 +68,19 @@ public final class Net {
             return new Payload(Protocol.decode(t, data));
         });
     }
+    //?} else {
+    /*// before 1.20.5 a custom payload is a channel and a buffer
+
+    public static FriendlyByteBuf buf(Packet p) {
+        return new FriendlyByteBuf(Unpooled.wrappedBuffer(Protocol.encode(p)));
+    }
+
+    public static Packet read(PacketType<?> t, FriendlyByteBuf buf) {
+        byte[] data = new byte[buf.readableBytes()];
+        buf.readBytes(data);
+        return Protocol.decode(t, data);
+    }
+    *///?}
 
     /** Set by the client: whether the server answered with a matching Welcome. */
     public static volatile BooleanSupplier serverReady = () -> false;

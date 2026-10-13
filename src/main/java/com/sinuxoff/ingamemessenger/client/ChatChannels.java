@@ -88,7 +88,7 @@ final class ChatChannels {
         }
         if (ch != null && !mineMsg && (!ch.equals(channel) || !(ChatMotion.chatOpen(mc)))) {
             mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
-                    net.minecraft.sounds.SoundEvents.NOTE_BLOCK_CHIME.value(), 1.4f, 0.8f));
+                    net.minecraft.sounds.SoundEvents.NOTE_BLOCK_CHIME/*? if >=1.19.3 {*/.value()/*?}*/, 1.4f, 0.8f));
         }
     }
 
