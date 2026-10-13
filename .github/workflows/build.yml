@@ -49,5 +49,6 @@ jobs:
             versions/*/build/libs/ingamemessenger-*.jar
             plugin/build/libs/ingamemessenger-plugin-*.jar
             !versions/*/build/libs/*-slim.jar
+            !versions/*/build/libs/*-mojmap.jar
           if-no-files-found: error
           retention-days: 7
