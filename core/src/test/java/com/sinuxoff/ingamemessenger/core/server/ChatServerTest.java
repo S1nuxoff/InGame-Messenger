@@ -246,6 +246,16 @@ class ChatServerTest {
     }
 
     @Test
+    void aClientMaySayHelloFirst() {
+        p.online.put(D, "Dan");
+        hello(s, D);
+        assertEquals(List.of(Welcome.class, Features.class), p.got(D).stream().limit(2).map(Object::getClass).toList());
+        p.clear();
+        hello(s, D);
+        assertTrue(p.got(D).isEmpty(), "once");
+    }
+
+    @Test
     void playersWithoutTheModGetPlainLines() {
         p.online.put(D, "Dan");
         s.joined(D);

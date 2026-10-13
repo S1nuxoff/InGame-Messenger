@@ -16,6 +16,8 @@ import com.sinuxoff.ingamemessenger.core.protocol.Protocol;
 public final class Session {
     /** How long to wait for Welcome before saying the server doesn't have the mod. */
     private static final int WAIT_TICKS = 100;
+    /** Without Welcome by then, we say Hello first: a server whose loader didn't see our channels answers it. */
+    private static final int HELLO_TICKS = 20, HELLO_AGAIN_TICKS = 60;
 
     /** The connection that got a matching Welcome and then Features. */
     private static Object welcomed;
@@ -70,6 +72,9 @@ public final class Session {
         if (c != current) {
             current = c;
             ticks = 0;
+        }
+        if (c != null && answered != c && ticks <= WAIT_TICKS && (ticks + 1 == HELLO_TICKS || ticks + 1 == HELLO_AGAIN_TICKS)) {
+            Net.toServer(new Hello(Protocol.VERSION, Platform.get().modVersion())); // dropped unless the server has our channels
         }
         if (c != null && ticks <= WAIT_TICKS && ++ticks > WAIT_TICKS) {
             if (answered != c) {

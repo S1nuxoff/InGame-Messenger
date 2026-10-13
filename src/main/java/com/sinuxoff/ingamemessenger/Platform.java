@@ -3,6 +3,7 @@ package com.sinuxoff.ingamemessenger;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
+import com.sinuxoff.ingamemessenger.core.server.ModSettings;
 
 import java.nio.file.Path;
 import java.util.List;

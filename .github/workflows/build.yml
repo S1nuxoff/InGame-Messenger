@@ -32,14 +32,15 @@ jobs:
           restore-keys: minecraft-
 
       # downloads from Mojang and the loaders' mavens time out now and then: one retry
-      - name: Build every version
-        run: ./gradlew :core:test buildAll --stacktrace || (sleep 30 && ./gradlew :core:test buildAll --stacktrace)
+      - name: Build every version and the plugin
+        run: ./gradlew :core:test buildAll :plugin:build --stacktrace || (sleep 30 && ./gradlew :core:test buildAll :plugin:build --stacktrace)
 
       - uses: actions/upload-artifact@v4
         with:
           name: ingamemessenger-jars
           path: |
             versions/*/build/libs/ingamemessenger-*.jar
+            plugin/build/libs/ingamemessenger-plugin-*.jar
             !versions/*/build/libs/*-slim.jar
           if-no-files-found: error
           retention-days: 7

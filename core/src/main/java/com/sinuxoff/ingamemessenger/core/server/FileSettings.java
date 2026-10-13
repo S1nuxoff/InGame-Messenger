@@ -1,6 +1,5 @@
-package com.sinuxoff.ingamemessenger;
+package com.sinuxoff.ingamemessenger.core.server;
 
-import com.sinuxoff.ingamemessenger.core.server.ChatServer;
 import com.sinuxoff.ingamemessenger.core.storage.DatabaseConfig;
 import com.sinuxoff.ingamemessenger.core.storage.StorageConfig;
 
@@ -10,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * config/ingamemessenger/server.toml. A small TOML subset: sections and key = value lines. Missing or invalid values
@@ -87,10 +87,12 @@ public final class FileSettings implements ModSettings {
             FILES_TYPE, S3_ENDPOINT, S3_REGION, S3_BUCKET, S3_ACCESS, S3_SECRET, S3_PATH_STYLE, S3_PREFIX};
 
     private final Path file;
+    private final Consumer<String> warn;
     private final Map<Key, Object> values = new LinkedHashMap<>();
 
-    public FileSettings(Path file) {
+    public FileSettings(Path file, Consumer<String> warn) {
         this.file = file;
+        this.warn = warn;
         reload();
     }
 
@@ -130,13 +132,13 @@ public final class FileSettings implements ModSettings {
                         if (v != null) {
                             values.put(k, v);
                         } else {
-                            InGameMessenger.LOG.warn("{}: invalid value for [{}] {}, using the default", file, section, name);
+                            warn.accept(file + ": invalid value for [" + section + "] " + name + ", using the default");
                         }
                     }
                 }
             }
         } catch (IOException e) {
-            InGameMessenger.LOG.warn("Can't read {}, using defaults: {}", file, e.toString());
+            warn.accept("Can't read " + file + ", using defaults: " + e);
             return ALL.length; // don't overwrite a file that couldn't be read
         }
         return found;
@@ -179,7 +181,7 @@ public final class FileSettings implements ModSettings {
             Files.createDirectories(file.getParent());
             Files.writeString(file, b.toString().stripTrailing() + "\n", StandardCharsets.UTF_8);
         } catch (IOException e) {
-            InGameMessenger.LOG.warn("Can't write {}: {}", file, e.toString());
+            warn.accept("Can't write " + file + ": " + e);
         }
     }
 

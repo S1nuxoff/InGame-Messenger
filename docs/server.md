@@ -19,11 +19,16 @@ storage, sticker packs and commands.
 
 ## Installation
 
-1. Download the jar for your Minecraft version and loader (NeoForge, Fabric or Forge) and put it in `mods/`. On Fabric,
-   Fabric API is required.
-2. Start the server. The mod creates `config/ingamemessenger/` with `server.toml` and the `stickers/` and `emoji/`
-   folders.
-3. Players install the same version of the mod on their client to get the messenger. See
+1. On a modded server, download the jar for your Minecraft version and loader (NeoForge, Fabric or Forge) and put it in
+   `mods/`. On Fabric, Fabric API is required.
+
+   On Paper, Spigot, Purpur or Folia, put the plugin's jar in `plugins/`. One jar covers 1.21.1 and newer (Folia from
+   1.21.4); it needs Java 21. On first start the server downloads the plugin's libraries (the H2 database and the Opus
+   codec) from Maven Central.
+2. Start the server. It creates `config/ingamemessenger/` with `server.toml` and the `stickers/` and `emoji/`
+   folders. With the plugin this folder is `plugins/InGameMessenger/`; everything in it works the same.
+3. Players install the same version of the mod on their client to get the messenger, on any loader: a NeoForge client
+   works with a Fabric server or with the plugin, and so on. See
    [Players without the mod](#players-without-the-mod) for everyone else.
 
 Nothing else is required. Without changes the server stores the history in an H2 database inside the world folder
@@ -45,6 +50,8 @@ config/ingamemessenger/
   voice/               voice messages (when storage.type = "local")
   images/              pictures (when storage.type = "local" and images.provider = "server")
 ```
+
+With the plugin, `config/ingamemessenger/` is `plugins/InGameMessenger/`, and `<world>` is the main world's folder.
 
 Players have their own settings in `config/ingamemessenger/client.json` on their computer.
 
@@ -279,7 +286,8 @@ fits in 900 KB.
 
 ## Players without the mod
 
-The mod never keeps anyone out. Players can always join, whatever they have installed:
+The mod and the plugin never keep anyone out. Players can always join, whatever they have installed. "Server with the
+mod" below also means a server with the plugin.
 
 | Client                         | Server with the mod                                   | Server without the mod |
 |--------------------------------|-------------------------------------------------------|------------------------|
@@ -317,7 +325,7 @@ together.
 
 ## Commands
 
-All commands require operator permission.
+All commands require operator permission. With the plugin, the permission `ingamemessenger.admin` grants them too.
 
 | Command                                   | Description                                                   |
 |-------------------------------------------|---------------------------------------------------------------|

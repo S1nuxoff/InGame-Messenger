@@ -73,6 +73,8 @@ public final class ChatServer {
     private final Map<UUID, UUID> target = new ConcurrentHashMap<>();
     private final Map<UUID, Long> lastSticker = new HashMap<>(), lastReact = new HashMap<>(), lastHistory = new HashMap<>(),
             lastTyping = new HashMap<>(), lastSearch = new HashMap<>();
+    /** Players who got Welcome. */
+    private final Set<UUID> welcomed = ConcurrentHashMap.newKeySet();
     /** Players who joined but haven't said Hello -> when they joined. */
     private final Map<UUID, Long> unanswered = new ConcurrentHashMap<>();
     /** While set, messages are not stored (test chat). */
@@ -148,14 +150,21 @@ public final class ChatServer {
 
     // Platform events
 
-    /** A player joined: the client gets Welcome and, if it has the mod, answers with Hello. */
+    /**
+     * A player joined: the client gets Welcome and, if it has the mod, answers with Hello. A client that sees our
+     * channels may also say Hello first; it gets Welcome then.
+     */
     public void joined(UUID id) {
         unanswered.put(id, System.currentTimeMillis());
+        welcomed.add(id);
         direct.send(id, new Welcome(Protocol.VERSION, platform.modVersion()));
     }
 
     private void hello(UUID id, String name, Hello h) {
         unanswered.remove(id);
+        if (welcomed.add(id)) {
+            direct.send(id, new Welcome(Protocol.VERSION, platform.modVersion()));
+        }
         if (!h.protocol().equals(Protocol.VERSION)) {
             platform.info(name + " has InGame Messenger " + h.version() + ", the server " + platform.modVersion()
                     + ": plain chat for them");
@@ -185,6 +194,7 @@ public final class ChatServer {
     public synchronized void left(UUID id, String name) {
         platform.remove(id);
         unanswered.remove(id);
+        welcomed.remove(id);
         lastSticker.remove(id);
         lastReact.remove(id);
         lastHistory.remove(id);

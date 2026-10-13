@@ -12,6 +12,7 @@ A messenger inside the Minecraft chat.
 [![NeoForge](https://img.shields.io/badge/NeoForge-supported-E68C37)](#supported-versions)
 [![Fabric](https://img.shields.io/badge/Fabric-supported-C6BBA5)](#supported-versions)
 [![Forge](https://img.shields.io/badge/Forge-supported-1E2D3D)](#supported-versions)
+[![Paper](https://img.shields.io/badge/Paper%20%C2%B7%20Spigot%20%C2%B7%20Folia-plugin-F7CF0D)](#server-plugin)
 
 [Features](#features) · [Installation](#installation) · [Server guide](docs/server.md) · [Building](#building-from-source) · [Contributing](CONTRIBUTING.md)
 
@@ -19,9 +20,11 @@ A messenger inside the Minecraft chat.
 
 InGame Messenger replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
 custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. It runs on
-NeoForge, Fabric and Forge, from Minecraft 1.21.1 to 26.3.
+NeoForge, Fabric and Forge, from Minecraft 1.21.1 to 26.3, and the server side also runs as a plugin on Paper,
+Spigot, Purpur and Folia.
 
-The mod is required on the server and on every client.
+Players install the mod; the server runs either the mod or the plugin. Clients and servers on different loaders work
+together.
 
 ## Features
 
@@ -91,7 +94,12 @@ Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
 
 Forge builds are made for one Minecraft release each, as Forge itself is.
 
-Quilt, a Paper/Spigot plugin and older Minecraft versions are planned.
+### Server plugin
+
+One plugin jar runs on Paper, Spigot and Purpur 1.21.1 and newer, and on Folia from 1.21.4. It needs Java 21. Players
+join it with the mod on any loader.
+
+Quilt, Velocity and BungeeCord, and older Minecraft versions are planned.
 
 ## Installation
 
@@ -106,9 +114,10 @@ with the mod let in players without it too; they see stickers, voice messages an
 
 ### Servers
 
-1. Put the same jar in the server's `mods` folder (plus Fabric API on Fabric).
-2. Start the server once. It creates `config/ingamemessenger/` with the configuration file and the folders for
-   sticker and emoji packs.
+1. Modded server: put the mod's jar in the `mods` folder (plus Fabric API on Fabric). Paper, Spigot, Purpur or Folia:
+   put the plugin's jar in the `plugins` folder.
+2. Start the server once. It creates `config/ingamemessenger/` (the plugin: `plugins/InGameMessenger/`) with the
+   configuration file and the folders for sticker and emoji packs.
 3. Add sticker packs if you want them, adjust the configuration if needed, then run `/messenger reload`.
 
 The defaults work without any changes: history in an H2 database in the world folder, voice messages and pictures in

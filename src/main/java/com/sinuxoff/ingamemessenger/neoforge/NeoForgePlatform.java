@@ -7,9 +7,9 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import com.sinuxoff.ingamemessenger.FileSettings;
+import com.sinuxoff.ingamemessenger.core.server.FileSettings;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
-import com.sinuxoff.ingamemessenger.ModSettings;
+import com.sinuxoff.ingamemessenger.core.server.ModSettings;
 import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.Platform;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 final class NeoForgePlatform implements Platform {
     // read by the mod itself: NeoForge sends its own server configs to clients, and this one holds keys
-    private final ModSettings settings = new FileSettings(configDir().resolve("server.toml"));
+    private final ModSettings settings = new FileSettings(configDir().resolve("server.toml"), InGameMessenger.LOG::warn);
 
     @Override
     public String loader() {

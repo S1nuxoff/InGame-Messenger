@@ -4,6 +4,7 @@
 //                       plus each loader's own entry points, config, network and events (packages neoforge/, fabric/)
 //   versions/<mc>-<loader> - one jar each (its versions in its gradle.properties); Stonecutter turns the
 //                       //? if >=1.21.4 { ... } comments in src/ into the code for that version
+//   plugin            - the server side as a Bukkit plugin (Paper, Spigot, Purpur, Folia), on the core alone
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -22,6 +23,7 @@ plugins {
 
 rootProject.name = 'ingamemessenger'
 include 'core'
+include 'plugin'
 
 stonecutter {
     centralScript = 'build.gradle'

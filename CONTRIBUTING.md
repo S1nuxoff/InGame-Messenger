@@ -39,9 +39,10 @@ src/main/java/com/sinuxoff/ingamemessenger/
   neoforge/ fabric/ forge/  Entry points, networking and events for each loader.
 
 versions/<mc>-<loader>/   One build target each, with its versions in gradle.properties.
+plugin/                   The server side as a Bukkit plugin (Paper, Spigot, Purpur, Folia), built on core alone.
 ```
 
-`core` must not depend on Minecraft or a mod loader. Anything a future platform (a Paper plugin, a proxy) could
+`core` must not depend on Minecraft or a mod loader. Anything another platform (the plugin, a future proxy) could
 reuse belongs there.
 
 Each loader package only wires events and networking to the shared code. A feature should be written once in the

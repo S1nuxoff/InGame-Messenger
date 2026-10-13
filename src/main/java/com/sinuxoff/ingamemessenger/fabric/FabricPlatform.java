@@ -4,9 +4,9 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import com.sinuxoff.ingamemessenger.FileSettings;
+import com.sinuxoff.ingamemessenger.core.server.FileSettings;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
-import com.sinuxoff.ingamemessenger.ModSettings;
+import com.sinuxoff.ingamemessenger.core.server.ModSettings;
 import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.Platform;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 final class FabricPlatform implements Platform {
-    private final ModSettings settings = new FileSettings(configDir().resolve("server.toml"));
+    private final ModSettings settings = new FileSettings(configDir().resolve("server.toml"), InGameMessenger.LOG::warn);
     volatile MinecraftServer server;
     /** Set by the client side; stays a no-op on a dedicated server. */
     volatile Consumer<Packet> toServer = p -> {

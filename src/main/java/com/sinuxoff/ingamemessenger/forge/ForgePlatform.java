@@ -5,9 +5,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.ServerLifecycleHooks;
-import com.sinuxoff.ingamemessenger.FileSettings;
+import com.sinuxoff.ingamemessenger.core.server.FileSettings;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
-import com.sinuxoff.ingamemessenger.ModSettings;
+import com.sinuxoff.ingamemessenger.core.server.ModSettings;
 import com.sinuxoff.ingamemessenger.Platform;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
 
@@ -43,7 +43,7 @@ final class ForgePlatform implements Platform {
     }
     //?}
 
-    private final ModSettings settings = new FileSettings(configDir().resolve("server.toml"));
+    private final ModSettings settings = new FileSettings(configDir().resolve("server.toml"), InGameMessenger.LOG::warn);
 
     @Override
     public String loader() {

@@ -1,6 +1,4 @@
-package com.sinuxoff.ingamemessenger;
-
-import com.sinuxoff.ingamemessenger.core.server.ServerSettings;
+package com.sinuxoff.ingamemessenger.core.server;
 
 /** Server config that can also be changed and reloaded in game (/messenger ...). */
 public interface ModSettings extends ServerSettings {

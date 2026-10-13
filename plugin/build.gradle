@@ -1,0 +1,42 @@
+// InGame Messenger as a server plugin: Paper, Spigot, Purpur and Folia. The core is compiled into the jar; H2 and
+// Concentus are downloaded by the server from plugin.yml's libraries, Gson comes with the server.
+plugins {
+    id 'java'
+}
+
+group = 'com.sinuxoff'
+version = mod_version
+base.archivesName = 'ingamemessenger-plugin'
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+}
+
+dependencies {
+    // the Paper API is the Bukkit API plus Folia's schedulers, which are only used where the server has them
+    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    implementation project(':core')
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+processResources {
+    def props = [version: version, h2: h2_version, concentus: concentus_version]
+    inputs.properties props
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+jar {
+    from(project(':core').sourceSets.main.output)
+    from(rootProject.file('LICENSE'))
+}

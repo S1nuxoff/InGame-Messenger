@@ -260,6 +260,10 @@ final class ChatPages {
                 } else {
                     runSender = null;
                     Component content = com.sinuxoff.ingamemessenger.ServerCompat.fromJson(o.get("c").getAsString(), conn.registryAccess());
+                    // we may have got it live before the messenger was on (our own join line), without its id: this
+                    // one takes its place
+                    String text = content.getString().strip();
+                    all.removeIf(gm -> (gm.tag() == null || ChatModel.msgs.get(gm.tag()) == null) && gm.content().getString().strip().equals(text));
                     snip = ChatDecor.snippet(content.getString());
                     out.append(content).append("\n ");
                     m = new ChatModel.Msg(null, null, false, null, null, 0, true, t, id, ChatModel.systemIcon(content));
