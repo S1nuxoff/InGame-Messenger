@@ -201,6 +201,11 @@ final class Feed {
     }
 
     /** One sender (a player, or the server for its lines), at most 2 minutes apart, the same day. */
+    /** Ours on the right, on the open chat only: the closed one reads like the game's chat, everything on the left. */
+    private static boolean onRight(Messenger.Entry e) {
+        return open && e.mine() && Prefs.ownRight();
+    }
+
     private static boolean sameRun(Messenger.Entry a, Messenger.Entry b) {
         if (a == null || b == null || Math.abs(a.time - b.time) >= 120_000 || ChatDates.dayOf(a.time) != ChatDates.dayOf(b.time)) {
             return false;
@@ -287,7 +292,7 @@ final class Feed {
     private static Box layout(Messenger.Entry e, Messenger.Entry prev, Messenger.Entry next, int chatW, Font font) {
         boolean date = prev == null || ChatDates.dayOf(prev.time) != ChatDates.dayOf(e.time);
         Messenger.Chan ch = Messenger.channels.get(e.channel);
-        boolean right = e.mine() && Prefs.ownRight(); // ours on the right: no name, no face (like a phone's messenger)
+        boolean right = onRight(e); // ours on the right: no name, no face (like a phone's messenger)
         boolean named = !right && (date || !sameRun(prev, e)) && (ch == null || !ch.dm());
         boolean face = !sameRun(e, next); // the last of a run: the face (not for ours on the right) and the tail
         // the server lays its lines out for the game's chat width: they get all of it
@@ -375,7 +380,7 @@ final class Feed {
             ChatDates.drawDate(g, ChatDates.dayOf(e.time), top + 2, chatW, a);
         }
         int textCol = (int) (a * 255) << 24 | 0xFFFFFF;
-        boolean right = e.mine() && Prefs.ownRight();
+        boolean right = onRight(e);
         if ("sticker".equals(e.kind)) {
             Library.Sticker st = Library.get(e.body.has("p") ? e.body.get("p").getAsString() : "", e.body.has("s") ? e.body.get("s").getAsString() : "");
             int sh = stickerH(), sw = st == null ? sh : Math.round(Math.min(sh * st.aspect(), sh * 1.6f));
@@ -462,7 +467,7 @@ final class Feed {
         }
         if (e.id > 0 && isPlayer(e) && Messenger.channels.containsKey(e.channel)) {
             int bw = b.w() + 2 * PAD, bh = b.h() - (b.date() ? DATE_H : 0) - (reactions(e).isEmpty() ? 0 : RX_H);
-            boolean right2 = e.mine() && Prefs.ownRight();
+            boolean right2 = onRight(e);
             int bx = "sticker".equals(e.kind) ? (right2 ? chatW - 2 - b.w() : AV) : right2 ? chatW - 2 - bw : AV - PAD;
             // the text bubble's branch already moved y above the reactions' row
             int bot = y;
@@ -474,7 +479,7 @@ final class Feed {
                 g.fill(AV - PAD - 2, top + (b.date() ? DATE_H : 0) - 1, chatW, y + 1, (int) (f * a * 0x40) << 24 | 0x9C8CFF);
             }
         }
-        if (b.face() && !(e.mine() && Prefs.ownRight())) {
+        if (b.face() && !onRight(e)) {
             if (isPlayer(e)) {
                 ChatRenderer.drawFace(g, e.sender, e.name, 0, y - FACE, a);
             } else {
