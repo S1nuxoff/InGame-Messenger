@@ -11,7 +11,7 @@ displayName = "InGame Messenger"
 displayTest = "IGNORE_ALL_VERSION"
 logoFile = "ingamemessenger.png"
 authors = "S1nuxoff"
-displayURL = "https://live.sinuxoff.com/messenger/"
+displayURL = "https://github.com/S1nuxoff/InGame-Messenger"
 description = '''
 A messenger in the Minecraft chat: bubbles with faces, stickers and emoji, reactions, replies, @mentions, private chats, pictures, voice messages, polls and search through the whole history. Install it on the server and on the clients; players without it can still join and chat as usual.
 '''

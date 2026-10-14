@@ -6,7 +6,7 @@
   "description": "A messenger in the Minecraft chat: bubbles with faces, stickers and emoji, reactions, replies, @mentions, private chats, pictures, voice messages, polls and search through the whole history. Install it on the server and on the clients; players without it can still join and chat as usual.",
   "authors": ["S1nuxoff"],
   "contact": {
-    "homepage": "https://live.sinuxoff.com/messenger/",
+    "homepage": "https://github.com/S1nuxoff/InGame-Messenger",
     "sources": "https://github.com/S1nuxoff/InGame-Messenger",
     "issues": "https://github.com/S1nuxoff/InGame-Messenger/issues"
   },
