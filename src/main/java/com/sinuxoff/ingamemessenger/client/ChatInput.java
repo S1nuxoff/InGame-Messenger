@@ -835,6 +835,10 @@ public final class ChatInput {
                 (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()));
         CommandAnswer.draw(g, screen, (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
                 (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()));
+        if (!Panel.open) {
+            Feed.hover(g, (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
+                    (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()));
+        }
         // mini player, centered above the input (and above the sticker panel when it's open)
         int mpY = Panel.open && !Panel.command ? y - 5 - barH() - Panel.panelHeight() - MP_H - 6 : y - barH() - MP_H - 6;
         ChatRenderer.drawTyping(g);

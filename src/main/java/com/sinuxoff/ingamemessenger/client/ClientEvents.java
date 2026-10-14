@@ -291,6 +291,7 @@ public final class ClientEvents {
         }
         if (screen0 instanceof ChatScreen screen
                 && (button == 0 && CommandAnswer.click(x, y)
+                || button == 0 && !Panel.covers(x, y, screen.width, screen.height) && Feed.click(screen, x, y)
                 || ChatInput.clickTabs(screen, x, y, button)
                 || ChatUi.clickDown(x, y, button)
                 || button == 0 && (ChatInput.clickMention(screen, x, y)

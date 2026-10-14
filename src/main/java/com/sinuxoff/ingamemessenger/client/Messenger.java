@@ -574,7 +574,7 @@ public final class Messenger {
         }
         long now = System.currentTimeMillis();
         c.typing.forEach((id, t) -> {
-            if (now - t < 4000) {
+            if (now - t < 4000 && !id.equals(me)) {
                 out.add(c.typingNames.getOrDefault(id, "?"));
             }
         });

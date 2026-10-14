@@ -193,6 +193,45 @@ final class ChatDecor {
     }
 
     /** Same text with @names colored (ours gold and bold); links and other styles kept. */
+    private static final java.util.regex.Pattern URL = java.util.regex.Pattern.compile("(?i)\\bhttps?://[^\\s<>\"]+[^\\s<>\".,;:!?)\\]'}]");
+
+    /** Addresses in a player's text: underlined links that open (after the game's question). */
+    static Component links(Component text) {
+        String plain = text.getString();
+        if (!plain.contains("://")) {
+            return text;
+        }
+        MutableComponent out = Component.empty();
+        text.visit((style, part) -> {
+            var m = URL.matcher(part);
+            int at = 0;
+            while (m.find()) {
+                if (m.start() > at) {
+                    out.append(Component.literal(part.substring(at, m.start())).withStyle(style));
+                }
+                net.minecraft.network.chat.Style link;
+                try {
+                    link = style.withColor(0x6CC6FF).withUnderlined(true).withClickEvent(Compat.openUrl(m.group()))
+                            .withHoverEvent(Compat.showText(Component.literal(m.group())));
+                } catch (IllegalArgumentException bad) { // not an address after all
+                    link = style;
+                }
+                out.append(Component.literal(m.group()).withStyle(link));
+                at = m.end();
+            }
+            if (at < part.length()) {
+                out.append(Component.literal(part.substring(at)).withStyle(style));
+            }
+            return java.util.Optional.empty();
+        }, net.minecraft.network.chat.Style.EMPTY);
+        return out;
+    }
+
+    /** An emoji's blank place (its insertion is ours, not something to put in the input). */
+    static boolean isEmojiMark(String insertion) {
+        return insertion != null && insertion.startsWith(EMOJI_MARK);
+    }
+
     static Component highlightMentions(Component text) {
         String plain = text.getString();
         if (!plain.contains("@") && !plain.contains(":")) {

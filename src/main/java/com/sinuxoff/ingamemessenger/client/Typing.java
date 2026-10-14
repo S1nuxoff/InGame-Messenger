@@ -40,8 +40,7 @@ final class Typing {
         boolean want = false;
         if (mc.gui.screen() instanceof ChatScreen chat && serverOn && Prefs.showMyTyping() && mc.getConnection() != null) {
             String v = ((ChatScreenAccessor) chat).ingamemessenger$input().getValue();
-            want = !v.isBlank() && !v.startsWith("/") && !ChatInput.searching() && !Ai.ID.equals(ChatChannels.channel())
-                    && !ChatChannels.SERVER.equals(ChatChannels.channel());
+            want = !v.isBlank() && !v.startsWith("/") && !ChatInput.searching() && Messenger.open() != null;
         }
         long now = System.currentTimeMillis();
         if (want && (!sent || now - sentMs > KEEP_ALIVE)) {
@@ -84,14 +83,7 @@ final class Typing {
     }
 
     private static List<String> here() {
-        long now = System.currentTimeMillis();
-        List<String> out = new ArrayList<>();
-        others.forEach((n, until) -> {
-            if (until >= now && java.util.Objects.equals(where.get(n), ChatChannels.channel())) {
-                out.add(n);
-            }
-        });
-        return out;
+        return Messenger.typingHere();
     }
 
     static void onFeatures(Packets.Features f) {
@@ -103,7 +95,7 @@ final class Typing {
 
     static boolean showing() {
         long now = System.currentTimeMillis();
-        return (serverOn || Ai.ID.equals(ChatChannels.channel())) && Prefs.seeTyping() && !here().isEmpty();
+        return serverOn && Prefs.seeTyping() && !here().isEmpty();
     }
 
     static void reset() {
@@ -116,7 +108,7 @@ final class Typing {
         long now = System.currentTimeMillis();
         others.values().removeIf(until -> until < now);
         List<String> names = here();
-        if (names.isEmpty() || !serverOn && !Ai.ID.equals(ChatChannels.channel()) || !Prefs.seeTyping()) {
+        if (names.isEmpty() || !serverOn || !Prefs.seeTyping()) {
             return;
         }
         Component label = names.size() == 1 ? Component.translatable("ingamemessenger.typing.one", names.get(0))

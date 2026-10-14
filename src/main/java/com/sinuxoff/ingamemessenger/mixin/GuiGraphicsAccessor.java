@@ -22,4 +22,9 @@ public interface GuiGraphicsAccessor {
     /*@Accessor("bufferSource")
     net.minecraft.client.renderer.MultiBufferSource.BufferSource ingamemessenger$buffers();
     *///?}
+
+    //? if >=26.1 {
+    @org.spongepowered.asm.mixin.gen.Invoker("componentHoverEffect")
+    void ingamemessenger$hover(net.minecraft.client.gui.Font font, net.minecraft.network.chat.Style style, int x, int y);
+    //?}
 }

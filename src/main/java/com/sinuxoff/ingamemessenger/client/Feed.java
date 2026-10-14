@@ -47,6 +47,105 @@ final class Feed {
 
     private static final int QUOTE_H = LINE + 3, RX_H = 14;
 
+    // Clickable text
+
+    /** A drawn line of text, in chat pixels. */
+    private record Text(FormattedCharSequence line, int x, int y) {
+    }
+
+    private static final List<Text> texts = new ArrayList<>();
+    private static float frameScale = 1f, frameShiftX, frameShiftY;
+    private static int frameTop, frameBottom;
+
+    private static void text(GuiGraphicsExtractor g, Font font, FormattedCharSequence l, int x, int y, int color) {
+        Gfx.text(g, font, l, x, y, color, false);
+        if (open) {
+            texts.add(new Text(l, x, y));
+        }
+    }
+
+    /** The style under the mouse on the open chat (with a click, hover or insertion), or null. */
+    static net.minecraft.network.chat.Style styleAt(double mx, double my) {
+        if (!open) {
+            return null;
+        }
+        float lx = (float) ((mx - frameShiftX) / frameScale) - 4, ly = (float) ((my - frameShiftY) / frameScale);
+        if (ly < frameTop || ly >= frameBottom) {
+            return null;
+        }
+        Font font = Minecraft.getInstance().font;
+        for (Text t : texts) {
+            if (ly < t.y() - 1 || ly >= t.y() + LINE - 1 || lx < t.x()) {
+                continue;
+            }
+            float[] x = {t.x()};
+            net.minecraft.network.chat.Style[] hit = {null};
+            t.line().accept((i, style, cp) -> {
+                float w = font.width(FormattedCharSequence.forward(new String(Character.toChars(cp)), style));
+                if (lx >= x[0] && lx < x[0] + w) {
+                    hit[0] = style;
+                    return false;
+                }
+                x[0] += w;
+                return true;
+            });
+            net.minecraft.network.chat.Style s = hit[0];
+            if (s != null && (s.getClickEvent() != null || s.getHoverEvent() != null
+                    || s.getInsertion() != null && !ChatDecor.isEmojiMark(s.getInsertion()))) {
+                return s;
+            }
+            return null;
+        }
+        return null;
+    }
+
+    /** Hover text, item or entity of a chat text, as a tooltip. */
+    private static void hoverEffect(GuiGraphicsExtractor g, net.minecraft.client.gui.Font font, net.minecraft.network.chat.Style style, int x, int y) {
+        //? if >=26.1 {
+        ((com.sinuxoff.ingamemessenger.mixin.GuiGraphicsAccessor) g).ingamemessenger$hover(font, style, x, y);
+        g.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND);
+        //?} else {
+        /*g.renderComponentHoverEffect(font, style, x, y);
+        *///?}
+    }
+
+    /** The tooltip of the text under the mouse. */
+    static void hover(GuiGraphicsExtractor g, int mx, int my) {
+        var s = styleAt(mx, my);
+        if (s != null) {
+            hoverEffect(g, Minecraft.getInstance().font, s, mx, my);
+        }
+    }
+
+    /** A click on a text: as in the game's chat; with shift, its insertion goes into the input. */
+    static boolean click(net.minecraft.client.gui.screens.ChatScreen screen, double mx, double my) {
+        var s = styleAt(mx, my);
+        if (s == null) {
+            return false;
+        }
+        if (Compat.shiftDown() && s.getInsertion() != null && !ChatDecor.isEmojiMark(s.getInsertion())) {
+            ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input().insertText(s.getInsertion());
+            return true;
+        }
+        if (s.getClickEvent() == null) {
+            return false;
+        }
+        String cmd = commandOf(s.getClickEvent());
+        if (cmd != null) {
+            CommandAnswer.sent(cmd.startsWith("/") ? cmd : "/" + cmd);
+        }
+        Compat.handleClick(screen, s);
+        return true;
+    }
+
+    private static String commandOf(net.minecraft.network.chat.ClickEvent ev) {
+        //? if >=1.21.5 {
+        return ev instanceof net.minecraft.network.chat.ClickEvent.RunCommand rc ? rc.command() : null;
+        //?} else {
+        /*return ev.getAction() == net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND ? ev.getValue() : null;
+        *///?}
+    }
+
     /** The quote line over a reply: the author and the start of the answered message. */
     private static Component quote(Messenger.Entry e) {
         long r = Messenger.replyOf(e);
@@ -93,7 +192,7 @@ final class Feed {
     /** What a message shows as text (pictures, voice and polls in words until they're drawn as such). */
     private static Component textOf(Messenger.Entry e) {
         return switch (e.kind) {
-            case "text" -> ChatDecor.highlightMentions(Component.literal(Messenger.body(e)));
+            case "text" -> ChatDecor.highlightMentions(ChatDecor.links(Component.literal(Messenger.body(e))));
             case "voice" -> Component.literal("▶ " + (e.body.has("ms") ? Math.max(1, Math.round(e.body.get("ms").getAsInt() / 1000f)) + " s" : ""));
             case "images" -> Component.literal("[" + (e.body.has("i") ? e.body.getAsJsonArray("i").size() : 1) + " ▣] "
                     + (e.body.has("c") ? e.body.get("c").getAsString() : ""));
@@ -263,7 +362,7 @@ final class Feed {
             bubble(g, bx, by, bw, bh, !isPlayer(e) ? BUBBLE_SYSTEM : me ? 0x332A5C : e.mine() ? BUBBLE_MINE : BUBBLE, e.nonce.isEmpty() ? a : a * 0.6f);
             int tx = bx + PAD, ty = by + PAD_V + 1;
             if (b.named()) {
-                Gfx.text(g, font, nameOf(e), tx, ty, textCol, false);
+                text(g, font, nameOf(e).getVisualOrderText(), tx, ty, textCol);
                 ty += LINE;
             }
             Component q = quote(e);
@@ -288,7 +387,7 @@ final class Feed {
                 ty += ai.height() + 2 * ChatAlbums.ALBUM_PAD - PAD_V;
             }
             for (FormattedCharSequence l : "voice".equals(e.kind) || loc != null ? List.<FormattedCharSequence>of() : b.lines()) {
-                Gfx.text(g, font, l, tx, ty, textCol, false);
+                text(g, font, l, tx, ty, textCol);
                 ChatDecor.drawInlineEmoji(g, font, l, tx, ty, a); // emoji over their blank places in the text
                 ty += LINE;
             }
@@ -386,6 +485,12 @@ final class Feed {
 
         ChatUi.clearHits();
         ChatUi.frame(s, 0, top, bottom, ChatMotion.shiftX(chat));
+        texts.clear();
+        frameScale = s;
+        frameShiftX = ChatMotion.shiftX(chat);
+        frameShiftY = ChatMotion.shiftY();
+        frameTop = top;
+        frameBottom = bottom;
         Gfx.scissor(g, 0, Math.round(top * s + ChatMotion.shiftYNow), g.guiWidth(), Math.round(bottom * s + ChatMotion.shiftYNow) + 2);
         Gfx.push(g);
         Gfx.scale(g, s, s);

@@ -255,6 +255,35 @@ public final class Compat {
         *///?}
     }
 
+    /** What a click on a chat text does: as in the game's chat (links ask first, commands run or go to the input). */
+    public static void handleClick(net.minecraft.client.gui.screens.Screen screen, net.minecraft.network.chat.Style style) {
+        //? if >=1.21.6 {
+        var mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.player != null && style.getClickEvent() != null) {
+            com.sinuxoff.ingamemessenger.mixin.ScreenInvoker.ingamemessenger$click(style.getClickEvent(), mc, screen);
+        }
+        //?} else {
+        /*screen.handleComponentClicked(style);
+        *///?}
+    }
+
+    /** A link that opens this address. */
+    public static net.minecraft.network.chat.ClickEvent openUrl(String url) {
+        //? if >=1.21.5 {
+        return new net.minecraft.network.chat.ClickEvent.OpenUrl(java.net.URI.create(url));
+        //?} else {
+        /*return new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.OPEN_URL, url);
+        *///?}
+    }
+
+    public static net.minecraft.network.chat.HoverEvent showText(net.minecraft.network.chat.Component text) {
+        //? if >=1.21.5 {
+        return new net.minecraft.network.chat.HoverEvent.ShowText(text);
+        //?} else {
+        /*return new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT, text);
+        *///?}
+    }
+
     /** Click event that runs this command. */
     public static net.minecraft.network.chat.ClickEvent runCommand(String command) {
         //? if >=1.21.5 {
