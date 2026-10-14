@@ -171,6 +171,9 @@ final class VoiceClient {
         }
         byte[] data = VoiceFile.write(enc.subList(from, enc.size()));
         byte[] wave = VoiceDsp.waveform(java.util.Arrays.copyOfRange(all, from, all.length));
+        if (Messenger.muted()) {
+            return;
+        }
         int id = ++uploadId;
         ChatInput.takeReply();
         Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.VoiceUp(id, Messenger.current, "", data.length, frames * 20, wave, 0));

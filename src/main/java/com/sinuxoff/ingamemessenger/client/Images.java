@@ -184,6 +184,9 @@ final class Images {
 
     /** Sends the tray with this caption, as a reply to replyTo. */
     static void sendAlbum(String caption, int replyTo) {
+        if (Messenger.muted()) {
+            return;
+        }
         List<Att> list = List.copyOf(atts);
         atts.clear();
         if (list.isEmpty()) {

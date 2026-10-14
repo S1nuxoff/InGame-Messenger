@@ -507,6 +507,26 @@ public final class Messenger {
     }
 
     /** A message being sent, shown at once (the server's copy replaces it). */
+    /** Muted where we'd send: says so instead (the server would refuse it anyway). */
+    static boolean muted() {
+        if (Muted.here() <= 0) {
+            return false;
+        }
+        Minecraft.getInstance().gui.hud.setOverlayMessage(Muted.hint().copy().withStyle(s -> s.withColor(0xE0707A)), false);
+        return true;
+    }
+
+    /** Our messages the server never confirmed (refused, or lost): gone after a while instead of hanging there. */
+    static void dropStale(Chan c) {
+        long now = System.currentTimeMillis();
+        for (int i = c.list.size() - 1, seen = 0; i >= 0 && seen < 30; i--, seen++) {
+            Entry e = c.list.get(i);
+            if (!e.nonce.isEmpty() && now - e.arrived > 15_000) {
+                c.list.remove(i);
+            }
+        }
+    }
+
     private static void pending(Chan c, String kind, JsonObject body, String nonce, long replyTo) {
         Entry e = new Entry();
         e.channel = c.id;
@@ -528,6 +548,9 @@ public final class Messenger {
      */
     static boolean sendText(String text, long replyTo) {
         Chan c = open();
+        if (c != null && muted()) {
+            return true;
+        }
         if (c == null || c.game) {
             return false;
         }
@@ -541,7 +564,7 @@ public final class Messenger {
 
     static void sendPoll(String question, List<String> options, boolean multi, long replyTo) {
         Chan c = open();
-        if (c == null) {
+        if (c == null || muted()) {
             return;
         }
         String n = nonce();
@@ -559,7 +582,7 @@ public final class Messenger {
 
     static void sendSticker(String pack, String id, long replyTo) {
         Chan c = open();
-        if (c == null) {
+        if (c == null || muted()) {
             return;
         }
         String n = nonce();

@@ -289,7 +289,7 @@ final class Feed {
         Messenger.Chan ch = Messenger.channels.get(e.channel);
         boolean right = e.mine() && Prefs.ownRight(); // ours on the right: no name, no face (like a phone's messenger)
         boolean named = !right && (date || !sameRun(prev, e)) && (ch == null || !ch.dm());
-        boolean face = !right && !sameRun(e, next);
+        boolean face = !sameRun(e, next); // the last of a run: the face (not for ours on the right) and the tail
         // the server lays its lines out for the game's chat width: they get all of it
         int maxW = isPlayer(e) ? chatW - AV - 2 * PAD - 4 : chatW;
         if ("sticker".equals(e.kind)) {
@@ -342,10 +342,14 @@ final class Feed {
     // Drawing
 
     private static void bubble(GuiGraphicsExtractor g, int x, int y, int w, int h, int rgb, float a) {
+        bubble(g, x, y, w, h, rgb, a, 0);
+    }
+
+    private static void bubble(GuiGraphicsExtractor g, int x, int y, int w, int h, int rgb, float a, int tail) {
         int lift = Math.round(ChatMotion.shade * 0x0A);
         int c = Math.min(255, (rgb >> 16 & 0xFF) + lift) << 16 | Math.min(255, (rgb >> 8 & 0xFF) + lift) << 8 | Math.min(255, (rgb & 0xFF) + lift + 2);
         int alpha = Math.round(BUBBLE_ALPHA + ChatMotion.shade * (0xC4 - BUBBLE_ALPHA));
-        Panel.round(g, x, y, w, h, Math.min(10, h / 2), (int) (a * alpha) << 24 | c);
+        Panel.bubble(g, x, y, w, h, Math.min(10, h / 2), (int) (a * alpha) << 24 | c, tail);
     }
 
     /** A message's reactions as pills from x, their bottom at y. */
@@ -406,7 +410,7 @@ final class Feed {
             int bw = b.w() + 2 * PAD, bh = b.h() - (b.date() ? DATE_H : 0) - (rx.isEmpty() ? 0 : RX_H);
             int bx = right ? chatW - 2 - bw : AV - PAD, by = y - bh;
             boolean me = !e.mine() && "text".equals(e.kind) && ChatDecor.mentionsMe(Component.literal(e.text()), e.name);
-            bubble(g, bx, by, bw, bh, !isPlayer(e) ? BUBBLE_SYSTEM : me ? 0x332A5C : e.mine() ? BUBBLE_MINE : BUBBLE, e.nonce.isEmpty() ? a : a * 0.6f);
+            bubble(g, bx, by, bw, bh, !isPlayer(e) ? BUBBLE_SYSTEM : me ? 0x332A5C : e.mine() ? BUBBLE_MINE : BUBBLE, e.nonce.isEmpty() ? a : a * 0.6f, b.face() ? right ? 1 : -1 : 0);
             int tx = bx + PAD, ty = by + PAD_V + 1;
             if (b.named()) {
                 text(g, font, nameOf(e).getVisualOrderText(), tx, ty, textCol);
@@ -470,7 +474,7 @@ final class Feed {
                 g.fill(AV - PAD - 2, top + (b.date() ? DATE_H : 0) - 1, chatW, y + 1, (int) (f * a * 0x40) << 24 | 0x9C8CFF);
             }
         }
-        if (b.face()) {
+        if (b.face() && !(e.mine() && Prefs.ownRight())) {
             if (isPlayer(e)) {
                 ChatRenderer.drawFace(g, e.sender, e.name, 0, y - FACE, a);
             } else {
@@ -591,6 +595,9 @@ final class Feed {
                 at = target;
             }
             Messenger.Chan c = Messenger.open();
+            if (c != null) {
+                Messenger.dropStale(c);
+            }
             if (wanted != 0) {
                 int[] o = offsets.get(wanted);
                 if (o != null) { // there: its middle in the middle of the chat

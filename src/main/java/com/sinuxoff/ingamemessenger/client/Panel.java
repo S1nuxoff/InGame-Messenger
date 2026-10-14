@@ -277,6 +277,67 @@ final class Panel {
         g.fill(x, y + r, x + w, y + h - r, color);
     }
 
+    /**
+     * A message bubble: rounded, and with tail -1 / 1 the bottom corner on that side is square with a small curved
+     * tail out of it (the last message of a run, by its sender's face). Every pixel is drawn once.
+     */
+    static void bubble(GuiGraphicsExtractor g, int x, int y, int w, int h, int r, int color, int tail) {
+        int s = pixels();
+        Gfx.push(g);
+        Gfx.scale(g, 1f / s, 1f / s);
+        bubblePx(g, x * s, y * s, w * s, h * s, r * s, color, tail, 5 * s);
+        Gfx.pop(g);
+    }
+
+    private static void bubblePx(GuiGraphicsExtractor g, int x, int y, int w, int h, int r, int color, int tail, int t) {
+        r = Math.min(r, Math.min(w, h) / 2);
+        for (int i = 0; i < r; i++) {
+            double dy = r - i - 0.5;
+            double in = r - Math.sqrt(r * r - dy * dy);
+            int solid = (int) Math.ceil(in);
+            float edge = (float) (solid - in);
+            roundRow(g, x, y + i, w, solid, solid, edge, color);
+            roundRow(g, x, y + h - 1 - i, w, tail < 0 ? 0 : solid, tail > 0 ? 0 : solid, edge, color);
+        }
+        g.fill(x, y + r, x + w, y + h - r, color);
+        if (tail == 0) {
+            return;
+        }
+        t = Math.min(t, h);
+        for (int d = 0; d < t; d++) { // rows up from the bottom: the tail narrows along a quarter circle
+            double dd = t - d - 0.5;
+            double span = t - Math.sqrt(t * t - dd * dd);
+            int full = (int) Math.floor(span);
+            int a = Math.round((color >>> 24) * (float) (span - full));
+            int ry = y + h - 1 - d, c = a << 24 | color & 0xFFFFFF;
+            if (tail < 0) {
+                g.fill(x - full, ry, x, ry + 1, color);
+                if (a > 0) {
+                    g.fill(x - full - 1, ry, x - full, ry + 1, c);
+                }
+            } else {
+                g.fill(x + w, ry, x + w + full, ry + 1, color);
+                if (a > 0) {
+                    g.fill(x + w + full, ry, x + w + full + 1, ry + 1, c);
+                }
+            }
+        }
+    }
+
+    private static void roundRow(GuiGraphicsExtractor g, int x, int y, int w, int left, int right, float edge, int color) {
+        g.fill(x + left, y, x + w - right, y + 1, color);
+        int a = Math.round((color >>> 24) * edge);
+        if (a > 0) {
+            int c = a << 24 | color & 0xFFFFFF;
+            if (left > 0) {
+                g.fill(x + left - 1, y, x + left, y + 1, c);
+            }
+            if (right > 0) {
+                g.fill(x + w - right, y, x + w - right + 1, y + 1, c);
+            }
+        }
+    }
+
     /** One row of a rounded shape: solid inside, edge pixels by coverage. */
     private static void roundRow(GuiGraphicsExtractor g, int x, int y, int w, int solid, float edge, int color) {
         g.fill(x + solid, y, x + w - solid, y + 1, color);
