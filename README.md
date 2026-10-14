@@ -8,7 +8,7 @@ A messenger inside the Minecraft chat.
 
 [![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
-[![Minecraft](https://img.shields.io/badge/Minecraft-18%20versions-62B47A)](#supported-versions)
+[![Minecraft](https://img.shields.io/badge/Minecraft-22%20versions-62B47A)](#supported-versions)
 [![NeoForge](https://img.shields.io/badge/NeoForge-supported-E68C37)](#supported-versions)
 [![Fabric](https://img.shields.io/badge/Fabric-supported-C6BBA5)](#supported-versions)
 [![Quilt](https://img.shields.io/badge/Quilt-supported-8A5CF5)](#supported-versions)
@@ -22,10 +22,10 @@ A messenger inside the Minecraft chat.
 InGame Messenger turns the Minecraft chat into a messenger for your server: message bubbles with player faces,
 stickers and custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history.
 The server's chat stays the place where everyone talks and where commands are typed; the messenger just makes it
-better. It runs on NeoForge, Fabric, Quilt and Forge, on Minecraft 1.19.2, 1.20.1, 1.20.4, 1.20.6, 1.21.1, 1.21.4,
-1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3 (see
-[the table](#supported-versions) for each loader), and the server side also runs as a plugin on Paper, Spigot, Purpur
-and Folia.
+better. It runs on NeoForge, Fabric, Quilt and Forge, on Minecraft 1.19.2, 1.20, 1.20.1, 1.20.3, 1.20.4, 1.20.5,
+1.20.6, 1.21, 1.21.1, 1.21.4, 1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and
+26.3 (see [the table](#supported-versions) for each loader), and the server side also runs as a plugin on Paper, Spigot,
+Purpur and Folia.
 
 Players install the mod; the server runs either the mod or the plugin. Clients and servers on different loaders work
 together.
@@ -95,9 +95,13 @@ together.
 | Minecraft | NeoForge | Fabric | Quilt | Forge | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
 |-----------|:--------:|:------:|:-----:|:-----:|:------------------------------:|:--------------:|:----:|
 | 1.19.2    |    —     |   ✓    |   ✓   |   ✓   |               —                |       —        |  17  |
+| 1.20      |    —     |   ✓    |   ✓   |   —   |               —                |       —        |  17  |
 | 1.20.1    |    —     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  17  |
+| 1.20.3    |    —     |   ✓    |   ✓   |   —   |               —                |       —        |  17  |
 | 1.20.4    |    —     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  17  |
+| 1.20.5    |    —     |   ✓    |   ✓   |   —   |               —                |       —        |  21  |
 | 1.20.6    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  21  |
+| 1.21      |    ✓     |   ✓    |   ✓   |   —   |               —                |       —        |  21  |
 | 1.21.1    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  21  |
 | 1.21.4    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  21  |
 | 1.21.5    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  21  |
@@ -117,8 +121,9 @@ Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
 
 On Quilt, use the Fabric jar together with Fabric API (not Quilted Fabric API, which stops at 1.21).
 
-Some versions share a jar: one NeoForge or Fabric jar covers 1.21.6, 1.21.7 and 1.21.8, another 1.21.9 and 1.21.10,
-another 26.1, 26.1.1 and 26.1.2. The jar's name shows the newest of them. Forge builds are made for one Minecraft release each,
+Some versions share a jar: the 1.20.1 Fabric jar also runs on 1.20, the 1.20.4 one on 1.20.3, the 1.20.6 one on 1.20.5,
+the 1.21.1 Fabric and NeoForge jars on 1.21; one NeoForge or Fabric jar covers 1.21.6, 1.21.7 and 1.21.8, another 1.21.9
+and 1.21.10, another 26.1, 26.1.1 and 26.1.2. The jar's name shows the newest of them. Forge builds are made for one Minecraft release each,
 as Forge itself is.
 
 ### Server plugin
@@ -127,7 +132,7 @@ One plugin jar covers every version in the table except 1.19.2. Folia is marked 
 server with the plugin with the mod on any loader.
 
 Each mod jar installs only on the versions it is made for. Versions missing from the table (1.19.3, 1.19.4, 1.20.2,
-1.20.3, 1.20.5, 1.21.2 and 1.21.3) are not supported yet.
+1.21.2 and 1.21.3) are not supported yet.
 
 Velocity and BungeeCord work too: install the mod or the plugin on the servers behind the proxy, nothing on the proxy.
 Each server keeps its own chat. See [Proxies](docs/server.md#proxies-velocity-bungeecord).
