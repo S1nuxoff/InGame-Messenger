@@ -26,5 +26,10 @@
     "fabric-api": "*",
     "minecraft": "${minecraft_range}",
     "java": ">=${java}"
+  },
+  "breaks": {
+    "chatpatches": "*",
+    "chattools": "*",
+    "chatting": "*"
   }
 }

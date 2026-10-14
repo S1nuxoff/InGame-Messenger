@@ -87,6 +87,7 @@ public final class ClientEvents {
         VoiceClient.tick();
         Images.tick();
         ChatMessages.flushHeld();
+        ModCompat.tick();
         Minecraft mc = Minecraft.getInstance();
         if (!Session.on()) { // Minecraft's own chat
             chatDownAt = -1;
