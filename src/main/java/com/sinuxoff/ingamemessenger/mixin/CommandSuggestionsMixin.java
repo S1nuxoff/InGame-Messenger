@@ -1,9 +1,9 @@
 package com.sinuxoff.ingamemessenger.mixin;
 
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.client.gui.screens.ChatScreen;
@@ -45,15 +45,15 @@ public abstract class CommandSuggestionsMixin {
 
     /** Usage or error text: one rounded bubble above the input, as wide as the text. */
     //? if >=26.1 {
-    /*@Inject(method = "extractUsage", at = @At("HEAD"), cancellable = true)
-    *///?} else {
-    @Inject(method = "renderUsage", at = @At("HEAD"), cancellable = true)
-    //?}
+    @Inject(method = "extractUsage", at = @At("HEAD"), cancellable = true)
+    //?} else {
+    /*@Inject(method = "renderUsage", at = @At("HEAD"), cancellable = true)
+    *///?}
     //? if >=1.20 {
-    private void ingamemessenger$usage(GuiGraphics g, CallbackInfo ci) {
+    private void ingamemessenger$usage(GuiGraphicsExtractor g, CallbackInfo ci) {
     //?} else {
     /*private void ingamemessenger$usage(com.mojang.blaze3d.vertex.PoseStack pose, CallbackInfo ci) {
-        GuiGraphics g = new GuiGraphics(pose);
+        GuiGraphicsExtractor g = new GuiGraphicsExtractor(pose);
     *///?}
         if (anchorToBottom && screen instanceof ChatScreen && com.sinuxoff.ingamemessenger.client.ChatHooks.on()) {
             ci.cancel();

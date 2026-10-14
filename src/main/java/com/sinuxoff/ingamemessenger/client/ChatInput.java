@@ -2,9 +2,9 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.Component;
@@ -26,13 +26,13 @@ public final class ChatInput {
     }
 
     static int fieldW(int sw) {
-        int w = Math.min(MAX_W + 40, Compat.chatWidth(Minecraft.getInstance().gui.getChat()) + 26);
+        int w = Math.min(MAX_W + 40, Compat.chatWidth(Minecraft.getInstance().gui.hud.getChat()) + 26);
         return Math.max(190, Math.min(sw - fieldX(sw) - 8, w));
     }
 
     /** Left aligned with the chat, next to the chat list. */
     static int fieldX(int sw) {
-        return Math.max(4, Math.round(ChatMotion.shiftX(Minecraft.getInstance().gui.getChat())) + 2);
+        return Math.max(4, Math.round(ChatMotion.shiftX(Minecraft.getInstance().gui.hud.getChat())) + 2);
     }
 
     static int fieldY(int sh) {
@@ -89,12 +89,12 @@ public final class ChatInput {
     private static boolean picking;
     private static final int ITEM = 22, ICON = 18;
 
-    private static void drawTabs(GuiGraphics g, int sw, int sh, int mx, int my) {
+    private static void drawTabs(GuiGraphicsExtractor g, int sw, int sh, int mx, int my) {
         var mc = Minecraft.getInstance();
         var font = mc.font;
         float open = ChatMotion.openness();
         items.clear();
-        sideX = Prefs.chatRight() ? Math.round(ChatMotion.shiftX(mc.gui.getChat())) - ChatMotion.SIDEBAR : 0;
+        sideX = Prefs.chatRight() ? Math.round(ChatMotion.shiftX(mc.gui.hud.getChat())) - ChatMotion.SIDEBAR : 0;
         int top = 8, foot = footTop(sh), bottom = foot - 4;
         int cx = sideX + (ChatMotion.SIDEBAR - ICON) / 2;
         Gfx.push(g);
@@ -201,7 +201,7 @@ public final class ChatInput {
         return gearY(sh) - ITEM * (Ai.ID.equals(ChatChannels.channel()) ? 2 : 1);
     }
 
-    private static void drawFoot(GuiGraphics g, int sh, int mx, int my, int cx) {
+    private static void drawFoot(GuiGraphicsExtractor g, int sh, int mx, int my, int cx) {
         int gy = gearY(sh), sy = gy - ITEM, by = sy - ITEM;
         boolean inSide = mx >= sideX && mx < sideX + ChatMotion.SIDEBAR;
         Panel.drawIcon(g, "gear", cx + 3, gy + 5, ICON - 6, inSide && my >= gy && my < gy + ITEM ? 0xFFFFFFFF : 0xB3C8CCD8);
@@ -235,7 +235,7 @@ public final class ChatInput {
         int sh = screen.height;
         int gy = gearY(sh), sy = gy - ITEM, by = sy - ITEM;
         if (my >= gy && my < gy + ITEM) {
-            Minecraft.getInstance().setScreen(new SettingsScreen(screen));
+            Minecraft.getInstance().gui.setScreen(new SettingsScreen(screen));
             return true;
         }
         if (my >= sy && my < sy + ITEM) {
@@ -262,7 +262,7 @@ public final class ChatInput {
             return out;
         }
         for (var info : mc.getConnection().getOnlinePlayers()) {
-            if (!info.getProfile().getId().equals(mc.player.getUUID())) {
+            if (!info.getProfile().id().equals(mc.player.getUUID())) {
                 out.add(info.getProfile());
             }
         }
@@ -277,7 +277,7 @@ public final class ChatInput {
         return new int[]{x, y, 130, h};
     }
 
-    private static void drawPicker(GuiGraphics g, int mx, int my) {
+    private static void drawPicker(GuiGraphicsExtractor g, int mx, int my) {
         var font = Minecraft.getInstance().font;
         int[] r = pickerRect();
         glassBox(g, r[0], r[1], r[2], r[3]);
@@ -366,12 +366,12 @@ public final class ChatInput {
 
     private static int[] closeBtn() {
         var mc = Minecraft.getInstance();
-        var chat = mc.gui.getChat();
+        var chat = mc.gui.hud.getChat();
         int right = Math.round(ChatMotion.shiftX(chat)) + 2 + Compat.chatWidth(chat) + 14;
         return new int[]{right - 14, 6, 12, 12};
     }
 
-    private static void drawClose(GuiGraphics g, int mx, int my) {
+    private static void drawClose(GuiGraphicsExtractor g, int mx, int my) {
         if (ChatMotion.openness() < 0.05f || searching) {
             return;
         }
@@ -388,7 +388,7 @@ public final class ChatInput {
         }
         int[] b = closeBtn();
         if (mx >= b[0] - 2 && mx < b[0] + b[2] + 2 && my >= b[1] - 2 && my < b[1] + b[3] + 2) {
-            Minecraft.getInstance().setScreen(null);
+            Minecraft.getInstance().gui.setScreen(null);
             return true;
         }
         return false;
@@ -475,7 +475,7 @@ public final class ChatInput {
     /** {x, y, w, h} along the top of the open chat. */
     private static int[] headRect() {
         var mc = Minecraft.getInstance();
-        var chat = mc.gui.getChat();
+        var chat = mc.gui.hud.getChat();
         int x = Math.round(ChatMotion.shiftX(chat)) + 2;
         int y = Math.max(3, Math.round(ChatMotion.chatTopY()) - 2);
         return new int[]{x, y, Compat.chatWidth(chat) + 14, HEAD_H};
@@ -512,7 +512,7 @@ public final class ChatInput {
         return Math.max(1, (resultsRect()[3] - 6) / RES_H);
     }
 
-    private static void drawSearch(GuiGraphics g, int sw, int sh, int mx, int my) {
+    private static void drawSearch(GuiGraphicsExtractor g, int sw, int sh, int mx, int my) {
         var mc = Minecraft.getInstance();
         var font = mc.font;
         float open = ChatMotion.openness();
@@ -764,12 +764,12 @@ public final class ChatInput {
             return text.isBlank() ? "" : text.startsWith("/") ? text : "/" + text;
         }
         if (Muted.here() > 0 && !text.startsWith("/")) { // the server wouldn't take it
-            Minecraft.getInstance().gui.setOverlayMessage(Muted.hint(), false);
+            Minecraft.getInstance().gui.hud.setOverlayMessage(Muted.hint(), false);
             return "";
         }
         if (Ai.ID.equals(ChatChannels.channel()) && !text.startsWith("/")) { // Gemini chat: sent from the client to Gemini
             if (!Images.atts.isEmpty()) {
-                Minecraft.getInstance().gui.setOverlayMessage(Component.translatable("ingamemessenger.ai.text_only"), false);
+                Minecraft.getInstance().gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.ai.text_only"), false);
             }
             Ai.say(expand(text).strip());
             replyTo = -1;
@@ -806,7 +806,7 @@ public final class ChatInput {
         return new int[]{fieldX(sw) + 10, fieldY(sh) - 18 - lowerH(), fieldW(sw) - 20, 15};
     }
 
-    private static void drawBar(GuiGraphics g, int sw, int sh, int mx, int my) {
+    private static void drawBar(GuiGraphicsExtractor g, int sw, int sh, int mx, int my) {
         if (replyTo < 0 && editId < 0) {
             return;
         }
@@ -843,7 +843,7 @@ public final class ChatInput {
     }
 
     /** Draws the field in place of the black bar, before the input text. */
-    public static void drawField(GuiGraphics g, ChatScreen screen) {
+    public static void drawField(GuiGraphicsExtractor g, ChatScreen screen) {
         Minecraft mc = Minecraft.getInstance();
         int w = screen.width, h = screen.height;
         int x = fieldX(w), y = fieldY(h), fw = fieldW(w);
@@ -988,7 +988,7 @@ public final class ChatInput {
         return mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + (b.length > 3 ? b[3] : b[2]);
     }
 
-    private static void drawTray(GuiGraphics g, int sw, int sh, int mx, int my) {
+    private static void drawTray(GuiGraphicsExtractor g, int sw, int sh, int mx, int my) {
         var font = Minecraft.getInstance().font;
         Gfx.push(g);
         Gfx.raise(g, 350);
@@ -1028,7 +1028,7 @@ public final class ChatInput {
     }
 
     /** "Sending 1/3" and a progress bar. */
-    static void drawProgress(GuiGraphics g, int x, int y, int w) {
+    static void drawProgress(GuiGraphicsExtractor g, int x, int y, int w) {
         String label = Component.translatable("ingamemessenger.image.sending_n",
                 Math.min(Images.sendTotal, Images.sendDone + 1), Images.sendTotal).getString();
         ChatDates.small(g, label, x + 2, y + 1, 0xFFC8CCD8);
@@ -1077,7 +1077,7 @@ public final class ChatInput {
         return new int[]{x, fieldY(sh) - barH() - 6 - h, MW, h};
     }
 
-    private static void drawAttach(GuiGraphics g, int sw, int sh, int mx, int my) {
+    private static void drawAttach(GuiGraphicsExtractor g, int sw, int sh, int mx, int my) {
         var font = Minecraft.getInstance().font;
         int[] r = attachRect(sw, sh);
         Gfx.push(g);
@@ -1128,7 +1128,7 @@ public final class ChatInput {
                     screen.handleChatInput(loc, false);
                 }
             } else if (row == 1) { // poll window
-                Minecraft.getInstance().setScreen(new PollScreen(screen, takeReply()));
+                Minecraft.getInstance().gui.setScreen(new PollScreen(screen, takeReply()));
             } else if (!Images.full()) {
                 Images.pickFile();
             }
@@ -1154,23 +1154,23 @@ public final class ChatInput {
     // Command suggestions (CommandSuggestionsMixin, SuggestionsListMixin)
 
     /** Rounded dark glass panel with a thin light border. */
-    public static void glassBox(GuiGraphics g, int x, int y, int w, int h) {
+    public static void glassBox(GuiGraphicsExtractor g, int x, int y, int w, int h) {
         glassBox(g, x, y, w, h, 0xC8);
     }
 
     /** With this much cover (0-255): the suggestion list hides the chat behind it. */
-    public static void glassBox(GuiGraphics g, int x, int y, int w, int h, int alpha) {
+    public static void glassBox(GuiGraphicsExtractor g, int x, int y, int w, int h, int alpha) {
         Panel.round(g, x - 1, y - 1, w + 2, h + 2, 7, 0x30FFFFFF);
         Panel.round(g, x, y, w, h, 6, alpha << 24 | 0x161A23);
     }
 
     /** Bar under the selected suggestion. */
-    public static void highlight(GuiGraphics g, int x, int y, int w, int h) {
+    public static void highlight(GuiGraphicsExtractor g, int x, int y, int w, int h) {
         Panel.round(g, x, y, w, h, 4, 0xC05B4BD6);
     }
 
     /** Command usage or error: one bubble above the field, from the argument (or the field start for errors), as wide as the text. */
-    public static void renderUsage(GuiGraphics g, net.minecraft.client.gui.screens.Screen screen,
+    public static void renderUsage(GuiGraphicsExtractor g, net.minecraft.client.gui.screens.Screen screen,
                                    java.util.List<net.minecraft.util.FormattedCharSequence> lines, int pos, int width) {
         if (lines.isEmpty()) {
             return;
@@ -1234,7 +1234,7 @@ public final class ChatInput {
     }
 
     /** Draws emoji images over their characters in the input, skipping the scrolled-out part. */
-    public static void drawLineEmoji(GuiGraphics g, ChatScreen screen) {
+    public static void drawLineEmoji(GuiGraphicsExtractor g, ChatScreen screen) {
         if (codeOf.isEmpty()) {
             return;
         }
@@ -1291,14 +1291,14 @@ public final class ChatInput {
             return out;
         }
         for (var p : conn.getOnlinePlayers()) {
-            String n = p.getProfile().getName();
-            if ((me == null || !n.equals(me.getGameProfile().getName())) && n.toLowerCase().startsWith(prefix.toLowerCase())) {
+            String n = p.getProfile().name();
+            if ((me == null || !n.equals(me.getGameProfile().name())) && n.toLowerCase().startsWith(prefix.toLowerCase())) {
                 out.add(p);
             }
         }
         // recent speakers first (latest first), then the rest by name
-        out.sort(java.util.Comparator.<net.minecraft.client.multiplayer.PlayerInfo>comparingInt(p -> -ChatDecor.lately(p.getProfile().getName()))
-                .thenComparing(p -> p.getProfile().getName().toLowerCase()));
+        out.sort(java.util.Comparator.<net.minecraft.client.multiplayer.PlayerInfo>comparingInt(p -> -ChatDecor.lately(p.getProfile().name()))
+                .thenComparing(p -> p.getProfile().name().toLowerCase()));
         return out.size() > 6 ? out.subList(0, 6) : out;
     }
 
@@ -1313,7 +1313,7 @@ public final class ChatInput {
         var input = ((ChatScreenAccessor) screen).ingamemessenger$input();
         int w = 0;
         for (var p : list) {
-            w = Math.max(w, font.width(p.getProfile().getName()));
+            w = Math.max(w, font.width(p.getProfile().name()));
         }
         w += 30;
         int x = Math.max(4, Math.min(input.getScreenX(at) - 6, screen.width - w - 4));
@@ -1322,7 +1322,7 @@ public final class ChatInput {
     }
 
     /** Name list, selected one on the accent. */
-    public static void renderMentions(GuiGraphics g, ChatScreen screen, int mx, int my) {
+    public static void renderMentions(GuiGraphicsExtractor g, ChatScreen screen, int mx, int my) {
         var input = ((ChatScreenAccessor) screen).ingamemessenger$input();
         Object[] m = mentionAt(input);
         if (m == null) {
@@ -1353,8 +1353,8 @@ public final class ChatInput {
                 highlight(g, b[0] + 2, ry, b[2] - 4, ROW);
             }
             var p = list.get(i);
-            ChatRenderer.drawFace(g, p.getProfile().getId(), p.getProfile().getName(), b[0] + 6, ry + 2, 10, 1f);
-            Gfx.text(g, font, p.getProfile().getName(), b[0] + 21, ry + 3, i == mentionSel ? 0xFFFFFFFF : 0xFFC8CCD8, false);
+            ChatRenderer.drawFace(g, p.getProfile().id(), p.getProfile().name(), b[0] + 6, ry + 2, 10, 1f);
+            Gfx.text(g, font, p.getProfile().name(), b[0] + 21, ry + 3, i == mentionSel ? 0xFFFFFFFF : 0xFFC8CCD8, false);
         }
         Gfx.pop(g);
     }
@@ -1386,7 +1386,7 @@ public final class ChatInput {
             return false;
         }
         switch (key) {
-            case com.mojang.blaze3d.platform.InputConstants.KEY_TAB, com.mojang.blaze3d.platform.InputConstants.KEY_RETURN, com.mojang.blaze3d.platform.InputConstants.KEY_NUMPADENTER -> accept(screen, list.get(Math.max(0, Math.min(mentionSel, list.size() - 1))).getProfile().getName());
+            case com.mojang.blaze3d.platform.InputConstants.KEY_TAB, com.mojang.blaze3d.platform.InputConstants.KEY_RETURN, com.mojang.blaze3d.platform.InputConstants.KEY_NUMPADENTER -> accept(screen, list.get(Math.max(0, Math.min(mentionSel, list.size() - 1))).getProfile().name());
             case com.mojang.blaze3d.platform.InputConstants.KEY_UP -> mentionSel = (mentionSel - 1 + list.size()) % list.size();
             case com.mojang.blaze3d.platform.InputConstants.KEY_DOWN -> mentionSel = (mentionSel + 1) % list.size();
             default -> {
@@ -1407,7 +1407,7 @@ public final class ChatInput {
         if (b == null || mx < b[0] || mx >= b[0] + b[2] || my < b[1] + 3 || my >= b[1] + 3 + list.size() * ROW) {
             return false;
         }
-        accept(screen, list.get((int) ((my - b[1] - 3) / ROW)).getProfile().getName());
+        accept(screen, list.get((int) ((my - b[1] - 3) / ROW)).getProfile().name());
         return true;
     }
 
@@ -1427,14 +1427,14 @@ public final class ChatInput {
 
     /** Just above the top of the chat, out of the messages' way. */
     public static int miniPlayerY(int sh) {
-        var chat = Minecraft.getInstance().gui.getChat();
+        var chat = Minecraft.getInstance().gui.hud.getChat();
         int top = (int) (sh - 40 + ChatMotion.shiftY() - ChatMotion.chatHeightPx(chat) * Compat.chatScale(chat));
         return Math.max(4, top - MP_H - 6);
     }
     private static int mpX = -1, mpY;
 
     /** Pill with play/pause, sender, progress, time and close (buttons work in the open chat only). */
-    public static void miniPlayer(GuiGraphics g, int x, int y, int mx, int my, boolean chatOpen) {
+    public static void miniPlayer(GuiGraphicsExtractor g, int x, int y, int mx, int my, boolean chatOpen) {
         String key = VoiceClient.nowKey();
         if (key == null) {
             mpX = -1;

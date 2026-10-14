@@ -50,6 +50,6 @@ stonecutter {
         mc('26.3', ['neoforge', 'fabric', 'forge'])
 
         // the version the sources in git are written for
-        vcsVersion = '1.21.1-neoforge'
+        vcsVersion = '26.3-fabric'
     }
 }

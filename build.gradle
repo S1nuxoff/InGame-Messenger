@@ -64,7 +64,7 @@ stonecutter.replacements.regex(since('26.2')) {
     replace(/\b(mc|minecraft|Minecraft\.getInstance\(\))\.setScreen\(/, '$1.gui.setScreen(', /\b(mc|minecraft|Minecraft\.getInstance\(\))\.gui\.setScreen\(/, '$1.setScreen(')
 }
 stonecutter.replacements.regex(since('26.2')) {
-    replace(/(net\.minecraft\.world\.entity\.)?\bEntityType\.PLAYER\b/, 'net.minecraft.world.entity.EntityTypes.PLAYER', /net\.minecraft\.world\.entity\.EntityTypes\.PLAYER/, 'EntityType.PLAYER')
+    replace(/(net\.minecraft\.world\.entity\.)?\bEntityType\.PLAYER\b/, 'net.minecraft.world.entity.EntityTypes.PLAYER', /net\.minecraft\.world\.entity\.EntityTypes\.PLAYER/, 'net.minecraft.world.entity.EntityType.PLAYER')
 }
 // 26.1 moved the GUI's render state classes
 stonecutter.replacements.string(since('26.1')) {

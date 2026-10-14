@@ -2,9 +2,9 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -31,30 +31,30 @@ final class Glass {
 
         abstract void press();
 
-        abstract void draw(GuiGraphics g, int mx, int my, float pt);
+        abstract void draw(GuiGraphicsExtractor g, int mx, int my, float pt);
 
         //? if >=1.21.9 {
-        /*@Override
+        @Override
         public final void onPress(net.minecraft.client.input.InputWithModifiers input) {
             press();
         }
-        *///?} else {
-        @Override
+        //?} else {
+        /*@Override
         public final void onPress() {
             press();
         }
-        //?}
+        *///?}
 
         @Override
         //? if >=26.1 {
-        /*protected final void extractContents(GuiGraphics g, int mx, int my, float pt) {
-        *///?} else if >=1.21.11 {
-        /*protected final void renderContents(GuiGraphics g, int mx, int my, float pt) {
+        protected final void extractContents(GuiGraphicsExtractor g, int mx, int my, float pt) {
+        //?} else if >=1.21.11 {
+        /*protected final void renderContents(GuiGraphicsExtractor g, int mx, int my, float pt) {
         *///?} else if >=1.19.4 {
-        protected final void renderWidget(GuiGraphics g, int mx, int my, float pt) {
-        //?} else {
+        /*protected final void renderWidget(GuiGraphicsExtractor g, int mx, int my, float pt) {
+        *///?} else {
         /*public final void renderButton(com.mojang.blaze3d.vertex.PoseStack pose, int mx, int my, float pt) {
-            GuiGraphics g = new GuiGraphics(pose);
+            GuiGraphicsExtractor g = new GuiGraphicsExtractor(pose);
         *///?}
             draw(g, mx, my, pt);
         }
@@ -103,7 +103,7 @@ final class Glass {
         }
 
         @Override
-        void draw(GuiGraphics g, int mx, int my, float pt) {
+        void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
             setMessage(label.get());
             boolean hover = isHovered() && active;
             int bg = primary ? (hover ? ACCENT_HOVER : ACCENT) : hover ? FILL_HOVER : FILL;
@@ -160,12 +160,12 @@ final class Glass {
 
         @Override
         //? if >=26.1 {
-        /*public void extractWidgetRenderState(GuiGraphics g, int mx, int my, float pt) {
-        *///?} else if >=1.19.4 {
-        public void renderWidget(GuiGraphics g, int mx, int my, float pt) {
-        //?} else {
+        public void extractWidgetRenderState(GuiGraphicsExtractor g, int mx, int my, float pt) {
+        //?} else if >=1.19.4 {
+        /*public void renderWidget(GuiGraphicsExtractor g, int mx, int my, float pt) {
+        *///?} else {
         /*public void renderButton(com.mojang.blaze3d.vertex.PoseStack pose, int mx, int my, float pt) {
-            GuiGraphics g = new GuiGraphics(pose);
+            GuiGraphicsExtractor g = new GuiGraphicsExtractor(pose);
         *///?}
             boolean hover = isHovered();
             int x = getX(), y = getY();
@@ -203,7 +203,7 @@ final class Glass {
         }
 
         @Override
-        void draw(GuiGraphics g, int mx, int my, float pt) {
+        void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
             active = enabled.getAsBoolean();
             boolean isOn = on.getAsBoolean() && active, hover = isHovered() && active;
             int x = getX(), y = getY();

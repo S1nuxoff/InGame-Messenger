@@ -262,7 +262,7 @@ final class Prefs {
         if (v != chatScale) {
             chatScale = v;
             save();
-            Minecraft.getInstance().gui.getChat().rescaleChat();
+            Minecraft.getInstance().gui.hud.getChat().rescaleChat();
         }
     }
 

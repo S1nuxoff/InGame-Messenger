@@ -83,10 +83,10 @@ final class NeoForgePlatform implements Platform {
             NetworkRegistry.onMinecraftRegister(connection.getConnection(), Set.of(type.id()));
         }
         //? if >=1.21.6 {
-        /*net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(new Net.Payload(packet));
-        *///?} else {
-        PacketDistributor.sendToServer(new Net.Payload(packet));
-        //?}
+        net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(new Net.Payload(packet));
+        //?} else {
+        /*PacketDistributor.sendToServer(new Net.Payload(packet));
+        *///?}
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.sinuxoff.ingamemessenger.client;
 
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -29,7 +29,7 @@ final class PickScreen extends BaseScreen {
     }
 
     @Override
-    protected void draw(GuiGraphics g, int mx, int my, float pt) {
+    protected void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawScreen(g, mx, my, pt);
         int panelTop = (height - Panel.panelHeight()) / 2;
         Gfx.centeredText(g, font, Component.translatable("ingamemessenger.pick.hint"), width / 2, panelTop + Panel.panelHeight() + 8, 0xA0A0A0);

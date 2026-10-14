@@ -1,7 +1,7 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -78,7 +78,7 @@ final class ChatPages {
         if (conn == null) {
             return;
         }
-        ChatComponent chat = mc.gui.getChat();
+        ChatComponent chat = mc.gui.hud.getChat();
         ChatComponentAccessor acc = (ChatComponentAccessor) chat;
         boolean active = java.util.Objects.equals(ch, ChatChannels.channel);
         List<GuiMessage> all = active ? acc.ingamemessenger$allMessages() : ch == null ? ChatChannels.commonStash : ChatChannels.stash.computeIfAbsent(ch, k -> new ArrayList<>());
@@ -96,7 +96,7 @@ final class ChatPages {
         }
         List<GuiMessage> built = new ArrayList<>(), serverBuilt = new ArrayList<>();
         long pageDay = Long.MIN_VALUE, serverDay = Long.MIN_VALUE;
-        int tick = mc.gui.getGuiTicks() - 400;
+        int tick = mc.gui.hud.getGuiTicks() - 400;
         UUID runSender = null;
         long runMs = 0;
         boolean runHasName = false;

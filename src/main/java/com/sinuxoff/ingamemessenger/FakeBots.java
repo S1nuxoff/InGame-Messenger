@@ -118,10 +118,10 @@ final class FakeBots {
         List<ClientboundPlayerInfoUpdatePacket.Entry> entries = new ArrayList<>();
         for (GameProfile p : bots.values()) {
             //? if >=1.21.4 {
-            /*entries.add(new ClientboundPlayerInfoUpdatePacket.Entry(ServerCompat.id(p), p, true, 20 + RND.nextInt(60), GameType.SURVIVAL, null, true, 0, null));
-            *///?} else {
-            entries.add(new ClientboundPlayerInfoUpdatePacket.Entry(ServerCompat.id(p), p, true, 20 + RND.nextInt(60), GameType.SURVIVAL, null, null));
-            //?}
+            entries.add(new ClientboundPlayerInfoUpdatePacket.Entry(ServerCompat.id(p), p, true, 20 + RND.nextInt(60), GameType.SURVIVAL, null, true, 0, null));
+            //?} else {
+            /*entries.add(new ClientboundPlayerInfoUpdatePacket.Entry(ServerCompat.id(p), p, true, 20 + RND.nextInt(60), GameType.SURVIVAL, null, null));
+            *///?}
         }
         ((PlayerInfoPacketAccessor) pk).ingamemessenger$setEntries(entries);
         return pk;
@@ -182,7 +182,7 @@ final class FakeBots {
                 continue;
             }
             done.add(who);
-            String bot = who, player = from.getGameProfile().getName();
+            String bot = who, player = from.getGameProfile().name();
             UUID bid = ServerCompat.id(bots.get(bot));
             String reaction = REACTIONS[RND.nextInt(REACTIONS.length)];
             delay += 700 + RND.nextInt(900);
@@ -214,7 +214,7 @@ final class FakeBots {
     private static void say(MinecraftServer server, String bot, UUID bid, String text) {
         chat().tag(bid, Protocol.print(text), null);
         Component name = Component.literal(bot).withStyle(st -> st.withHoverEvent(
-                ServerCompat.showEntity(EntityType.PLAYER, bid, Component.literal(bot))));
+                ServerCompat.showEntity(net.minecraft.world.entity.EntityTypes.PLAYER, bid, Component.literal(bot))));
         chat().quietly(() -> server.getPlayerList().broadcastSystemMessage(
                 Component.translatable("chat.type.text", name, Component.literal(text)), false));
     }

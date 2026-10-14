@@ -1,6 +1,6 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -36,7 +36,7 @@ final class ChatMessages {
             Component text = a1 instanceof Component c ? c : Component.literal(String.valueOf(a1));
             showText(chat, ChatModel.uuidOf(nameC), nameC.getString(), text, now, sig, null, Protocol.print(text.getString()));
         } else if (muteNotice(content)) { // "you're muted" belongs where you tried to write, not in the server chat
-            Minecraft.getInstance().gui.setOverlayMessage(content, false);
+            Minecraft.getInstance().gui.hud.setOverlayMessage(content, false);
         } else {
             // a chat plugin's format or a server line: which one is known once the server's id for it is in, and
             // that may come a moment after the line itself
@@ -65,7 +65,7 @@ final class ChatMessages {
         if (held.isEmpty()) {
             return;
         }
-        ChatComponent chat = Minecraft.getInstance().gui.getChat();
+        ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
         for (java.util.Iterator<Held> it = held.iterator(); it.hasNext(); ) {
             Held h = it.next();
             ChatModel.PlayerLine line = ChatModel.playerLine(h.content().getString());
@@ -107,16 +107,16 @@ final class ChatMessages {
 
     /** Lines that came before the server said it has the mod (a join greeting): rebuilt now, oldest first. */
     static void adoptEarly(ChatComponent chat) {
-        java.util.List<net.minecraft.client.GuiMessage> all = ((ChatComponentAccessor) chat).ingamemessenger$allMessages();
-        java.util.List<net.minecraft.client.GuiMessage> early = new java.util.ArrayList<>();
+        java.util.List<net.minecraft.client.multiplayer.chat.GuiMessage> all = ((ChatComponentAccessor) chat).ingamemessenger$allMessages();
+        java.util.List<net.minecraft.client.multiplayer.chat.GuiMessage> early = new java.util.ArrayList<>();
         for (int i = all.size() - 1; i >= 0; i--) {
-            net.minecraft.client.GuiMessage gm = all.get(i);
+            net.minecraft.client.multiplayer.chat.GuiMessage gm = all.get(i);
             if (gm.tag() == null || !ChatModel.msgs.containsKey(gm.tag())) {
                 early.add(gm);
                 all.remove(i);
             }
         }
-        for (net.minecraft.client.GuiMessage gm : early) {
+        for (net.minecraft.client.multiplayer.chat.GuiMessage gm : early) {
             transform(chat, gm.content(), null, null);
         }
         chat.rescaleChat();
@@ -133,7 +133,7 @@ final class ChatMessages {
             return false;
         }
         boolean shown = ChatChannels.SERVER.equals(ChatChannels.channel());
-        java.util.List<net.minecraft.client.GuiMessage> list = shown ? ((ChatComponentAccessor) chat).ingamemessenger$allMessages()
+        java.util.List<net.minecraft.client.multiplayer.chat.GuiMessage> list = shown ? ((ChatComponentAccessor) chat).ingamemessenger$allMessages()
                 : ChatChannels.stash.get(ChatChannels.SERVER);
         if (list == null || list.isEmpty() || list.get(0).tag() != burstTag) { // something else came in between
             return false;
@@ -141,7 +141,7 @@ final class ChatMessages {
         burstText.append("\n").append(content);
         burstMs = now;
         burstLines++;
-        list.set(0, Compat.message(Minecraft.getInstance().gui.getGuiTicks(), burstText.copy().append("\n "), null, burstTag));
+        list.set(0, Compat.message(Minecraft.getInstance().gui.hud.getGuiTicks(), burstText.copy().append("\n "), null, burstTag));
         if (shown) {
             chat.rescaleChat();
         }
@@ -203,11 +203,11 @@ final class ChatMessages {
         }
         MutableComponent text = Component.empty();
         text.append(" \n \n ");
-        GuiMessageTag tag = ChatModel.remember(new ChatModel.Msg(p.getUUID(), p.getGameProfile().getName(), false, null, null, 0, true, System.currentTimeMillis(),
+        GuiMessageTag tag = ChatModel.remember(new ChatModel.Msg(p.getUUID(), p.getGameProfile().name(), false, null, null, 0, true, System.currentTimeMillis(),
                 -1, null));
         ChatVoiceNotes.voiceOf.put(tag, new ChatVoiceNotes.VoiceInfo(key, ms, wave));
-        ChatModel.note(tag, p.getGameProfile().getName(), ChatVoiceNotes.voiceWord(), -1);
-        ChatChannels.postTo(Minecraft.getInstance().gui.getChat(), text, null, tag, Ai.ID);
+        ChatModel.note(tag, p.getGameProfile().name(), ChatVoiceNotes.voiceWord(), -1);
+        ChatChannels.postTo(Minecraft.getInstance().gui.hud.getChat(), text, null, tag, Ai.ID);
     }
 
     /** Clears the Gemini chat and its memory, then greets again. */
@@ -216,7 +216,7 @@ final class ChatMessages {
         ChatChannels.stash.remove(Ai.ID);
         ChatChannels.dmUnread.remove(Ai.ID);
         if (Ai.ID.equals(ChatChannels.channel)) {
-            ChatComponent chat = Minecraft.getInstance().gui.getChat();
+            ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
             ((ChatComponentAccessor) chat).ingamemessenger$allMessages().clear();
             chat.rescaleChat();
         }
@@ -231,7 +231,7 @@ final class ChatMessages {
         GuiMessageTag tag = ChatModel.remember(new ChatModel.Msg(who, name, false, null, null, 0, true, System.currentTimeMillis(), -1, null));
         ChatModel.pendingFull = text;
         ChatModel.note(tag, name, ChatDecor.snippet(text), -1);
-        ChatChannels.postTo(Minecraft.getInstance().gui.getChat(), out, null, tag, Ai.ID);
+        ChatChannels.postTo(Minecraft.getInstance().gui.hud.getChat(), out, null, tag, Ai.ID);
     }
 
     /** Markdown subset to Minecraft styles: **bold**, *italic*, _italic_, `code` (grey), "- " and "* " as "• ". */
@@ -280,7 +280,7 @@ final class ChatMessages {
         if (s.replyTo() >= 0 && ChatReplies.isMine(s.replyTo()) && !s.name().equalsIgnoreCase(ChatDecor.myName())) {
             ChatReplies.notifyReply(s.name());
         }
-        ChatChannels.postTo(mc.gui.getChat(), text, null, tag, ch);
+        ChatChannels.postTo(mc.gui.hud.getChat(), text, null, tag, ch);
     }
 
     static String stickerWord() {

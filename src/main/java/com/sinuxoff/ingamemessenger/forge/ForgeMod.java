@@ -29,7 +29,7 @@ public final class ForgeMod {
         Platform.set(new ForgePlatform());
         ForgeNet.register();
         //? if >=1.21.9 {
-        /*RegisterCommandsEvent.BUS.addListener(e -> InGameMessenger.registerCommands(e.getDispatcher()));
+        RegisterCommandsEvent.BUS.addListener(e -> InGameMessenger.registerCommands(e.getDispatcher()));
         ServerStartedEvent.BUS.addListener(e -> InGameMessenger.serverStarted(e.getServer()));
         ServerStoppedEvent.BUS.addListener(e -> InGameMessenger.serverStopped());
         TickEvent.ServerTickEvent.Post.BUS.addListener(e -> InGameMessenger.serverTick(e.server()));
@@ -48,7 +48,7 @@ public final class ForgeMod {
                 InGameMessenger.playerLeft(p);
             }
         });
-        *///?} else if >=1.21.6 {
+        //?} else if >=1.21.6 {
         /*RegisterCommandsEvent.BUS.addListener(e -> InGameMessenger.registerCommands(e.getDispatcher()));
         ServerStartedEvent.BUS.addListener(e -> InGameMessenger.serverStarted(e.getServer()));
         ServerStoppedEvent.BUS.addListener(e -> InGameMessenger.serverStopped());
@@ -69,19 +69,19 @@ public final class ForgeMod {
             }
         });
         *///?} else {
-        var bus = net.minecraftforge.common.MinecraftForge.EVENT_BUS;
+        /*var bus = net.minecraftforge.common.MinecraftForge.EVENT_BUS;
         bus.addListener((RegisterCommandsEvent e) -> InGameMessenger.registerCommands(e.getDispatcher()));
         bus.addListener((ServerStartedEvent e) -> InGameMessenger.serverStarted(e.getServer()));
         bus.addListener((ServerStoppedEvent e) -> InGameMessenger.serverStopped());
         //? if >=1.20.2 {
         bus.addListener((TickEvent.ServerTickEvent.Post e) -> InGameMessenger.serverTick(e.getServer()));
         //?} else {
-        /*bus.addListener((TickEvent.ServerTickEvent e) -> {
+        /^bus.addListener((TickEvent.ServerTickEvent e) -> {
             if (e.phase == TickEvent.Phase.END) {
                 InGameMessenger.serverTick(e.getServer());
             }
         });
-        *///?}
+        ^///?}
         bus.addListener(net.minecraftforge.eventbus.api.EventPriority.HIGHEST, false, (ServerChatEvent e) -> {
             if (!InGameMessenger.mayChat(e.getPlayer())) {
                 e.setCanceled(true);
@@ -102,7 +102,7 @@ public final class ForgeMod {
                 InGameMessenger.playerLeft(p);
             }
         });
-        //?}
+        *///?}
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ForgeClient.init(context);
         }

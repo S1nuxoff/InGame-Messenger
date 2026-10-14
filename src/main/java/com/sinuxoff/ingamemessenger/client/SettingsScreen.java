@@ -2,9 +2,9 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -102,7 +102,7 @@ final class SettingsScreen extends BaseScreen {
             addRenderableWidget(new Glass.Button(x + COL - 108, mutedY() + 3, 104, ROW - 6, () -> Component.translatable("ingamemessenger.screen.unmute"),
                     false, Prefs::unmuteAll) {
                 @Override
-                void draw(GuiGraphics g, int mx, int my, float pt) {
+                void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
                     active = Prefs.mutedCount() > 0;
                     super.draw(g, mx, my, pt);
                 }
@@ -200,7 +200,7 @@ final class SettingsScreen extends BaseScreen {
     }
 
     @Override
-    protected void draw(GuiGraphics g, int mx, int my, float pt) {
+    protected void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawScreen(g, mx, my, pt);
         int x = left(), t = top();
         Gfx.text(g, font, title, x, t + 11, TITLE_COLOR, false);
@@ -255,12 +255,12 @@ final class SettingsScreen extends BaseScreen {
         Gfx.text(g, font, Component.translatable("ingamemessenger.screen.packs_hint"), x, contentY() + 13, DARK, false);
         // slim scroll bar of our own; Minecraft's is moved out of sight
         //? if >=1.21.4 {
-        /*int max = list.maxScrollAmount();
+        int max = list.maxScrollAmount();
         double scrolled = list.scrollAmount();
-        *///?} else {
-        int max = list.getMaxScroll();
+        //?} else {
+        /*int max = list.getMaxScroll();
         double scrolled = list.getScrollAmount();
-        //?}
+        *///?}
         if (max > 0) {
             int lh = list.h(), barH = Math.max(14, lh * lh / (lh + max));
             int barY = listY() + (int) ((lh - barH) * scrolled / max);
@@ -272,7 +272,7 @@ final class SettingsScreen extends BaseScreen {
     }
 
     @Override
-    protected void drawBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected void drawBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         g.fill(0, 0, width, height, 0x50000000);
         Panel.window(g, (width - WIN_W) / 2, top() - 2, WIN_W, winH() + 2);
         if (tab == PACKS && list != null) {
@@ -287,7 +287,7 @@ final class SettingsScreen extends BaseScreen {
         if (Audio.testing()) {
             Audio.toggleTest();
         }
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     // Device list (1 = microphone, 2 = speakers)
@@ -322,7 +322,7 @@ final class SettingsScreen extends BaseScreen {
         return new int[]{left(), y, COL, h};
     }
 
-    private void drawPicker(GuiGraphics g, int mx, int my) {
+    private void drawPicker(GuiGraphicsExtractor g, int mx, int my) {
         int[] r = pickerRect();
         Gfx.push(g);
         Gfx.raise(g, 500);
@@ -400,36 +400,36 @@ final class SettingsScreen extends BaseScreen {
 
         // no background or separators, the window draws its own
         //? if >=26.1 {
+        @Override
+        protected void extractListBackground(GuiGraphicsExtractor g) {
+        }
+
+        @Override
+        protected void extractListSeparators(GuiGraphicsExtractor g) {
+        }
+        //?} else if >=1.20.5 {
         /*@Override
-        protected void extractListBackground(GuiGraphics g) {
+        protected void renderListBackground(GuiGraphicsExtractor g) {
         }
 
         @Override
-        protected void extractListSeparators(GuiGraphics g) {
+        protected void renderListSeparators(GuiGraphicsExtractor g) {
         }
-        *///?} else if >=1.20.5 {
-        @Override
-        protected void renderListBackground(GuiGraphics g) {
-        }
-
-        @Override
-        protected void renderListSeparators(GuiGraphics g) {
-        }
-        //?}
+        *///?}
 
         //? if <1.21.9 {
-        @Override
+        /*@Override
         protected boolean isSelectedItem(int index) {
             return false; // no selection frame, rows highlight on hover
         }
-        //?}
+        *///?}
 
         @Override
         //? if >=1.21.4 {
-        /*protected int scrollBarX() {
-        *///?} else {
-        protected int getScrollbarPosition() {
-        //?}
+        protected int scrollBarX() {
+        //?} else {
+        /*protected int getScrollbarPosition() {
+        *///?}
             return -1000; // hidden, the window draws a slim one
         }
     }
@@ -447,30 +447,30 @@ final class SettingsScreen extends BaseScreen {
         }
 
         //? if >=26.1 {
-        /*@Override
-        public void extractContent(GuiGraphics g, int mx, int my, boolean hovering, float pt) {
+        @Override
+        public void extractContent(GuiGraphicsExtractor g, int mx, int my, boolean hovering, float pt) {
             draw(g, getContentY(), getContentX(), getContentWidth(), getContentHeight(), mx, my, hovering);
         }
-        *///?} else if >=1.21.9 {
+        //?} else if >=1.21.9 {
         /*@Override
-        public void renderContent(GuiGraphics g, int mx, int my, boolean hovering, float pt) {
+        public void renderContent(GuiGraphicsExtractor g, int mx, int my, boolean hovering, float pt) {
             draw(g, getContentY(), getContentX(), getContentWidth(), getContentHeight(), mx, my, hovering);
         }
         *///?} else if >=1.20 {
-        @Override
-        public void render(GuiGraphics g, int index, int top, int left, int width, int height, int mx, int my,
+        /*@Override
+        public void render(GuiGraphicsExtractor g, int index, int top, int left, int width, int height, int mx, int my,
                            boolean hovering, float pt) {
             draw(g, top, left, width, height, mx, my, hovering);
         }
-        //?} else {
+        *///?} else {
         /*@Override
         public void render(com.mojang.blaze3d.vertex.PoseStack pose, int index, int top, int left, int width, int height, int mx, int my,
                            boolean hovering, float pt) {
-            draw(new GuiGraphics(pose), top, left, width, height, mx, my, hovering);
+            draw(new GuiGraphicsExtractor(pose), top, left, width, height, mx, my, hovering);
         }
         *///?}
 
-        private void draw(GuiGraphics g, int top, int left, int width, int height, int mx, int my, boolean hovering) {
+        private void draw(GuiGraphicsExtractor g, int top, int left, int width, int height, int mx, int my, boolean hovering) {
             if (hovering) {
                 Panel.round(g, left, top - 1, width - 2, height + 2, 6, 0x12FFFFFF);
             }
@@ -483,15 +483,15 @@ final class SettingsScreen extends BaseScreen {
         }
 
         //? if >=1.21.9 {
-        /*@Override
+        @Override
         public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent e, boolean doubleClick) {
             return true;
         }
-        *///?} else {
-        @Override
+        //?} else {
+        /*@Override
         public boolean mouseClicked(double mx, double my, int button) {
             return true;
         }
-        //?}
+        *///?}
     }
 }

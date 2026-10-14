@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
  * lines are cut at the edge of the scrolling chat area. Empty on older versions.
  */
 //? if >=1.21.11 {
-/*@Mixin(targets = {"net.minecraft.client.gui.components.ChatComponent$DrawingFocusedGraphicsAccess",
+@Mixin(targets = {"net.minecraft.client.gui.components.ChatComponent$DrawingFocusedGraphicsAccess",
         "net.minecraft.client.gui.components.ChatComponent$DrawingBackgroundGraphicsAccess"})
 public abstract class ChatTextClipMixin {
     @org.spongepowered.asm.mixin.injection.ModifyArg(method = "handleMessage", index = 3,
@@ -22,8 +22,8 @@ public abstract class ChatTextClipMixin {
         return p.withScissor(both != null ? both : new net.minecraft.client.gui.navigation.ScreenRectangle(0, 0, 0, 0));
     }
 }
-*///?} else {
-@Mixin(targets = "net.minecraft.client.gui.components.ChatComponent")
+//?} else {
+/*@Mixin(targets = "net.minecraft.client.gui.components.ChatComponent")
 public abstract class ChatTextClipMixin {
 }
-//?}
+*///?}

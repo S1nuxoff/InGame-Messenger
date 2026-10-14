@@ -1,11 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
 //? if >=1.21.11 {
-/*import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ChatComponent;
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix3x2f;
 import com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor;
@@ -14,19 +14,19 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/^*
+/**
  * 1.21.11+ draws the chat and finds clicks through a ChatGraphicsAccess; this wraps it and does what the older
  * versions' mixins do: no dark rows, no scroll bar or tag bars, messenger text right of the face, fading in and moving
  * with the chat (click detection too), inline emoji drawn on top.
- ^/
+ */
 public final class ChatLines implements ChatComponent.ChatGraphicsAccess {
     private final ChatComponent.ChatGraphicsAccess inner;
-    /^* Where it's drawn (null: Minecraft only looks for what's clicked). ^/
-    private final GuiGraphics g;
-    /^* Each line on the screen by its text, to know whose it is. ^/
+    /** Where it's drawn (null: Minecraft only looks for what's clicked). */
+    private final GuiGraphicsExtractor g;
+    /** Each line on the screen by its text, to know whose it is. */
     private final Map<FormattedCharSequence, GuiMessage.Line> lines = new IdentityHashMap<>();
 
-    public ChatLines(ChatComponent chat, ChatComponent.ChatGraphicsAccess inner, GuiGraphics g) {
+    public ChatLines(ChatComponent chat, ChatComponent.ChatGraphicsAccess inner, GuiGraphicsExtractor g) {
         this.inner = inner;
         this.g = g;
         for (GuiMessage.Line line : ((ChatComponentAccessor) chat).ingamemessenger$lines()) {
@@ -89,4 +89,4 @@ public final class ChatLines implements ChatComponent.ChatGraphicsAccess {
         inner.handleTagIcon(left, bottom, forceVisible, tag, icon);
     }
 }
-*///?}
+//?}

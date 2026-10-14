@@ -3,9 +3,9 @@ package com.sinuxoff.ingamemessenger.client;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -174,7 +174,7 @@ final class ChatDecor {
 
     static String myName() {
         var p = Minecraft.getInstance().player;
-        return p == null ? null : p.getGameProfile().getName();
+        return p == null ? null : p.getGameProfile().name();
     }
 
     /** True if someone else's message mentions us. */
@@ -228,7 +228,7 @@ final class ChatDecor {
 
     /** Inline emoji are written ":pack/id:"; in the text they become a blank glyph of the emoji's width. */
     private static final String EMOJI_CHAR = "\uE000", EMOJI_MARK = "ingamemessenger:emoji:";
-    private static final net.minecraft.resources.ResourceLocation EMOJI_FONT =
+    private static final net.minecraft.resources.Identifier EMOJI_FONT =
             InGameMessenger.id("emoji");
     private static final java.util.regex.Pattern DECOR =
             java.util.regex.Pattern.compile("@([A-Za-z0-9_]{1,16})|:([A-Za-z0-9_\\-]{1,64})/([A-Za-z0-9_\\-]{1,64}):");
@@ -238,7 +238,7 @@ final class ChatDecor {
     }
 
     /** Draws a line's inline emoji (animated) over their blanks. */
-    public static void drawInlineEmoji(GuiGraphics g, net.minecraft.client.gui.Font font,
+    public static void drawInlineEmoji(GuiGraphicsExtractor g, net.minecraft.client.gui.Font font,
                                        net.minecraft.util.FormattedCharSequence text, int x, int y, float alpha) {
         float[] adv = {0};
         List<Object[]> found = new ArrayList<>();
@@ -283,6 +283,6 @@ final class ChatDecor {
         Minecraft mc = Minecraft.getInstance();
         mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
                 net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL/*? if >=1.19.3 {*/.value()/*?}*/, 1.2f, 0.9f));
-        mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.mention", who).withStyle(s -> s.withColor(MENTION_ME)), false);
+        mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.mention", who).withStyle(s -> s.withColor(MENTION_ME)), false);
     }
 }

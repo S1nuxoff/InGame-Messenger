@@ -3,9 +3,9 @@ package com.sinuxoff.ingamemessenger.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,69 +22,69 @@ import com.sinuxoff.ingamemessenger.client.ChatInput;
 @Mixin(ChatScreen.class)
 public abstract class ChatScreenMixin {
     //? if >=26.1 {
-    /*@WrapOperation(method = "extractRenderState", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
-    private void ingamemessenger$field(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+    @WrapOperation(method = "extractRenderState", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 0))
+    private void ingamemessenger$field(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
 
     @Inject(method = "extractRenderState", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
-            target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V"))
-    private void ingamemessenger$fieldAfterChat(GuiGraphics g, int mx, int my, float pt, CallbackInfo ci) {
+            target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V"))
+    private void ingamemessenger$fieldAfterChat(GuiGraphicsExtractor g, int mx, int my, float pt, CallbackInfo ci) {
         if (ChatHooks.on()) {
             ChatInput.drawField(g, (ChatScreen) (Object) this);
         }
     }
-    *///?} else if >=1.21.11 {
+    //?} else if >=1.21.11 {
     /*@WrapOperation(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
-    private void ingamemessenger$field(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 0))
+    private void ingamemessenger$field(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
-            target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V"))
-    private void ingamemessenger$fieldAfterChat(GuiGraphics g, int mx, int my, float pt, CallbackInfo ci) {
+            target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIIZZ)V"))
+    private void ingamemessenger$fieldAfterChat(GuiGraphicsExtractor g, int mx, int my, float pt, CallbackInfo ci) {
         if (ChatHooks.on()) {
             ChatInput.drawField(g, (ChatScreen) (Object) this);
         }
     }
     *///?} else if >=1.21.6 {
     /*@WrapOperation(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
-    private void ingamemessenger$field(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 0))
+    private void ingamemessenger$field(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
 
     @Inject(method = "render", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
-            target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V"))
-    private void ingamemessenger$fieldAfterChat(GuiGraphics g, int mx, int my, float pt, CallbackInfo ci) {
+            target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIIZ)V"))
+    private void ingamemessenger$fieldAfterChat(GuiGraphicsExtractor g, int mx, int my, float pt, CallbackInfo ci) {
         if (ChatHooks.on()) {
             ChatInput.drawField(g, (ChatScreen) (Object) this);
         }
     }
     *///?} else if >=1.20 {
-    @WrapOperation(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
-    private void ingamemessenger$field(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+    /*@WrapOperation(method = "render", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 0))
+    private void ingamemessenger$field(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (ChatHooks.on()) {
             ChatInput.drawField(g, (ChatScreen) (Object) this);
         } else {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
-    //?} else {
+    *///?} else {
     /*@WrapOperation(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/screens/ChatScreen;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V", ordinal = 0))
     private void ingamemessenger$field(com.mojang.blaze3d.vertex.PoseStack pose, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (ChatHooks.on()) {
-            ChatInput.drawField(new GuiGraphics(pose), (ChatScreen) (Object) this);
+            ChatInput.drawField(new GuiGraphicsExtractor(pose), (ChatScreen) (Object) this);
         } else {
             op.call(pose, x1, y1, x2, y2, color);
         }

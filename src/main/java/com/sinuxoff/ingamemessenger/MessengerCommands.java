@@ -60,7 +60,7 @@ final class MessengerCommands {
             root.then(Commands.literal("clients").executes(ctx -> {
                         StringBuilder b = new StringBuilder();
                         for (var p : ctx.getSource().getServer().getPlayerList().getPlayers()) {
-                            b.append(b.length() > 0 ? ", " : "").append(p.getGameProfile().getName())
+                            b.append(b.length() > 0 ? ", " : "").append(p.getGameProfile().name())
                                     .append(InGameMessenger.hasClient(p) ? ": messenger" : ": plain chat");
                         }
                         return done(ctx.getSource(), b.length() > 0 ? b.toString() : "nobody on");

@@ -5,13 +5,13 @@ import com.sinuxoff.ingamemessenger.client.Gfx;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.gui.Font;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -107,18 +107,18 @@ public abstract class ChatComponentMixin {
     // Incoming messages
 
     //? if >=26.1 {
-    /*@Inject(method = "addMessage", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "addMessage", at = @At("HEAD"), cancellable = true)
     private void ingamemessenger$incoming(Component content, MessageSignature sig, net.minecraft.client.multiplayer.chat.GuiMessageSource source,
                                    GuiMessageTag tag, CallbackInfo ci) {
         ingamemessenger$transform(content, sig, tag, ci);
     }
-    *///?} else {
-    @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
+    //?} else {
+    /*@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
             at = @At("HEAD"), cancellable = true)
     private void ingamemessenger$incoming(Component content, MessageSignature sig, GuiMessageTag tag, CallbackInfo ci) {
         ingamemessenger$transform(content, sig, tag, ci);
     }
-    //?}
+    *///?}
 
     private void ingamemessenger$transform(Component content, MessageSignature sig, GuiMessageTag tag, CallbackInfo ci) {
         if (ChatHooks.transform((ChatComponent) (Object) this, content, sig, tag)) {
@@ -129,52 +129,52 @@ public abstract class ChatComponentMixin {
     // Drawing: shade and bubbles before, the rest after
 
     //? if >=26.1 {
-    /*@Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
             at = @At("HEAD"), cancellable = true)
-    private void ingamemessenger$bubbles(GuiGraphics g, Font font, int ticks, int mx, int my, ChatComponent.DisplayMode mode, boolean cursor,
+    private void ingamemessenger$bubbles(GuiGraphicsExtractor g, Font font, int ticks, int mx, int my, ChatComponent.DisplayMode mode, boolean cursor,
                                   CallbackInfo ci) {
         ingamemessenger$before(g, ticks, mode.foreground, ci);
     }
 
-    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
             at = @At("RETURN"))
-    private void ingamemessenger$render(GuiGraphics g, Font font, int ticks, int mx, int my, ChatComponent.DisplayMode mode, boolean cursor,
+    private void ingamemessenger$render(GuiGraphicsExtractor g, Font font, int ticks, int mx, int my, ChatComponent.DisplayMode mode, boolean cursor,
                                  CallbackInfo ci) {
         ingamemessenger$after(g, ticks, mode.foreground);
     }
-    *///?} else if >=1.21.11 {
-    /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At("HEAD"), cancellable = true)
-    private void ingamemessenger$bubbles(GuiGraphics g, Font font, int ticks, int mx, int my, boolean focused, boolean cursor, CallbackInfo ci) {
+    //?} else if >=1.21.11 {
+    /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$bubbles(GuiGraphicsExtractor g, Font font, int ticks, int mx, int my, boolean focused, boolean cursor, CallbackInfo ci) {
         ingamemessenger$before(g, ticks, focused, ci);
     }
 
-    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At("RETURN"))
-    private void ingamemessenger$render(GuiGraphics g, Font font, int ticks, int mx, int my, boolean focused, boolean cursor, CallbackInfo ci) {
+    @Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At("RETURN"))
+    private void ingamemessenger$render(GuiGraphicsExtractor g, Font font, int ticks, int mx, int my, boolean focused, boolean cursor, CallbackInfo ci) {
         ingamemessenger$after(g, ticks, focused);
     }
     *///?} else if >=1.20.2 {
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void ingamemessenger$bubbles(GuiGraphics g, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+    /*@Inject(method = "render", at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$bubbles(GuiGraphicsExtractor g, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         ingamemessenger$before(g, tickCount, focused, ci);
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void ingamemessenger$render(GuiGraphics g, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+    private void ingamemessenger$render(GuiGraphicsExtractor g, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         ingamemessenger$after(g, tickCount, focused);
     }
-    //?} else if >=1.20 {
+    *///?} else if >=1.20 {
     /*@org.spongepowered.asm.mixin.Shadow
     private boolean isChatFocused() {
         throw new AssertionError();
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void ingamemessenger$bubbles(GuiGraphics g, int tickCount, int mouseX, int mouseY, CallbackInfo ci) {
+    private void ingamemessenger$bubbles(GuiGraphicsExtractor g, int tickCount, int mouseX, int mouseY, CallbackInfo ci) {
         ingamemessenger$before(g, tickCount, isChatFocused(), ci);
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void ingamemessenger$render(GuiGraphics g, int tickCount, int mouseX, int mouseY, CallbackInfo ci) {
+    private void ingamemessenger$render(GuiGraphicsExtractor g, int tickCount, int mouseX, int mouseY, CallbackInfo ci) {
         ingamemessenger$after(g, tickCount, isChatFocused());
     }
     *///?} else {
@@ -189,7 +189,7 @@ public abstract class ChatComponentMixin {
         int off = net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledHeight() - 48;
         pose.pushPose();
         pose.translate(0, -off, 0);
-        ingamemessenger$before(new GuiGraphics(pose), tickCount, isChatFocused(), ci);
+        ingamemessenger$before(new GuiGraphicsExtractor(pose), tickCount, isChatFocused(), ci);
         if (ci.isCancelled()) {
             pose.popPose();
             return;
@@ -201,12 +201,12 @@ public abstract class ChatComponentMixin {
     @Inject(method = "render", at = @At("RETURN"))
     private void ingamemessenger$render(com.mojang.blaze3d.vertex.PoseStack pose, int tickCount, CallbackInfo ci) {
         pose.popPose();
-        ingamemessenger$after(new GuiGraphics(pose), tickCount, isChatFocused());
+        ingamemessenger$after(new GuiGraphicsExtractor(pose), tickCount, isChatFocused());
         pose.popPose();
     }
     *///?}
 
-    private void ingamemessenger$before(GuiGraphics g, int ticks, boolean focused, CallbackInfo ci) {
+    private void ingamemessenger$before(GuiGraphicsExtractor g, int ticks, boolean focused, CallbackInfo ci) {
         if (!ChatHooks.on()) {
             return;
         }
@@ -224,7 +224,7 @@ public abstract class ChatComponentMixin {
         ChatHooks.renderBubbles(chat, g, ticks, focused);
     }
 
-    private void ingamemessenger$after(GuiGraphics g, int ticks, boolean focused) {
+    private void ingamemessenger$after(GuiGraphicsExtractor g, int ticks, boolean focused) {
         if (!ChatHooks.on()) {
             return;
         }
@@ -235,17 +235,17 @@ public abstract class ChatComponentMixin {
     // Lines: text position, clicks, wrapping
 
     //? if >=1.21.11 {
-    /*/^* Minecraft draws the chat and finds clicks through a "graphics access"; ChatLines wraps it. ^/
+    /** Minecraft draws the chat and finds clicks through a "graphics access"; ChatLines wraps it. */
     //? if >=26.1 {
-    /^@ModifyArg(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
+    @ModifyArg(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V"),
             index = 0)
-    ^///?} else {
-    /^@ModifyArg(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V",
+    //?} else {
+    /*@ModifyArg(method = "render(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIIZZ)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IIZ)V"),
             index = 0)
-    ^///?}
-    private ChatComponent.ChatGraphicsAccess ingamemessenger$drawing(ChatComponent.ChatGraphicsAccess access, @Local(argsOnly = true) GuiGraphics g) {
+    *///?}
+    private ChatComponent.ChatGraphicsAccess ingamemessenger$drawing(ChatComponent.ChatGraphicsAccess access, @Local(argsOnly = true) GuiGraphicsExtractor g) {
         if (!ChatHooks.on()) {
             return access;
         }
@@ -253,14 +253,14 @@ public abstract class ChatComponentMixin {
     }
 
     //? if >=26.1 {
-    /^@ModifyArg(method = "captureClickableText",
+    @ModifyArg(method = "captureClickableText",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V"),
             index = 0)
-    ^///?} else {
-    /^@ModifyArg(method = "captureClickableText",
+    //?} else {
+    /*@ModifyArg(method = "captureClickableText",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IIZ)V"),
             index = 0)
-    ^///?}
+    *///?}
     private ChatComponent.ChatGraphicsAccess ingamemessenger$clicks(ChatComponent.ChatGraphicsAccess access) {
         if (!ChatHooks.on()) {
             return access;
@@ -268,24 +268,24 @@ public abstract class ChatComponentMixin {
         return new com.sinuxoff.ingamemessenger.client.ChatLines((ChatComponent) (Object) this, access, null);
     }
 
-    /^* While scrolling smoothly, one extra line is drawn at the top, partly hidden. ^/
+    /** While scrolling smoothly, one extra line is drawn at the top, partly hidden. */
     @WrapOperation(method = "forEachLine", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/components/ChatComponent;getLinesPerPage()I"))
     private int ingamemessenger$moreLines(ChatComponent chat, Operation<Integer> op) {
         return op.call(chat) + ChatHooks.extraLines();
     }
 
-    /^* Messenger messages wrap narrower, leaving room for the face. ^/
+    /** Messenger messages wrap narrower, leaving room for the face. */
     @WrapOperation(method = "addMessageToDisplayQueue", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/GuiMessage;splitLines(Lnet/minecraft/client/gui/Font;I)Ljava/util/List;"))
+            target = "Lnet/minecraft/client/multiplayer/chat/GuiMessage;splitLines(Lnet/minecraft/client/gui/Font;I)Ljava/util/List;"))
     private List<FormattedCharSequence> ingamemessenger$wrap(GuiMessage msg, Font font, int width, Operation<List<FormattedCharSequence>> op) {
         if (!ChatHooks.shifted(msg.tag())) {
             return op.call(msg, font, width);
         }
         return ingamemessenger$messengerLines(op.call(msg, font, width - ChatHooks.AV - 40), msg.tag());
     }
-    *///?} else {
-    /** Mouse position mapped into the shifted chat. */
+    //?} else {
+    /*/^* Mouse position mapped into the shifted chat. ^/
     @Inject(method = "screenToChatX", at = @At("RETURN"), cancellable = true)
     private void ingamemessenger$mouseX(double x, CallbackInfoReturnable<Double> cir) {
         ChatComponent chat = (ChatComponent) (Object) this;
@@ -297,14 +297,14 @@ public abstract class ChatComponentMixin {
         return y - ChatHooks.shiftY();
     }
 
-    /** While scrolling smoothly, one extra line is drawn at the top, partly hidden. */
+    /^* While scrolling smoothly, one extra line is drawn at the top, partly hidden. ^/
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/components/ChatComponent;getLinesPerPage()I"))
     private int ingamemessenger$moreLines(ChatComponent chat, Operation<Integer> op) {
         return op.call(chat) + ChatHooks.extraLines();
     }
 
-    /** Clicks on links land where the shifted text really is. */
+    /^* Clicks on links land where the shifted text really is. ^/
     @WrapOperation(method = "getClickedComponentStyleAt", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/StringSplitter;componentStyleAtWidth(Lnet/minecraft/util/FormattedCharSequence;I)Lnet/minecraft/network/chat/Style;"))
     private Style ingamemessenger$click(StringSplitter splitter, FormattedCharSequence text, int x, Operation<Style> op,
@@ -312,7 +312,7 @@ public abstract class ChatComponentMixin {
         return op.call(splitter, text, ChatHooks.shifted(line.tag()) ? x - ChatHooks.textX(line.tag()) : x);
     }
 
-    /** Messenger messages wrap narrower, leaving room for the face. */
+    /^* Messenger messages wrap narrower, leaving room for the face. ^/
     //? if >=1.20.2 {
     @WrapOperation(method = "addMessageToDisplayQueue", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/components/ComponentRenderUtils;wrapComponents(Lnet/minecraft/network/chat/FormattedText;ILnet/minecraft/client/gui/Font;)Ljava/util/List;"))
@@ -320,11 +320,11 @@ public abstract class ChatComponentMixin {
                                                      @Local(argsOnly = true) GuiMessage msg) {
         GuiMessageTag tag = msg.tag();
     //?} else {
-    /*@WrapOperation(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;ILnet/minecraft/client/GuiMessageTag;Z)V", at = @At(value = "INVOKE",
+    /^@WrapOperation(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;ILnet/minecraft/client/GuiMessageTag;Z)V", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/client/gui/components/ComponentRenderUtils;wrapComponents(Lnet/minecraft/network/chat/FormattedText;ILnet/minecraft/client/gui/Font;)Ljava/util/List;"))
     private List<FormattedCharSequence> ingamemessenger$wrap(FormattedText text, int width, Font font, Operation<List<FormattedCharSequence>> op,
                                                      @Local(argsOnly = true) GuiMessageTag tag) {
-    *///?}
+    ^///?}
         if (!ChatHooks.shifted(tag)) {
             return op.call(text, width, font);
         }
@@ -332,18 +332,18 @@ public abstract class ChatComponentMixin {
     }
 
     //? if >=1.21.6 {
-    /*/^* Vanilla's dark row and tag bar behind each line are replaced by the bubbles. ^/
+    /^* Vanilla's dark row and tag bar behind each line are replaced by the bubbles. ^/
     // lambda names: NeoForge's, then Fabric's
-    @WrapOperation(method = {"lambda$render$0", "method_71992"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"))
-    private void ingamemessenger$rows(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+    @WrapOperation(method = {"lambda$render$0", "method_71992"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V"))
+    private void ingamemessenger$rows(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
 
     /^* No background for the pending-message line, and no square scroll bar (we draw a slim one). ^/
-    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V"))
-    private void ingamemessenger$scrollBar(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V"))
+    private void ingamemessenger$scrollBar(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
@@ -351,64 +351,64 @@ public abstract class ChatComponentMixin {
 
     /^* Messenger message text, right of the face. ^/
     @WrapOperation(method = {"lambda$render$1", "method_71991"}, at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;III)V"))
-    private void ingamemessenger$text(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color, Operation<Void> op,
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;III)V"))
+    private void ingamemessenger$text(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color, Operation<Void> op,
                                @Local(argsOnly = true) GuiMessage.Line line) {
         ingamemessenger$line(g, font, text, x, y, color, line, (dx, c) -> op.call(g, font, text, dx, y, c));
     }
-    *///?} else if >=1.20 {
-    /** Vanilla's dark row is replaced by the bubbles. */
+    //?} else if >=1.20 {
+    /^/^¹* Vanilla's dark row is replaced by the bubbles. ¹^/
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 0))
-    private void ingamemessenger$row(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 0))
+    private void ingamemessenger$row(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
 
-    /** No square scroll bar, we draw a slim one. */
+    /^¹* No square scroll bar, we draw a slim one. ¹^/
     //? if >=1.20.2 {
-    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIIII)V"))
-    private void ingamemessenger$scrollBar(GuiGraphics g, int x1, int y1, int x2, int y2, int z, int color, Operation<Void> op) {
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIIII)V"))
+    private void ingamemessenger$scrollBar(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int z, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, z, color);
         }
     }
     //?} else {
-    /*@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 3))
-    private void ingamemessenger$scrollBar(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+    /^¹@WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 3))
+    private void ingamemessenger$scrollBar(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
 
-    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 4))
-    private void ingamemessenger$scrollBarEdge(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 4))
+    private void ingamemessenger$scrollBarEdge(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
-    *///?}
+    ¹^///?}
 
-    /** No tag bar next to bubbles. */
+    /^¹* No tag bar next to bubbles. ¹^/
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;fill(IIIII)V", ordinal = 1))
-    private void ingamemessenger$tagBar(GuiGraphics g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;fill(IIIII)V", ordinal = 1))
+    private void ingamemessenger$tagBar(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color, Operation<Void> op) {
         if (!ChatHooks.on()) {
             op.call(g, x1, y1, x2, y2, color);
         }
     }
 
-    /** Messenger message text, right of the face. */
+    /^¹* Messenger message text, right of the face. ¹^/
     @WrapOperation(method = "render", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;III)I"))
-    private int ingamemessenger$text(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color, Operation<Integer> op,
+            target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;III)I"))
+    private int ingamemessenger$text(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color, Operation<Integer> op,
                               @Local GuiMessage.Line line) {
         ingamemessenger$line(g, font, text, x, y, color, line, (dx, c) -> op.call(g, font, text, dx, y, c));
         return 0;
     }
-    //?} else {
-    /*// before 1.20 the chat draws on a PoseStack: its fills are GuiComponent's, its text Font.drawShadow
+    ^///?} else {
+    /^// before 1.20 the chat draws on a PoseStack: its fills are GuiComponent's, its text Font.drawShadow
     private static final String FILL = "Lnet/minecraft/client/gui/components/ChatComponent;fill(Lcom/mojang/blaze3d/vertex/PoseStack;IIIII)V";
 
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = FILL, ordinal = 0))
@@ -443,13 +443,13 @@ public abstract class ChatComponentMixin {
             target = "Lnet/minecraft/client/gui/Font;drawShadow(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/util/FormattedCharSequence;FFI)I"))
     private int ingamemessenger$text(Font font, com.mojang.blaze3d.vertex.PoseStack pose, FormattedCharSequence text, float x, float y, int color,
                               Operation<Integer> op, @Local GuiMessage.Line line) {
-        ingamemessenger$line(new GuiGraphics(pose), font, text, (int) x, (int) y, color, line, (dx, c) -> op.call(font, pose, text, (float) dx, y, c));
+        ingamemessenger$line(new GuiGraphicsExtractor(pose), font, text, (int) x, (int) y, color, line, (dx, c) -> op.call(font, pose, text, (float) dx, y, c));
         return 0;
     }
-    *///?}
+    ^///?}
 
-    /** Draws a line's text: faded in when new, right of the face, moving with the chat. */
-    private static void ingamemessenger$line(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color, GuiMessage.Line line,
+    /^* Draws a line's text: faded in when new, right of the face, moving with the chat. ^/
+    private static void ingamemessenger$line(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color, GuiMessage.Line line,
                                       java.util.function.BiConsumer<Integer, Integer> draw) {
         if (!ChatHooks.on()) {
             draw.accept(x, color);
@@ -475,7 +475,7 @@ public abstract class ChatComponentMixin {
             return 0;
         });
     }
-    //?}
+    *///?}
 
     /** Wrapped lines of a messenger message: no leading space on continuation lines, a reaction row if needed. */
     private static List<FormattedCharSequence> ingamemessenger$messengerLines(List<FormattedCharSequence> wrapped, GuiMessageTag tag) {

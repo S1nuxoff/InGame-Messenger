@@ -4,9 +4,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -20,10 +20,10 @@ public final class ClientEvents {
     /** Optional key for the sticker picker, unbound by default (holding the chat key does the same). */
     public static final KeyMapping OPEN = new KeyMapping("key.ingamemessenger.open", InputConstants.UNKNOWN.getType(), InputConstants.UNKNOWN.getValue(),
             //? if >=1.21.9 {
-            /*KeyMapping.Category.MULTIPLAYER);
-            *///?} else {
-            "key.categories.multiplayer");
-            //?}
+            KeyMapping.Category.MULTIPLAYER);
+            //?} else {
+            /*"key.categories.multiplayer");
+            *///?}
 
     /** Hold time that opens the sticker picker. */
     private static final long HOLD_MS = 280;
@@ -97,7 +97,7 @@ public final class ClientEvents {
             }
             return;
         }
-        if (mc.player == null || mc.screen != null) {
+        if (mc.player == null || mc.gui.screen() != null) {
             chatDownAt = -1;
             return;
         }
@@ -124,15 +124,15 @@ public final class ClientEvents {
             long held = System.currentTimeMillis() - chatDownAt;
             if (!down) {
                 chatDownAt = -1;
-                mc.setScreen(Compat.chatScreen("")); // tap: the chat
+                mc.gui.setScreen(Compat.chatScreen("")); // tap: the chat
             } else if (held >= HOLD_MS) {
                 chatDownAt = -1;
-                mc.setScreen(new PickScreen(chat)); // hold: the sticker picker
+                mc.gui.setScreen(new PickScreen(chat)); // hold: the sticker picker
             }
         }
         while (OPEN.consumeClick()) {
-            if (mc.screen == null) {
-                mc.setScreen(new PickScreen(OPEN));
+            if (mc.gui.screen() == null) {
+                mc.gui.setScreen(new PickScreen(OPEN));
             }
         }
     }
@@ -157,34 +157,34 @@ public final class ClientEvents {
 
     /** The hotbar and everything on it is hidden while the chat is open. */
     public static boolean hideHotbar() {
-        return Session.on() && Minecraft.getInstance().screen instanceof ChatScreen && Prefs.hideHotbar();
+        return Session.on() && Minecraft.getInstance().gui.screen() instanceof ChatScreen && Prefs.hideHotbar();
     }
 
     /** Clips drawing to above the hotbar area. */
-    public static void clipBottom(GuiGraphics g) {
+    public static void clipBottom(GuiGraphicsExtractor g) {
         Gfx.scissor(g, 0, 0, g.guiWidth(), g.guiHeight() - 64);
     }
 
     /** Before the HUD: our blur behind our screens (instead of Minecraft's). */
-    public static void hudStart(GuiGraphics g, float partialTick) {
+    public static void hudStart(GuiGraphicsExtractor g, float partialTick) {
         if (!Session.on()) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        boolean ours = mc.screen instanceof ChatScreen || mc.screen instanceof SettingsScreen || mc.screen instanceof PollScreen
-                || mc.screen instanceof ImageViewScreen;
+        boolean ours = mc.gui.screen() instanceof ChatScreen || mc.gui.screen() instanceof SettingsScreen || mc.gui.screen() instanceof PollScreen
+                || mc.gui.screen() instanceof ImageViewScreen;
         if (ours && Prefs.blurBehind() && mc.level != null) {
             Gfx.blur(g, partialTick);
         }
     }
 
     /** After the HUD: typing line next to the closed chat, upload progress, mini player. */
-    public static void hudEnd(GuiGraphics g0) {
+    public static void hudEnd(GuiGraphicsExtractor g0) {
         if (!Session.on()) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.screen == null && !Compat.hudHidden(mc)) {
+        if (mc.gui.screen() == null && !Compat.hudHidden(mc)) {
             ChatRenderer.drawTyping(g0);
             if (Images.sending) { // upload progress above the hotbar while the chat is closed
                 var gg = g0;
@@ -221,7 +221,7 @@ public final class ClientEvents {
     }
 
     /** Our layer on top of the chat screen. */
-    public static void screenRender(Screen screen0, GuiGraphics g, int mx, int my) {
+    public static void screenRender(Screen screen0, GuiGraphicsExtractor g, int mx, int my) {
         if (screen0 instanceof ChatScreen screen && Session.on()) {
             Gfx.layerAbove(g); // our windows and lists above the messages
             Panel.command = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input().getValue().startsWith("/");

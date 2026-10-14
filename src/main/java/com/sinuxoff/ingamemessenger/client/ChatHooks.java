@@ -1,11 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.gui.Font;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -119,19 +119,19 @@ public final class ChatHooks {
 
     // Drawing
 
-    public static void drawShade(GuiGraphics g, ChatComponent chat) {
+    public static void drawShade(GuiGraphicsExtractor g, ChatComponent chat) {
         ChatMotion.drawShade(g, chat);
     }
 
-    public static void hiddenForSearch(GuiGraphics g, ChatComponent chat) {
+    public static void hiddenForSearch(GuiGraphicsExtractor g, ChatComponent chat) {
         ChatMotion.hiddenForSearch(g, chat);
     }
 
-    public static void renderBubbles(ChatComponent chat, GuiGraphics g, int tickCount, boolean focused) {
+    public static void renderBubbles(ChatComponent chat, GuiGraphicsExtractor g, int tickCount, boolean focused) {
         ChatRenderer.renderBubbles(chat, g, tickCount, focused);
     }
 
-    public static void render(ChatComponent chat, GuiGraphics g, int tickCount, boolean focused) {
+    public static void render(ChatComponent chat, GuiGraphicsExtractor g, int tickCount, boolean focused) {
         ChatRenderer.render(chat, g, tickCount, focused);
     }
 
@@ -140,11 +140,11 @@ public final class ChatHooks {
         return on() ? ChatRenderer.alphaOf(tag) : 1;
     }
 
-    public static int clipped(GuiGraphics g, IntSupplier draw) {
+    public static int clipped(GuiGraphicsExtractor g, IntSupplier draw) {
         return ChatRenderer.clipped(g, draw);
     }
 
-    public static void drawInlineEmoji(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, float alpha) {
+    public static void drawInlineEmoji(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, float alpha) {
         if (on()) {
             ChatDecor.drawInlineEmoji(g, font, text, x, y, alpha);
         }

@@ -20,10 +20,10 @@ abstract class Mic implements AutoCloseable {
     /** name is an OpenAL device name, null = default. Falls back to the default; null if there's no microphone. */
     static Mic open(String name) {
         //? if >=26.1 {
-        /*Mic m = JavaSound.open(name);
-        *///?} else {
-        Mic m = OpenAl.open(name);
-        //?}
+        Mic m = JavaSound.open(name);
+        //?} else {
+        /*Mic m = OpenAl.open(name);
+        *///?}
         return m;
     }
 

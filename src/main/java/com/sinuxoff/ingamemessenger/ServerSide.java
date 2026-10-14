@@ -70,7 +70,7 @@ final class ServerSide implements ServerPlatform {
     public Collection<ChatPlayer> online() {
         List<ChatPlayer> out = new ArrayList<>();
         for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-            out.add(new ChatPlayer(p.getUUID(), p.getGameProfile().getName()));
+            out.add(new ChatPlayer(p.getUUID(), p.getGameProfile().name()));
         }
         return out;
     }
@@ -80,7 +80,7 @@ final class ServerSide implements ServerPlatform {
     public String nameOf(UUID id) {
         ServerPlayer p = server.getPlayerList().getPlayer(id);
         if (p != null) {
-            return p.getGameProfile().getName();
+            return p.getGameProfile().name();
         }
         String bot = FakeBots.nameOf(id);
         if (bot != null) {
@@ -103,7 +103,7 @@ final class ServerSide implements ServerPlatform {
             out.append(Component.literal(part).withStyle(style.withClickEvent(null).withHoverEvent(null).withInsertion(null)));
             return java.util.Optional.empty();
         }, net.minecraft.network.chat.Style.EMPTY);
-        return !styled[0] && out.getString().equals(p.getGameProfile().getName()) ? null : json(server, out);
+        return !styled[0] && out.getString().equals(p.getGameProfile().name()) ? null : json(server, out);
     }
 
     @Override

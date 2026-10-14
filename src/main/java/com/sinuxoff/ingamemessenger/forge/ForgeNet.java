@@ -2,7 +2,7 @@ package com.sinuxoff.ingamemessenger.forge;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 //? if >=1.20.2 {
 import net.minecraftforge.network.ChannelBuilder;

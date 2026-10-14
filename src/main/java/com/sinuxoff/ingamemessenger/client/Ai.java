@@ -47,7 +47,7 @@ final class Ai {
             for (JsonObject t : talk) {
                 String text = t.getAsJsonArray("parts").get(0).getAsJsonObject().get("text").getAsString();
                 if ("user".equals(t.get("role").getAsString())) {
-                    ChatMessages.aiMessage(mc.player.getUUID(), mc.player.getGameProfile().getName(), text);
+                    ChatMessages.aiMessage(mc.player.getUUID(), mc.player.getGameProfile().name(), text);
                 } else {
                     answer(text);
                 }
@@ -113,7 +113,7 @@ final class Ai {
         if (mc.player == null || text.isBlank()) {
             return;
         }
-        ChatMessages.aiMessage(mc.player.getUUID(), mc.player.getGameProfile().getName(), text);
+        ChatMessages.aiMessage(mc.player.getUUID(), mc.player.getGameProfile().name(), text);
         ask(Gemini.turn("user", text));
     }
 

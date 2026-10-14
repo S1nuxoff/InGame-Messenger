@@ -1,11 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.network.chat.Component;
 import com.sinuxoff.ingamemessenger.Platform;
@@ -33,8 +33,8 @@ final class ChatLocations {
         if (p == null) {
             return null;
         }
-        return new ChatText.Location(p.getGameProfile().getName(), p.getBlockX(), p.getBlockY(), p.getBlockZ(),
-                p.level().dimension().location().toString()).wire();
+        return new ChatText.Location(p.getGameProfile().name(), p.getBlockX(), p.getBlockY(), p.getBlockZ(),
+                p.level().dimension().identifier().toString()).wire();
     }
 
     static String locWord() {
@@ -58,7 +58,7 @@ final class ChatLocations {
     }
 
     /** Pin icon, coordinates, dimension and distance (or the click action on hover). */
-    static void drawLoc(GuiGraphics g, ChatText.Location l, int x, int y, float a) {
+    static void drawLoc(GuiGraphicsExtractor g, ChatText.Location l, int x, int y, float a) {
         var mc = Minecraft.getInstance();
         int s = 17, by = y + 1;
         boolean over = ChatUi.over(x, by, LOC_W, s);
@@ -72,7 +72,7 @@ final class ChatLocations {
         } else {
             second = dimName(l.dim());
             var p = mc.player;
-            if (p != null && p.level().dimension().location().toString().equals(l.dim())) {
+            if (p != null && p.level().dimension().identifier().toString().equals(l.dim())) {
                 double d = Math.sqrt(p.distanceToSqr(l.x() + 0.5, l.y(), l.z() + 0.5));
                 second += " \u00B7 " + Component.translatable("ingamemessenger.loc.dist", d < 1000 ? String.valueOf((int) d)
                         : String.format(java.util.Locale.ROOT, "%.1fk", d / 1000)).getString();
@@ -89,7 +89,7 @@ final class ChatLocations {
             Compat.clickCommand(screen, "/jmc wpedit " + l.wire());
         } else {
             mc.keyboardHandler.setClipboard(l.coords());
-            mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.loc.copied"), false);
+            mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.loc.copied"), false);
         }
     }
 }

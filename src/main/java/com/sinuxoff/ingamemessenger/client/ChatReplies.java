@@ -1,7 +1,7 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -78,7 +78,7 @@ final class ChatReplies {
         if (m == null || m.sticker()) {
             return;
         }
-        ChatComponent chat = Minecraft.getInstance().gui.getChat();
+        ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
         ChatComponentAccessor acc = (ChatComponentAccessor) chat;
         List<GuiMessage> all = acc.ingamemessenger$allMessages();
         for (int i = 0; i < all.size(); i++) {
@@ -118,7 +118,7 @@ final class ChatReplies {
         deletedMids.add(d.id());
         Component newQuote = quoteLine(d.id());
         GuiMessageTag tag = ChatModel.byMid.get(d.id());
-        ChatComponent chat = Minecraft.getInstance().gui.getChat();
+        ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
         List<GuiMessage> all = ((ChatComponentAccessor) chat).ingamemessenger$allMessages();
         boolean changed = false;
         for (int i = 0; i < all.size(); i++) {
@@ -181,7 +181,7 @@ final class ChatReplies {
         String[] i = replyInfo(target);
         String who = i == null ? Component.translatable("ingamemessenger.reply.unknown").getString()
                 : i[0] == null ? Component.translatable("ingamemessenger.reply.server").getString() : i[0];
-        int room = (int) (Compat.chatWidth(mc.gui.getChat()) / Math.max(0.1, Compat.chatScale(mc.gui.getChat()))) - ChatRenderer.AV - 40;
+        int room = (int) (Compat.chatWidth(mc.gui.hud.getChat()) / Math.max(0.1, Compat.chatScale(mc.gui.hud.getChat()))) - ChatRenderer.AV - 40;
         MutableComponent name = Component.literal(who).withStyle(s -> s.withColor(i != null && i[0] != null ? ChatDecor.nameColor(who) : 0xC8CCD8));
         int left = room - mc.font.width(name) - 14;
         String text = i == null ? "" : i[1];
@@ -197,7 +197,7 @@ final class ChatReplies {
         Minecraft mc = Minecraft.getInstance();
         mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
                 net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL/*? if >=1.19.3 {*/.value()/*?}*/, 1.2f, 0.9f));
-        mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.replied", who).withStyle(s -> s.withColor(ChatDecor.MENTION_ME)), false);
+        mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.replied", who).withStyle(s -> s.withColor(ChatDecor.MENTION_ME)), false);
     }
 
     /** Message to jump to once loaded (older pages are requested until it is), or -1. */
@@ -237,7 +237,7 @@ final class ChatReplies {
         if (tag == null) {
             return;
         }
-        ChatComponent chat = Minecraft.getInstance().gui.getChat();
+        ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
         ChatComponentAccessor acc = (ChatComponentAccessor) chat;
         List<GuiMessage.Line> lines = acc.ingamemessenger$lines();
         for (int i = 0; i < lines.size(); i++) {

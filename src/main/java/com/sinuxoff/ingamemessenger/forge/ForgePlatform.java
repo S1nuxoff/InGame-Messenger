@@ -18,7 +18,7 @@ import java.util.List;
 final class ForgePlatform implements Platform {
     // 26.1 made ModList's methods static
     //? if >=26.1 {
-    /*private static java.util.Optional<? extends net.minecraftforge.fml.ModContainer> container(String id) {
+    private static java.util.Optional<? extends net.minecraftforge.fml.ModContainer> container(String id) {
         return ModList.getModContainerById(id);
     }
 
@@ -29,8 +29,8 @@ final class ForgePlatform implements Platform {
     private static List<net.minecraftforge.forgespi.language.IModInfo> allMods() {
         return ModList.getMods();
     }
-    *///?} else {
-    private static java.util.Optional<? extends net.minecraftforge.fml.ModContainer> container(String id) {
+    //?} else {
+    /*private static java.util.Optional<? extends net.minecraftforge.fml.ModContainer> container(String id) {
         return ModList.get().getModContainerById(id);
     }
 
@@ -41,7 +41,7 @@ final class ForgePlatform implements Platform {
     private static List<net.minecraftforge.forgespi.language.IModInfo> allMods() {
         return ModList.get().getMods();
     }
-    //?}
+    *///?}
 
     private final ModSettings settings = new FileSettings(configDir().resolve("server.toml"), InGameMessenger.LOG::warn);
 

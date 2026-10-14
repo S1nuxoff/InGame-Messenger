@@ -1,6 +1,6 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -67,7 +67,7 @@ final class ChatModel {
     record Reaction(String emoji, List<String> names) {
         boolean mine() {
             var p = Minecraft.getInstance().player;
-            return p != null && names.contains(p.getGameProfile().getName());
+            return p != null && names.contains(p.getGameProfile().name());
         }
     }
 
@@ -205,7 +205,7 @@ final class ChatModel {
             reactions.put(r.id(), list);
         }
         if (had != !list.isEmpty()) { // the reaction row appears or disappears: relayout, keeping the scroll
-            ChatComponent chat = Minecraft.getInstance().gui.getChat();
+            ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
             ChatComponentAccessor acc = (ChatComponentAccessor) chat;
             int scroll = acc.ingamemessenger$scroll();
             chat.rescaleChat();
@@ -263,7 +263,7 @@ final class ChatModel {
         }
         var conn = Minecraft.getInstance().getConnection();
         PlayerInfo p = conn == null ? null : conn.getPlayerInfo(name.getString());
-        return p == null ? null : p.getProfile().getId();
+        return p == null ? null : p.getProfile().id();
     }
 
     /** Icon for a non-player message: the advancement's item, the player it's about, or a command block. */

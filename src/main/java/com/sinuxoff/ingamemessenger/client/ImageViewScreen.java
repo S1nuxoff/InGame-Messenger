@@ -1,9 +1,9 @@
 package com.sinuxoff.ingamemessenger.client;
 
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -56,12 +56,12 @@ final class ImageViewScreen extends BaseScreen {
     }
 
     @Override
-    protected void drawBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected void drawBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         g.fill(0, 0, width, height, Math.round(shown() * 0xE0) << 24 | 0x0B0D12);
     }
 
     @Override
-    protected void draw(GuiGraphics g, int mx, int my, float pt) {
+    protected void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
         if (closing >= 0 && System.currentTimeMillis() - closing >= CLOSE_MS) {
             back();
             return;
@@ -128,8 +128,8 @@ final class ImageViewScreen extends BaseScreen {
     }
 
     private void back() {
-        minecraft.setScreen(back);
-        ((com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor) minecraft.gui.getChat()).ingamemessenger$setScroll(chatScroll);
+        minecraft.gui.setScreen(back);
+        ((com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor) minecraft.gui.hud.getChat()).ingamemessenger$setScroll(chatScroll);
     }
 
     @Override

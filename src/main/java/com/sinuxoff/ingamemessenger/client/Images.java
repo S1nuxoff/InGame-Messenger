@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
 import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.Platform;
@@ -76,7 +76,7 @@ final class Images {
 
     private static void tooMany() {
         Minecraft mc = Minecraft.getInstance();
-        mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.image.max", MAX), false);
+        mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.image.max", MAX), false);
     }
 
     /** temp files are deleted once read. */
@@ -98,7 +98,7 @@ final class Images {
                 }
                 BufferedImage src = Pictures.read(Files.readAllBytes(file), 3200);
                 if (src == null) {
-                    mc.execute(() -> mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.image.bad"), false));
+                    mc.execute(() -> mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.image.bad"), false));
                     throw new IllegalArgumentException("not a picture");
                 }
                 Pictures.Jpeg made = Pictures.shrinkToJpeg(src, maxKb * 1024);
@@ -110,7 +110,7 @@ final class Images {
                 mc.execute(() -> {
                     DynamicTexture dt = Compat.texture("pic", img);
                     Gfx.smooth(dt);
-                    ResourceLocation rl = InGameMessenger.id("att/" + Long.toHexString(System.nanoTime()));
+                    Identifier rl = InGameMessenger.id("att/" + Long.toHexString(System.nanoTime()));
                     mc.getTextureManager().register(rl, dt);
                     a.thumb = new Thumb(rl, img.getWidth(), img.getHeight());
                     a.w = made.width();
@@ -235,7 +235,7 @@ final class Images {
             } catch (Exception e) {
                 InGameMessenger.LOG.warn("Pictures not sent: {}", e.toString());
                 sending = false;
-                mc.execute(() -> mc.gui.setOverlayMessage(Component.translatable("ingamemessenger.image.failed"), false));
+                mc.execute(() -> mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.image.failed"), false));
             } finally {
                 mc.execute(() -> list.forEach(a -> {
                     Thumb th = a.thumb;
@@ -408,10 +408,10 @@ final class Images {
             for (int x = 0; x < w; x++) {
                 int c = px[y * w + x];
                 //? if >=1.21.4 {
-                /*img.setPixel(x, y, c);
-                *///?} else {
-                img.setPixelRGBA(x, y, c & 0xFF00FF00 | (c >> 16) & 0xFF | (c & 0xFF) << 16); // ARGB -> ABGR
-                //?}
+                img.setPixel(x, y, c);
+                //?} else {
+                /*img.setPixelRGBA(x, y, c & 0xFF00FF00 | (c >> 16) & 0xFF | (c & 0xFF) << 16); // ARGB -> ABGR
+                *///?}
             }
         }
         return img;
@@ -422,7 +422,7 @@ final class Images {
     record Shot(Path file, long modified) {
     }
 
-    record Thumb(ResourceLocation rl, int w, int h) {
+    record Thumb(Identifier rl, int w, int h) {
     }
 
     private static final Map<Path, Object> thumbs = new ConcurrentHashMap<>(); // Thumb or LOADING (failures stay LOADING)
@@ -464,7 +464,7 @@ final class Images {
                     Minecraft.getInstance().execute(() -> {
                         DynamicTexture dt = Compat.texture("pic", img);
                         Gfx.smooth(dt);
-                        ResourceLocation rl = InGameMessenger.id("shot/" + Integer.toHexString(s.file().toString().hashCode()) + "_" + Long.toHexString(s.modified()));
+                        Identifier rl = InGameMessenger.id("shot/" + Integer.toHexString(s.file().toString().hashCode()) + "_" + Long.toHexString(s.modified()));
                         Minecraft.getInstance().getTextureManager().register(rl, dt);
                         thumbs.put(s.file(), new Thumb(rl, img.getWidth(), img.getHeight()));
                     });

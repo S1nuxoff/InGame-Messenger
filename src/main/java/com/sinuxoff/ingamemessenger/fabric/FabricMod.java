@@ -9,17 +9,17 @@ import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 //?}
 //? if >=26.1 {
-/*import net.fabricmc.fabric.api.networking.v1.ClientboundConfigurationChannelEvents;
+import net.fabricmc.fabric.api.networking.v1.ClientboundConfigurationChannelEvents;
 import net.fabricmc.fabric.api.networking.v1.ClientboundPlayChannelEvents;
-*///?} else if >=1.20.2 {
-import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents;
+//?} else if >=1.20.2 {
+/*import net.fabricmc.fabric.api.networking.v1.S2CConfigurationChannelEvents;
 import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
-//?} else {
+*///?} else {
 /*import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
 *///?}
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
 import com.sinuxoff.ingamemessenger.Net;
@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class FabricMod implements ModInitializer {
     static final FabricPlatform PLATFORM = new FabricPlatform();
     /** Once the client lists this channel, it can get Welcome. */
-    private static final ResourceLocation READY = Net.id(Packets.Welcome.TYPE);
+    private static final Identifier READY = Net.id(Packets.Welcome.TYPE);
 
     @Override
     public void onInitialize() {
@@ -53,16 +53,16 @@ public final class FabricMod implements ModInitializer {
             *///?} else {
             if (t.direction() == PacketType.Direction.TO_CLIENT) {
                 //? if >=26.1 {
-                /*PayloadTypeRegistry.clientboundPlay().register(Net.type(t), Net.codec(t));
-                *///?} else {
-                PayloadTypeRegistry.playS2C().register(Net.type(t), Net.codec(t));
-                //?}
+                PayloadTypeRegistry.clientboundPlay().register(Net.type(t), Net.codec(t));
+                //?} else {
+                /*PayloadTypeRegistry.playS2C().register(Net.type(t), Net.codec(t));
+                *///?}
             } else {
                 //? if >=26.1 {
-                /*PayloadTypeRegistry.serverboundPlay().register(Net.type(t), Net.codec(t));
-                *///?} else {
-                PayloadTypeRegistry.playC2S().register(Net.type(t), Net.codec(t));
-                //?}
+                PayloadTypeRegistry.serverboundPlay().register(Net.type(t), Net.codec(t));
+                //?} else {
+                /*PayloadTypeRegistry.playC2S().register(Net.type(t), Net.codec(t));
+                *///?}
                 ServerPlayNetworking.registerGlobalReceiver(Net.type(t), (p, ctx) -> InGameMessenger.toServer(ctx.player(), p.packet()));
             }
             //?}
@@ -85,12 +85,12 @@ public final class FabricMod implements ModInitializer {
         // play starts
         //? if >=1.20.2 {
         //? if >=26.1 {
-        /*ClientboundConfigurationChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
-        *///?} else {
-        S2CConfigurationChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
-        //?}
+        ClientboundConfigurationChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
+        //?} else {
+        /*S2CConfigurationChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
+        *///?}
             if (channels.contains(READY)) {
-                early.add(handler.getOwner().getId());
+                early.add(handler.getOwner().id());
             }
         });
         //?}
@@ -98,10 +98,10 @@ public final class FabricMod implements ModInitializer {
         // (or listed them early: on the next tick, once the player is in the list), or after 3 seconds at the latest.
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> joining.put(handler.getPlayer().getUUID(), server.getTickCount()));
         //? if >=26.1 {
-        /*ClientboundPlayChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
-        *///?} else {
-        S2CPlayChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
-        //?}
+        ClientboundPlayChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
+        //?} else {
+        /*S2CPlayChannelEvents.REGISTER.register((handler, sender, server, channels) -> {
+        *///?}
             if (channels.contains(READY)) {
                 // on the next tick: this can fire while the connection is still being set up
                 early.add(handler.getPlayer().getUUID());
@@ -128,7 +128,7 @@ public final class FabricMod implements ModInitializer {
     private static final Set<UUID> early = ConcurrentHashMap.newKeySet();
 
     /** Whether the client can get this packet: Fabric knows it, it listed it early, or it said Hello. */
-    static boolean canSend(ServerPlayer player, ResourceLocation channel) {
+    static boolean canSend(ServerPlayer player, Identifier channel) {
         return ServerPlayNetworking.canSend(player, channel) || early.contains(player.getUUID()) || InGameMessenger.hasClient(player);
     }
 

@@ -2,9 +2,9 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -52,7 +52,7 @@ final class ChatDates {
     }
 
     /** The date on a small pill centered in the chat. */
-    static void drawDate(GuiGraphics g, long day, int y, int width, float a) {
+    static void drawDate(GuiGraphicsExtractor g, long day, int y, int width, float a) {
         String label = dateLabel(day);
         int w = timeWidth(label) + 14, x = (width - w) / 2;
         Panel.round(g, x, y, w, 11, 5, (int) (a * 0xB0) << 24 | 0x161A23);
@@ -64,7 +64,7 @@ final class ChatDates {
         return at.toLocalDate().equals(java.time.LocalDate.now()) ? at.format(HH_MM) : at.format(DAY_HH_MM);
     }
 
-    static void small(GuiGraphics g, String text, float x, float y, int color) {
+    static void small(GuiGraphicsExtractor g, String text, float x, float y, int color) {
         smallText(g, text, x, y, color);
     }
 
@@ -83,11 +83,11 @@ final class ChatDates {
         return at.toLocalDate().equals(java.time.LocalDate.now()) ? at.format(HH_MM) : at.format(DAY_HH_MM);
     }
 
-    static void drawTime(GuiGraphics g, String time, float x, float y, float a) {
+    static void drawTime(GuiGraphicsExtractor g, String time, float x, float y, float a) {
         smallText(g, time, x, y, (int) (a * 0xC0) << 24 | 0x8E95A6);
     }
 
-    static void smallText(GuiGraphics g, String text, float x, float y, int color) {
+    static void smallText(GuiGraphicsExtractor g, String text, float x, float y, int color) {
         Gfx.push(g);
         Gfx.move(g, x, y);
         float k = Panel.smallScale();

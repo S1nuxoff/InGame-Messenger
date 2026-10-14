@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 /*import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 *///?}
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
@@ -25,7 +25,7 @@ import java.util.function.BooleanSupplier;
  * the core's bytes unchanged.
  */
 public final class Net {
-    private static final Map<PacketType<?>, ResourceLocation> IDS = new HashMap<>();
+    private static final Map<PacketType<?>, Identifier> IDS = new HashMap<>();
 
     static {
         for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
@@ -37,7 +37,7 @@ public final class Net {
     }
 
     /** The channel of a packet type. */
-    public static ResourceLocation id(PacketType<?> t) {
+    public static Identifier id(PacketType<?> t) {
         return IDS.get(t);
     }
 

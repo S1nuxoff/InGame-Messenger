@@ -1,7 +1,7 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -81,10 +81,10 @@ final class ChatChannels {
         if (java.util.Objects.equals(ch, channel)) {
             Compat.addToChat(chat, text, sig, tag);
         } else if (ch == null) {
-            commonStash.add(0, Compat.message(mc.gui.getGuiTicks(), text, sig, tag));
+            commonStash.add(0, Compat.message(mc.gui.hud.getGuiTicks(), text, sig, tag));
             commonUnread++;
         } else {
-            stash.computeIfAbsent(ch, k -> new ArrayList<>()).add(0, Compat.message(mc.gui.getGuiTicks(), text, sig, tag));
+            stash.computeIfAbsent(ch, k -> new ArrayList<>()).add(0, Compat.message(mc.gui.hud.getGuiTicks(), text, sig, tag));
             if (!mineMsg) {
                 dmUnread.merge(ch, 1, Integer::sum);
             }
@@ -100,7 +100,7 @@ final class ChatChannels {
         var conn = Minecraft.getInstance().getConnection();
         var info = conn == null ? null : conn.getPlayerInfo(id);
         if (info != null) {
-            return info.getProfile().getName();
+            return info.getProfile().name();
         }
         String n = dmTabs.get(id);
         return n != null ? n : "?";
@@ -120,7 +120,7 @@ final class ChatChannels {
         }
         // a command isn't a message, nor a message a command: the input is cleared going in or out of the server
         // chat (unless a "/" just brought us in)
-        if (mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen cs) {
+        if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.ChatScreen cs) {
             var input = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) cs).ingamemessenger$input();
             if (SERVER.equals(channel) || SERVER.equals(peer) && !input.getValue().startsWith("/")) {
                 input.setValue("");
@@ -129,7 +129,7 @@ final class ChatChannels {
         if (SERVER.equals(peer)) {
             beforeServer = channel;
         }
-        ChatComponent chat = mc.gui.getChat();
+        ChatComponent chat = mc.gui.hud.getChat();
         ChatComponentAccessor acc = (ChatComponentAccessor) chat;
         List<GuiMessage> all = acc.ingamemessenger$allMessages();
         List<GuiMessage> cur = new ArrayList<>(all);
@@ -216,7 +216,7 @@ final class ChatChannels {
         }
         UUID peer = v.from().equals(me.getUUID()) ? v.to() : v.from();
         dmTabs.putIfAbsent(peer, v.from().equals(me.getUUID()) ? v.toName() : v.fromName());
-        ChatMessages.showText(Minecraft.getInstance().gui.getChat(), v.from(), v.fromName(), Component.literal(v.text()), System.currentTimeMillis(), null, peer,
+        ChatMessages.showText(Minecraft.getInstance().gui.hud.getChat(), v.from(), v.fromName(), Component.literal(v.text()), System.currentTimeMillis(), null, peer,
                 Protocol.print("dm:" + v.text()));
     }
 
@@ -259,7 +259,7 @@ final class ChatChannels {
 
     /** Private chat scrolled to the bottom: mark it read. */
     static void dmHaveRead() {
-        ChatComponentAccessor acc = (ChatComponentAccessor) Minecraft.getInstance().gui.getChat();
+        ChatComponentAccessor acc = (ChatComponentAccessor) Minecraft.getInstance().gui.hud.getChat();
         int newest = 0;
         for (GuiMessage gm : acc.ingamemessenger$allMessages()) {
             ChatModel.Msg m = gm.tag() == null ? null : ChatModel.msgs.get(gm.tag());

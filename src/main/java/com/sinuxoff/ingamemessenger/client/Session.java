@@ -56,7 +56,7 @@ public final class Session {
             return;
         }
         if (last != null) {
-            Minecraft.getInstance().gui.getChat().clearMessages(false);
+            Minecraft.getInstance().gui.hud.getChat().clearMessages(false);
             ChatModel.reset();
             ChatPages.reset();
             ChatReads.reset();
@@ -86,7 +86,7 @@ public final class Session {
         if (c != null && c == matched && welcomed != c) {
             welcomed = c;
             ModCompat.tick(); // before the early lines are rebuilt, so they come out without Chat Heads' heads
-            ChatMessages.adoptEarly(Minecraft.getInstance().gui.getChat());
+            ChatMessages.adoptEarly(Minecraft.getInstance().gui.hud.getChat());
         }
     }
 
@@ -114,6 +114,6 @@ public final class Session {
         if (!Prefs.serverNotices()) {
             return;
         }
-        Compat.addToChat(Minecraft.getInstance().gui.getChat(), text.copy().withStyle(ChatFormatting.GRAY), null, null);
+        Compat.addToChat(Minecraft.getInstance().gui.hud.getChat(), text.copy().withStyle(ChatFormatting.GRAY), null, null);
     }
 }

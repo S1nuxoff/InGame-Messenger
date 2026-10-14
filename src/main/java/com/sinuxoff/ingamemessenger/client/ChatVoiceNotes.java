@@ -1,11 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -62,11 +62,11 @@ final class ChatVoiceNotes {
             ChatModel.mentioned.add(tag);
             ChatReplies.notifyReply(v.name());
         }
-        ChatChannels.postTo(mc.gui.getChat(), text, null, tag, ch);
+        ChatChannels.postTo(mc.gui.hud.getChat(), text, null, tag, ch);
     }
 
     /** Round play/pause button, waveform (played part highlighted), duration. */
-    static void drawVoice(GuiGraphics g, VoiceInfo v, String who, int x, int y, float a) {
+    static void drawVoice(GuiGraphicsExtractor g, VoiceInfo v, String who, int x, int y, float a) {
         var font = Minecraft.getInstance().font;
         boolean playing = VoiceClient.playing(v.key()), gone = VoiceClient.gone(v.key());
         int s = 17, by = y + 1;

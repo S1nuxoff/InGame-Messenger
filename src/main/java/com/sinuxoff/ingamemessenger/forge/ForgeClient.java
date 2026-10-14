@@ -21,7 +21,7 @@ final class ForgeClient {
     static void init(FMLJavaModLoadingContext context) {
         ClientEvents.init();
         //? if >=1.21.9 {
-        /*RegisterKeyMappingsEvent.BUS.addListener(e -> e.register(ClientEvents.OPEN));
+        RegisterKeyMappingsEvent.BUS.addListener(e -> e.register(ClientEvents.OPEN));
         TickEvent.ClientTickEvent.Pre.BUS.addListener(e -> ClientEvents.tickStart());
         TickEvent.ClientTickEvent.Post.BUS.addListener(e -> ClientEvents.tickEnd());
         ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(e -> ClientEvents.loggedOut());
@@ -36,7 +36,7 @@ final class ForgeClient {
         ScreenEvent.MouseScrolled.Pre.BUS.addListener((Predicate<ScreenEvent.MouseScrolled.Pre>) e ->
                 ClientEvents.mouseScrolled(e.getScreen(), e.getMouseX(), e.getMouseY(), e.getDeltaY()));
         ScreenEvent.Closing.BUS.addListener(e -> ClientEvents.screenClosing(e.getScreen()));
-        *///?} else if >=1.21.6 {
+        //?} else if >=1.21.6 {
         /*RegisterKeyMappingsEvent.getBus(context.getModBusGroup()).addListener(e -> e.register(ClientEvents.OPEN));
         TickEvent.ClientTickEvent.Pre.BUS.addListener(e -> ClientEvents.tickStart());
         TickEvent.ClientTickEvent.Post.BUS.addListener(e -> ClientEvents.tickEnd());
@@ -53,28 +53,28 @@ final class ForgeClient {
                 ClientEvents.mouseScrolled(e.getScreen(), e.getMouseX(), e.getMouseY(), e.getDeltaY()));
         ScreenEvent.Closing.BUS.addListener(e -> ClientEvents.screenClosing(e.getScreen()));
         *///?} else {
-        context.getModEventBus().addListener((RegisterKeyMappingsEvent e) -> e.register(ClientEvents.OPEN));
+        /*context.getModEventBus().addListener((RegisterKeyMappingsEvent e) -> e.register(ClientEvents.OPEN));
         var bus = net.minecraftforge.common.MinecraftForge.EVENT_BUS;
         //? if >=1.20.2 {
         bus.addListener((TickEvent.ClientTickEvent.Pre e) -> ClientEvents.tickStart());
         bus.addListener((TickEvent.ClientTickEvent.Post e) -> ClientEvents.tickEnd());
         //?} else {
-        /*bus.addListener((TickEvent.ClientTickEvent e) -> {
+        /^bus.addListener((TickEvent.ClientTickEvent e) -> {
             if (e.phase == TickEvent.Phase.START) {
                 ClientEvents.tickStart();
             } else {
                 ClientEvents.tickEnd();
             }
         });
-        *///?}
+        ^///?}
         bus.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> ClientEvents.loggedOut());
         bus.addListener((ScreenEvent.Init.Post e) -> ClientEvents.screenInit(e.getScreen()));
         //? if >=1.20 {
         bus.addListener((ScreenEvent.Render.Post e) -> ClientEvents.screenRender(e.getScreen(), e.getGuiGraphics(), e.getMouseX(), e.getMouseY()));
         //?} else {
-        /*bus.addListener((ScreenEvent.Render.Post e) -> ClientEvents.screenRender(e.getScreen(),
-                new com.sinuxoff.ingamemessenger.client.compat.GuiGraphics(e.getPoseStack()), e.getMouseX(), e.getMouseY()));
-        *///?}
+        /^bus.addListener((ScreenEvent.Render.Post e) -> ClientEvents.screenRender(e.getScreen(),
+                new com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor(e.getPoseStack()), e.getMouseX(), e.getMouseY()));
+        ^///?}
         bus.addListener((ScreenEvent.KeyPressed.Pre e) -> {
             if (ClientEvents.keyPressed(e.getScreen(), e.getKeyCode())) {
                 e.setCanceled(true);
@@ -94,13 +94,13 @@ final class ForgeClient {
             //? if >=1.20.2 {
             double dy = e.getDeltaY();
             //?} else {
-            /*double dy = e.getScrollDelta();
-            *///?}
+            /^double dy = e.getScrollDelta();
+            ^///?}
             if (ClientEvents.mouseScrolled(e.getScreen(), e.getMouseX(), e.getMouseY(), dy)) {
                 e.setCanceled(true);
             }
         });
         bus.addListener((ScreenEvent.Closing e) -> ClientEvents.screenClosing(e.getScreen()));
-        //?}
+        *///?}
     }
 }

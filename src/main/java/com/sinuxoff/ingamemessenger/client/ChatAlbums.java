@@ -1,11 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -59,7 +59,7 @@ final class ChatAlbums {
             ChatModel.mentioned.add(tag);
             ChatReplies.notifyReply(v.name());
         }
-        ChatChannels.postTo(mc.gui.getChat(), text, null, tag, ch);
+        ChatChannels.postTo(mc.gui.hud.getChat(), text, null, tag, ch);
     }
 
     record Pic(String ref, int w, int h) {
@@ -95,7 +95,7 @@ final class ChatAlbums {
      */
     static AlbumInfo album(List<Pic> pics, String caption) {
         Minecraft mc = Minecraft.getInstance();
-        ChatComponent chat = mc.gui.getChat();
+        ChatComponent chat = mc.gui.hud.getChat();
         int lineH = (int) (9.0 * (mc.options.chatLineSpacing().get() + 1.0));
         int chatW = (int) (Compat.chatWidth(chat) / Math.max(0.1, Compat.chatScale(chat)));
         // independent of the sticker size setting: at most 150 wide and 160 tall, smaller in a narrow chat
@@ -165,7 +165,7 @@ final class ChatAlbums {
     }
 
     /** Pictures in their cells (placeholder while loading, a note if deleted); click to open. */
-    static void drawAlbum(GuiGraphics g, AlbumInfo ai, String who, int x, int y, float a) {
+    static void drawAlbum(GuiGraphicsExtractor g, AlbumInfo ai, String who, int x, int y, float a) {
         for (int i = 0; i < ai.pics().size() && i < ai.cells().size(); i++) {
             Pic pc = ai.pics().get(i);
             int[] c = ai.cells().get(i);

@@ -6,12 +6,12 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
@@ -38,7 +38,7 @@ final class Panel {
     private static final int GLASS = 0xD4141821, GLASS_EDGE = 0x2CFFFFFF;
     private static final int ACCENT = 0xFF7B68FF, ACCENT_TOP = 0x40FFFFFF, HOVER = 0x16FFFFFF;
     private static final int TEXT = 0xFFF2F3F7, MUTED = 0xFF8E95A6;
-    private static final ResourceLocation ICON_BUTTON = tex("button"), ICON_STAR = tex("star"), ICON_GEAR = tex("gear");
+    private static final Identifier ICON_BUTTON = tex("button"), ICON_STAR = tex("star"), ICON_GEAR = tex("gear");
     private static final ItemStack CLOCK = new ItemStack(Items.CLOCK);
 
     static boolean open;
@@ -67,7 +67,7 @@ final class Panel {
     private Panel() {
     }
 
-    private static ResourceLocation tex(String name) {
+    private static Identifier tex(String name) {
         return InGameMessenger.id("textures/gui/" + name + ".png");
     }
 
@@ -252,7 +252,7 @@ final class Panel {
     }
 
     /** Filled rounded rectangle drawn in real screen pixels with anti-aliased edges, crisp at any GUI scale. */
-    static void round(GuiGraphics g, int x, int y, int w, int h, int r, int color) {
+    static void round(GuiGraphicsExtractor g, int x, int y, int w, int h, int r, int color) {
         int s = pixels();
         if (s <= 1) {
             roundPx(g, x, y, w, h, r, color);
@@ -264,7 +264,7 @@ final class Panel {
         Gfx.pop(g);
     }
 
-    private static void roundPx(GuiGraphics g, int x, int y, int w, int h, int r, int color) {
+    private static void roundPx(GuiGraphicsExtractor g, int x, int y, int w, int h, int r, int color) {
         r = Math.min(r, Math.min(w, h) / 2);
         for (int i = 0; i < r; i++) {
             double dy = r - i - 0.5;
@@ -278,7 +278,7 @@ final class Panel {
     }
 
     /** One row of a rounded shape: solid inside, edge pixels by coverage. */
-    private static void roundRow(GuiGraphics g, int x, int y, int w, int solid, float edge, int color) {
+    private static void roundRow(GuiGraphicsExtractor g, int x, int y, int w, int solid, float edge, int color) {
         g.fill(x + solid, y, x + w - solid, y + 1, color);
         int a = Math.round((color >>> 24) * edge);
         if (solid > 0 && a > 0) {
@@ -289,7 +289,7 @@ final class Panel {
     }
 
     /** Glass: soft shadow, thin light border, dark body, faint highlight along the top. */
-    static void glass(GuiGraphics g, int x, int y, int w, int h) {
+    static void glass(GuiGraphicsExtractor g, int x, int y, int w, int h) {
         round(g, x - 3, y - 1, w + 6, h + 6, RADIUS + 3, 0x18000000);
         round(g, x - 1, y + 1, w + 2, h + 2, RADIUS + 1, 0x30000000);
         round(g, x - 1, y - 1, w + 2, h + 2, RADIUS + 1, GLASS_EDGE);
@@ -297,11 +297,11 @@ final class Panel {
         g.fill(x + RADIUS, y, x + w - RADIUS, y + 1, 0x14FFFFFF);
     }
 
-    private static final java.util.Set<ResourceLocation> smoothed = new java.util.HashSet<>();
+    private static final java.util.Set<Identifier> smoothed = new java.util.HashSet<>();
 
     /** GUI icon (textures/gui/<name>.png), smoothly scaled and tinted. */
-    static void drawIcon(GuiGraphics g, String name, float x, float y, float size, int argb) {
-        ResourceLocation tex = tex(name);
+    static void drawIcon(GuiGraphicsExtractor g, String name, float x, float y, float size, int argb) {
+        Identifier tex = tex(name);
         if (smoothed.add(tex)) {
             Gfx.smooth(tex);
         }
@@ -313,14 +313,14 @@ final class Panel {
     }
 
     /** Panel icon (large image drawn small, smoothly). */
-    private static void icon(GuiGraphics g, ResourceLocation tex, int x, int y, int size, float alpha) {
+    private static void icon(GuiGraphicsExtractor g, Identifier tex, int x, int y, int size, float alpha) {
         if (smoothed.add(tex)) {
             Gfx.smooth(tex);
         }
         Gfx.blit(g, tex, x, y, size, alpha);
     }
 
-    private static void small(GuiGraphics g, Font font, Component text, int x, int y, int color) {
+    private static void small(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int color) {
         float k = smallScale();
         Gfx.push(g);
         Gfx.move(g, x, y);
@@ -341,7 +341,7 @@ final class Panel {
 
     // Drawing
 
-    static void render(GuiGraphics g, int mx, int my, int sw, int sh) {
+    static void render(GuiGraphicsExtractor g, int mx, int my, int sw, int sh) {
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;
         long now = System.currentTimeMillis();
@@ -502,13 +502,13 @@ final class Panel {
     }
 
     /** Big preview: just the image with a soft shadow over the blurred screen. */
-    private static void drawPreview(GuiGraphics g, int sw, int sh, long now) {
+    private static void drawPreview(GuiGraphicsExtractor g, int sw, int sh, long now) {
         Minecraft mc = Minecraft.getInstance();
         float t = Math.min(1f, (now - previewMs) / 160f), e = 1 - (1 - t) * (1 - t) * (1 - t);
         //? if <1.21.5 {
-        g.flush();
+        /*g.flush();
         com.mojang.blaze3d.systems.RenderSystem.disableDepthTest();
-        //?}
+        *///?}
         Gfx.blur(g, Gfx.partialTick());
         Gfx.push(g);
         Gfx.raise(g, 400);
@@ -527,12 +527,12 @@ final class Panel {
         Library.draw(g, preview, x0, y0, size, size, e);
         Gfx.pop(g);
         //? if <1.21.5 {
-        com.mojang.blaze3d.systems.RenderSystem.enableDepthTest();
-        //?}
+        /*com.mojang.blaze3d.systems.RenderSystem.enableDepthTest();
+        *///?}
     }
 
     /** Smiley's right-click menu: pin or unpin the panel. */
-    private static void drawSmileMenu(GuiGraphics g, Font font, int mx, int my, int sw, int sh) {
+    private static void drawSmileMenu(GuiGraphicsExtractor g, Font font, int mx, int my, int sw, int sh) {
         if (!smileMenu || centered) {
             return;
         }
@@ -561,7 +561,7 @@ final class Panel {
         return new int[]{x, y, w, h};
     }
 
-    private static void drawTab(GuiGraphics g, int t, int tx, int ty, int mx, int my, float a, boolean mouseHere) {
+    private static void drawTab(GuiGraphicsExtractor g, int t, int tx, int ty, int mx, int my, float a, boolean mouseHere) {
         boolean over = mouseHere && mx >= tx && mx < tx + TAB && my >= ty && my < ty + TAB;
         if (over && t != tab) {
             round(g, tx, ty, TAB, TAB, 7, HOVER);
@@ -675,14 +675,14 @@ final class Panel {
             if (Library.isEmoji(was.pack())) { // emoji go into the text
                 Library.used(was);
                 Minecraft mc = Minecraft.getInstance();
-                if (mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen chat) {
+                if (mc.gui.screen() instanceof net.minecraft.client.gui.screens.ChatScreen chat) {
                     var input = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) chat).ingamemessenger$input();
                     input.insertText(ChatInput.emojiChar(was));
                     chat.setFocused(input);
                 } else { // hold-to-pick mode has no input: open the chat with it
                     open = false;
                     ClientEvents.swallowHeldKeys(); // the held key types nothing until released
-                    mc.setScreen(Compat.chatScreen(ChatInput.emojiChar(was)));
+                    mc.gui.setScreen(Compat.chatScreen(ChatInput.emojiChar(was)));
                 }
             } else {
                 send(was); // stickers are sent right away
@@ -717,17 +717,17 @@ final class Panel {
     /** Sends a sticker and adds it to Recent. */
     static void send(Library.Sticker s) {
         if (Ai.ID.equals(ChatChannels.channel())) { // Gemini only reads text
-            Minecraft.getInstance().gui.setOverlayMessage(net.minecraft.network.chat.Component.translatable("ingamemessenger.ai.text_only"), false);
+            Minecraft.getInstance().gui.hud.setOverlayMessage(net.minecraft.network.chat.Component.translatable("ingamemessenger.ai.text_only"), false);
             return;
         }
         Net.toServer(new Packets.Send(s.pack(), s.id(), ChatInput.takeReply()));
         Library.used(s);
         Minecraft mc = Minecraft.getInstance();
-        if (Prefs.keepOpen() && mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen) {
+        if (Prefs.keepOpen() && mc.gui.screen() instanceof net.minecraft.client.gui.screens.ChatScreen) {
             return; // "keep chat open": the chat and the panel stay
         }
         open = false;
-        mc.setScreen(null);
+        mc.gui.setScreen(null);
     }
 
     /** True if the wheel was over the panel. */
@@ -747,12 +747,12 @@ final class Panel {
     // Shared with the settings window
 
     /** Window background. */
-    static void window(GuiGraphics g, int x, int y, int w, int h) {
+    static void window(GuiGraphicsExtractor g, int x, int y, int w, int h) {
         glass(g, x, y, w, h);
     }
 
     /** Recessed area inside the glass. */
-    static void inset(GuiGraphics g, int x, int y, int w, int h) {
+    static void inset(GuiGraphicsExtractor g, int x, int y, int w, int h) {
         round(g, x, y, w, h, 7, 0x40000000);
     }
 }

@@ -8,20 +8,20 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
 /^*
- * Minecraft's GuiGraphics (1.20+) for older versions: the part of it the mod draws with, on a PoseStack. The sources
- * use GuiGraphics everywhere; before 1.20 the build points them here, and each hook wraps the PoseStack it gets.
+ * Minecraft's GuiGraphicsExtractor (1.20+) for older versions: the part of it the mod draws with, on a PoseStack. The sources
+ * use GuiGraphicsExtractor everywhere; before 1.20 the build points them here, and each hook wraps the PoseStack it gets.
  ^/
-public final class GuiGraphics {
+public final class GuiGraphicsExtractor {
     private final PoseStack pose;
 
-    public GuiGraphics(PoseStack pose) {
+    public GuiGraphicsExtractor(PoseStack pose) {
         this.pose = pose;
     }
 
@@ -65,7 +65,7 @@ public final class GuiGraphics {
         RenderSystem.setShaderColor(r, g, b, a);
     }
 
-    public void blit(ResourceLocation tex, int x, int y, int w, int h, float u, float v, int uw, int vh, int texW, int texH) {
+    public void blit(Identifier tex, int x, int y, int w, int h, float u, float v, int uw, int vh, int texW, int texH) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, tex);
         GuiComponent.blit(pose, x, y, w, h, u, v, uw, vh, texW, texH);
@@ -95,7 +95,7 @@ public final class GuiGraphics {
     }
 
     public void renderComponentTooltip(Font font, List<Component> lines, int x, int y) {
-        var screen = Minecraft.getInstance().screen;
+        var screen = Minecraft.getInstance().gui.screen();
         if (screen != null) {
             screen.renderComponentTooltip(pose, lines, x, y);
         }

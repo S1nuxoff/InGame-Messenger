@@ -2,9 +2,9 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import com.sinuxoff.ingamemessenger.InGameMessenger;
 import com.sinuxoff.ingamemessenger.Net;
@@ -88,7 +88,7 @@ final class ChatReads {
     }
 
     /** ✓ sent, blue ✓✓ read by someone. Remembers where it was drawn, for the "read by" tooltip. */
-    static void drawChecks(GuiGraphics g, int mid, float x, float y, float a) {
+    static void drawChecks(GuiGraphicsExtractor g, int mid, float x, float y, float a) {
         boolean dm = ChatChannels.isDm(mid);
         boolean read = dm ? ChatChannels.channel != null && ChatChannels.dmPeerRead.getOrDefault(ChatChannels.channel, 0) >= mid : !readers(mid).isEmpty();
         Panel.drawIcon(g, read ? "check2" : "check1", x - 1, y - 2.5f, 9, (int) (a * 0xF0) << 24 | (read ? 0x6CC6FF : 0x8E95A6));

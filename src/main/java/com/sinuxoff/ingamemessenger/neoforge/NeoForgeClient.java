@@ -1,7 +1,7 @@
 package com.sinuxoff.ingamemessenger.neoforge;
 
 import com.sinuxoff.ingamemessenger.client.Gfx;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -24,16 +24,16 @@ import java.util.Set;
 /** NeoForge client events forwarded to {@link ClientEvents}. */
 @Mod(value = InGameMessenger.MOD_ID, dist = Dist.CLIENT)
 public final class NeoForgeClient {
-    private static final Set<ResourceLocation> HOTBAR_LAYERS = Set.of(VanillaGuiLayers.HOTBAR, VanillaGuiLayers.PLAYER_HEALTH,
+    private static final Set<Identifier> HOTBAR_LAYERS = Set.of(VanillaGuiLayers.HOTBAR, VanillaGuiLayers.PLAYER_HEALTH,
             VanillaGuiLayers.ARMOR_LEVEL, VanillaGuiLayers.FOOD_LEVEL, VanillaGuiLayers.AIR_LEVEL, VanillaGuiLayers.VEHICLE_HEALTH,
             //? if >=1.21.6 {
-            /*VanillaGuiLayers.CONTEXTUAL_INFO_BAR_BACKGROUND, VanillaGuiLayers.CONTEXTUAL_INFO_BAR,
-            *///?} else {
-            VanillaGuiLayers.EXPERIENCE_BAR, VanillaGuiLayers.JUMP_METER,
-            //?}
+            VanillaGuiLayers.CONTEXTUAL_INFO_BAR_BACKGROUND, VanillaGuiLayers.CONTEXTUAL_INFO_BAR,
+            //?} else {
+            /*VanillaGuiLayers.EXPERIENCE_BAR, VanillaGuiLayers.JUMP_METER,
+            *///?}
             VanillaGuiLayers.EXPERIENCE_LEVEL, VanillaGuiLayers.SELECTED_ITEM_NAME);
     /** Layers left uncut: the chat itself and full-screen overlays (vignette, pumpkin, portal...), which would show a hard edge. */
-    private static final Set<ResourceLocation> UNCUT_LAYERS = Set.of(VanillaGuiLayers.CHAT, VanillaGuiLayers.CAMERA_OVERLAYS,
+    private static final Set<Identifier> UNCUT_LAYERS = Set.of(VanillaGuiLayers.CHAT, VanillaGuiLayers.CAMERA_OVERLAYS,
             VanillaGuiLayers.SLEEP_OVERLAY);
     /** Layers currently clipped, so each layer's end restores only its own clip. */
     private static final ArrayDeque<Boolean> clipped = new ArrayDeque<>();
@@ -94,10 +94,10 @@ public final class NeoForgeClient {
         });
         NeoForge.EVENT_BUS.addListener((ScreenEvent.KeyPressed.Pre e) -> {
             //? if >=26.3 {
-            /*if (ClientEvents.keyPressed(e.getScreen(), e.getKey())) {
-            *///?} else {
-            if (ClientEvents.keyPressed(e.getScreen(), e.getKeyCode())) {
-            //?}
+            if (ClientEvents.keyPressed(e.getScreen(), e.getKey())) {
+            //?} else {
+            /*if (ClientEvents.keyPressed(e.getScreen(), e.getKeyCode())) {
+            *///?}
                 e.setCanceled(true);
             }
         });

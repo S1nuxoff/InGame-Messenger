@@ -31,7 +31,7 @@ final class AiContext {
         *///?}
         StringBuilder b = new StringBuilder();
         b.append("You are Gemini, an assistant inside the Minecraft chat (the InGame Messenger mod), talking with the player ")
-                .append(p != null ? p.getGameProfile().getName() : "?").append(".\n")
+                .append(p != null ? p.getGameProfile().name() : "?").append(".\n")
                 .append("Below is live data from the player's game. Use it only when the player's question needs it ")
                 .append("(their health, items, where they are, mods…); otherwise just talk normally. ")
                 .append("Never bring the data up on your own, never comment on their inventory or surroundings unprompted, ")
@@ -67,7 +67,7 @@ final class AiContext {
         if (conn != null) {
             StringBuilder on = new StringBuilder();
             for (var info : conn.getOnlinePlayers()) {
-                on.append(on.length() > 0 ? ", " : "").append(info.getProfile().getName());
+                on.append(on.length() > 0 ? ", " : "").append(info.getProfile().name());
             }
             b.append("Players online (").append(conn.getOnlinePlayers().size()).append("): ").append(on).append('\n');
             var me = mc.player != null ? conn.getPlayerInfo(mc.player.getUUID()) : null;
@@ -103,8 +103,8 @@ final class AiContext {
         }
         b.append("\n== Place ==\n");
         b.append("Position: ").append(pos.getX()).append(' ').append(pos.getY()).append(' ').append(pos.getZ())
-                .append(", dimension ").append(level.dimension().location()).append('\n');
-        level.getBiome(pos).unwrapKey().ifPresent(k -> b.append("Biome: ").append(k.location()).append('\n'));
+                .append(", dimension ").append(level.dimension().identifier()).append('\n');
+        level.getBiome(pos).unwrapKey().ifPresent(k -> b.append("Biome: ").append(k.identifier()).append('\n'));
         long t = Compat.dayTime(level) % 24000;
         int hours = (int) ((t / 1000 + 6) % 24), mins = (int) (t % 1000 * 60 / 1000);
         b.append(String.format(java.util.Locale.ROOT, "Time: day %d, %02d:%02d (%s), weather: %s\n", Compat.dayTime(level) / 24000 + 1, hours, mins,

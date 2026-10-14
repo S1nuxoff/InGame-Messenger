@@ -143,7 +143,7 @@ final class TestChat {
                         ids.put(s.label(), mid);
                     }
                     Component name = Component.literal(s.who()).withStyle(st -> st.withHoverEvent(
-                            ServerCompat.showEntity(EntityType.PLAYER, id, Component.literal(s.who()))));
+                            ServerCompat.showEntity(net.minecraft.world.entity.EntityTypes.PLAYER, id, Component.literal(s.who()))));
                     String said = text;
                     chat.quietly(() -> server.getPlayerList().broadcastSystemMessage(
                             Component.translatable("chat.type.text", name, Component.literal(said)), false));

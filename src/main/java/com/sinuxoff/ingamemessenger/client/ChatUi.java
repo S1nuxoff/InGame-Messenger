@@ -3,13 +3,13 @@ package com.sinuxoff.ingamemessenger.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
 import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.core.protocol.Packets;
@@ -30,8 +30,8 @@ import java.util.UUID;
 final class ChatUi {
     private static final int ACCENT = 0xFF7B68FF, TEXT = 0xFFF2F3F7, MUTED = 0xFF8E95A6;
     private static final int BTN = 13, PICK_CELL = 20;
-    private static final ResourceLocation[] EMOJI = new ResourceLocation[Protocol.BUILT_IN_REACTIONS], EMOJI_SMALL = new ResourceLocation[Protocol.BUILT_IN_REACTIONS];
-    private static final Set<ResourceLocation> smooth = new HashSet<>();
+    private static final Identifier[] EMOJI = new Identifier[Protocol.BUILT_IN_REACTIONS], EMOJI_SMALL = new Identifier[Protocol.BUILT_IN_REACTIONS];
+    private static final Set<Identifier> smooth = new HashSet<>();
 
     static {
         for (int i = 0; i < Protocol.BUILT_IN_REACTIONS; i++) {
@@ -243,7 +243,7 @@ final class ChatUi {
     // Emoji
 
     /** Reaction emoji by key: "0".."7" (built in) or "pack/id" (emoji pack, possibly animated). */
-    static void emoji(GuiGraphics g, String key, float x, float y, float size, float alpha) {
+    static void emoji(GuiGraphicsExtractor g, String key, float x, float y, float size, float alpha) {
         if (key.length() == 1 && Character.isDigit(key.charAt(0))) {
             emoji(g, key.charAt(0) - '0', x, y, size, alpha);
             return;
@@ -261,11 +261,11 @@ final class ChatUi {
     }
 
     /** A built-in emoji, smoothly scaled. */
-    static void emoji(GuiGraphics g, int i, float x, float y, float size, float alpha) {
+    static void emoji(GuiGraphicsExtractor g, int i, float x, float y, float size, float alpha) {
         if (i < 0 || i >= Protocol.BUILT_IN_REACTIONS) {
             return;
         }
-        ResourceLocation rl = size <= 10 ? EMOJI_SMALL[i] : EMOJI[i];
+        Identifier rl = size <= 10 ? EMOJI_SMALL[i] : EMOJI[i];
         int src = size <= 10 ? 18 : 32;
         if (smooth.add(rl)) {
             Gfx.smooth(rl);
@@ -334,7 +334,7 @@ final class ChatUi {
         return r >= 0 && r < MORE_ROWS && i >= 0 && i < list.size() ? list.get(i).key() : "";
     }
 
-    static void render(GuiGraphics g, int mx, int my, int sw, int sh, boolean blocked) {
+    static void render(GuiGraphicsExtractor g, int mx, int my, int sw, int sh, boolean blocked) {
         Minecraft mc = Minecraft.getInstance();
         Font font = mc.font;
         mouseX = mx;
@@ -544,7 +544,7 @@ final class ChatUi {
 
     private static boolean self(FaceHit f) {
         var p = Minecraft.getInstance().player;
-        return p != null && (p.getUUID().equals(f.id()) || p.getGameProfile().getName().equals(f.name()));
+        return p != null && (p.getUUID().equals(f.id()) || p.getGameProfile().name().equals(f.name()));
     }
 
     /** Card actions: message, mention, hide or show stickers (none for ourselves). */
@@ -692,10 +692,10 @@ final class ChatUi {
         for (PicHit p : pics) { // open the picture
             if (p.box().has(mx, my) && button == 0) {
                 // opening the picture resets Minecraft's chat scroll, so it's kept
-                int scroll = ((com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor) mc.gui.getChat()).ingamemessenger$scroll();
+                int scroll = ((com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor) mc.gui.hud.getChat()).ingamemessenger$scroll();
                 Box b = p.box();
                 ChatMotion.keepScrollOnce();
-                mc.setScreen(new ImageViewScreen(screen, p.pic(), p.who(), scroll, b.x0(), b.y0(), b.x1() - b.x0(), b.y1() - b.y0()));
+                mc.gui.setScreen(new ImageViewScreen(screen, p.pic(), p.who(), scroll, b.x0(), b.y0(), b.x1() - b.x0(), b.y1() - b.y0()));
                 return true;
             }
         }

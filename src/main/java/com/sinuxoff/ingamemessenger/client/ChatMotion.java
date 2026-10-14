@@ -1,11 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.ChatComponent;
 
@@ -75,7 +75,7 @@ final class ChatMotion {
 
     /** A picture is open in full size over the chat. */
     public static boolean viewing() {
-        return Minecraft.getInstance().screen instanceof ImageViewScreen;
+        return Minecraft.getInstance().gui.screen() instanceof ImageViewScreen;
     }
 
     /** Keep the scroll position once when the chat screen is replaced by the picture view. */
@@ -91,7 +91,7 @@ final class ChatMotion {
 
     /** The chat is open, or a picture from it is shown full size. */
     static boolean chatOpen(Minecraft mc) {
-        return mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen || mc.screen instanceof ImageViewScreen;
+        return mc.gui.screen() instanceof net.minecraft.client.gui.screens.ChatScreen || mc.gui.screen() instanceof ImageViewScreen;
     }
 
     public static float shiftY() {
@@ -137,12 +137,12 @@ final class ChatMotion {
     /** Top of the open chat on screen (the tabs go above it). */
     static float chatTopY() {
         Minecraft mc = Minecraft.getInstance();
-        ChatComponent chat = mc.gui.getChat();
+        ChatComponent chat = mc.gui.hud.getChat();
         return mc.getWindow().getGuiScaledHeight() - 40 + shiftYNow - chatHeightPx(chat) * (float) Compat.chatScale(chat);
     }
 
     /** Messages are hidden while searching (only the shade stays). */
-    public static void hiddenForSearch(GuiGraphics g, ChatComponent chat) {
+    public static void hiddenForSearch(GuiGraphicsExtractor g, ChatComponent chat) {
         drawShade(g, chat);
         ChatUi.clearHits();
     }
@@ -153,7 +153,7 @@ final class ChatMotion {
     private static long shadeMs;
 
     /** Darkens the chat's side of the screen while it's open, fading out across, so messages stay readable. */
-    public static void drawShade(GuiGraphics g, ChatComponent chat) {
+    public static void drawShade(GuiGraphicsExtractor g, ChatComponent chat) {
         Minecraft mc = Minecraft.getInstance();
         boolean open = chatOpen(mc);
         long now = System.currentTimeMillis();

@@ -22,11 +22,11 @@ public final class InGameMessenger {
     public static final Logger LOG = LoggerFactory.getLogger("InGameMessenger");
 
     /** A resource location in the mod's namespace. */
-    public static net.minecraft.resources.ResourceLocation id(String path) {
+    public static net.minecraft.resources.Identifier id(String path) {
         //? if >=1.21 {
-        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        return net.minecraft.resources.Identifier.fromNamespaceAndPath(MOD_ID, path);
         //?} else {
-        /*return new net.minecraft.resources.ResourceLocation(MOD_ID, path);
+        /*return new net.minecraft.resources.Identifier(MOD_ID, path);
         *///?}
     }
 
@@ -54,7 +54,7 @@ public final class InGameMessenger {
     public static void chatLine(ServerPlayer player, Component message) {
         var hub = ServerSide.hub;
         if (hub != null) {
-            hub.chatLine(player.getUUID(), player.getGameProfile().getName(), message.getString());
+            hub.chatLine(player.getUUID(), player.getGameProfile().name(), message.getString());
         }
     }
 

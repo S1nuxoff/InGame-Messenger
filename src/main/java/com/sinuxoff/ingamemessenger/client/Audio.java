@@ -155,7 +155,7 @@ final class Audio {
                     free.add(b);
                 }
                 mic.start();
-                while (testing && Minecraft.getInstance().screen instanceof SettingsScreen) {
+                while (testing && Minecraft.getInstance().gui.screen() instanceof SettingsScreen) {
                     if (!mic.read(pcm)) {
                         Thread.sleep(4);
                         continue;

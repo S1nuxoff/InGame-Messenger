@@ -1,12 +1,12 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -46,15 +46,15 @@ final class ChatRenderer {
     static final int TYPING_ROW = 12;
 
     /** Typing row under the newest message, next to the faces. */
-    static void drawTyping(GuiGraphics g) {
-        ChatComponent chat = Minecraft.getInstance().gui.getChat();
+    static void drawTyping(GuiGraphicsExtractor g) {
+        ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
         float cs = (float) Compat.chatScale(chat);
         int y = g.guiHeight() - ChatInput.BOTTOM - ChatInput.H - 6 - 9;
         String who = Typing.first();
         if (who != null && Prefs.seeTyping()) { // face in the face column, like a message
             var conn = Minecraft.getInstance().getConnection();
             UUID id = Ai.NAME.equals(who) && Ai.ID.equals(ChatChannels.channel) ? Ai.ID
-                    : conn != null && conn.getPlayerInfo(who) != null ? conn.getPlayerInfo(who).getProfile().getId() : null;
+                    : conn != null && conn.getPlayerInfo(who) != null ? conn.getPlayerInfo(who).getProfile().id() : null;
             int fs = Math.round(11 * cs);
             drawFace(g, id, who, Math.round(ChatMotion.shiftX(chat) + 4 * cs + (FACE * cs - fs) / 2f), y - 2, fs, 1f);
         }
@@ -81,7 +81,7 @@ final class ChatRenderer {
         }
     }
 
-    private static Layout layout(ChatComponent chat, GuiGraphics g) {
+    private static Layout layout(ChatComponent chat, GuiGraphicsExtractor g) {
         Minecraft mc = Minecraft.getInstance();
         float scale = (float) Compat.chatScale(chat);
         double spacing = mc.options.chatLineSpacing().get();
@@ -104,7 +104,7 @@ final class ChatRenderer {
     }
 
     /** Rounded translucent bubble. */
-    private static void bubble(GuiGraphics g, int x, int y, int w, int h, int rgb, float a) {
+    private static void bubble(GuiGraphicsExtractor g, int x, int y, int w, int h, int rgb, float a) {
         int r = Math.min(11, h / 2); // a single line becomes a pill
         // lighter and more opaque over the open chat's shade, so they stand out
         int lift = Math.round(ChatMotion.shade * 0x0A);
@@ -118,7 +118,7 @@ final class ChatRenderer {
      * messages from the newest up; a face goes next to the last message of a group. Leaves the chat area clipped for
      * Minecraft's text until {@link #render}. With the chat open, records hit areas for {@link ChatUi}.
      */
-    public static void renderBubbles(ChatComponent chat, GuiGraphics g, int tickCount, boolean focused) {
+    public static void renderBubbles(ChatComponent chat, GuiGraphicsExtractor g, int tickCount, boolean focused) {
         ChatMotion.slide = 0;
         ChatMotion.newest = null;
         ChatMotion.newestAlpha = 1f;
@@ -443,7 +443,7 @@ final class ChatRenderer {
     }
 
     /** Round arrow button with the new message count, bottom right of the chat. */
-    private static void drawDown(GuiGraphics g, int x, int y, float dy, float a) {
+    private static void drawDown(GuiGraphicsExtractor g, int x, int y, float dy, float a) {
         boolean over = ChatUi.over(x, y + dy, DOWN, DOWN);
         Panel.round(g, x - 1, y - 1, DOWN + 2, DOWN + 2, DOWN / 2 + 1, (int) (a * 0x40) << 24 | 0xFFFFFF);
         Panel.round(g, x, y, DOWN, DOWN, DOWN / 2, (int) (a * 0xF0) << 24 | (over ? 0x2A3040 : 0x1B1F2A));
@@ -478,7 +478,7 @@ final class ChatRenderer {
     }
 
     /** Reaction pills (emoji and count), ours in the accent color. */
-    private static void drawReactions(GuiGraphics g, List<ChatModel.Reaction> rs, int mid, int x, int y, float a) {
+    private static void drawReactions(GuiGraphicsExtractor g, List<ChatModel.Reaction> rs, int mid, int x, int y, float a) {
         var font = Minecraft.getInstance().font;
         for (ChatModel.Reaction r : rs) {
             String n = String.valueOf(r.names().size());
@@ -493,7 +493,7 @@ final class ChatRenderer {
     }
 
     /** Draws a Minecraft chat line clipped to the chat area. */
-    public static int clipped(GuiGraphics g, java.util.function.IntSupplier draw) {
+    public static int clipped(GuiGraphicsExtractor g, java.util.function.IntSupplier draw) {
         if (ChatMotion.clipTop < 0 || ChatMotion.slide == 0) {
             return draw.getAsInt();
         }
@@ -520,11 +520,11 @@ final class ChatRenderer {
         Prefs.markSpacingSet();
     }
 
-    static void drawFace(GuiGraphics g, UUID id, String name, int x, int y, float alpha) {
+    static void drawFace(GuiGraphicsExtractor g, UUID id, String name, int x, int y, float alpha) {
         drawFace(g, id, name, x, y, FACE, alpha);
     }
 
-    static void drawFace(GuiGraphics g, UUID id, String name, int x, int y, int size, float alpha) {
+    static void drawFace(GuiGraphicsExtractor g, UUID id, String name, int x, int y, int size, float alpha) {
         if (Ai.ID.equals(id)) {
             Panel.round(g, x, y, size, size, Math.max(2, size / 3), (int) (alpha * 255) << 24 | 0xF4F6FB);
             Panel.drawIcon(g, "ai_logo", x + size * 0.08f, y + size * 0.08f, size * 0.84f, (int) (alpha * 255) << 24 | 0xFFFFFF);
@@ -559,7 +559,7 @@ final class ChatRenderer {
     }
 
     /** After Minecraft draws the chat: stickers over their blank lines, right of the face. */
-    public static void render(ChatComponent chat, GuiGraphics g, int tickCount, boolean focused) {
+    public static void render(ChatComponent chat, GuiGraphicsExtractor g, int tickCount, boolean focused) {
         if (ChatModel.msgs.isEmpty() || hidden()) {
             return;
         }

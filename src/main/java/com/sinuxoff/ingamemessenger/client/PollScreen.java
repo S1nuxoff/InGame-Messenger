@@ -1,9 +1,9 @@
 package com.sinuxoff.ingamemessenger.client;
 
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -80,7 +80,7 @@ final class PollScreen extends BaseScreen {
         addRenderableWidget(new Glass.Button(x, by, 80, 20, () -> Component.translatable("gui.cancel"), false, this::onClose));
         addRenderableWidget(new Glass.Button(x + w - 100, by, 100, 20, () -> Component.translatable("ingamemessenger.poll.create"), true, this::create) {
             @Override
-            void draw(GuiGraphics g, int mx, int my, float pt) {
+            void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
                 active = ready();
                 super.draw(g, mx, my, pt);
             }
@@ -120,7 +120,7 @@ final class PollScreen extends BaseScreen {
     }
 
     @Override
-    protected void drawBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected void drawBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         g.fill(0, 0, width, height, 0x50000000);
         int x = left(), y = top();
         Panel.window(g, x, y, W, winH());
@@ -144,7 +144,7 @@ final class PollScreen extends BaseScreen {
 
     @Override
     public void onClose() {
-        minecraft.setScreen(back);
+        minecraft.gui.setScreen(back);
     }
 
     @Override

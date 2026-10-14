@@ -1,11 +1,11 @@
 package com.sinuxoff.ingamemessenger.client;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -106,7 +106,7 @@ final class ChatPolls {
         ChatModel.note(tag, v.name(), pollWord(pi), v.replyTo());
         ChatRenderer.arrived();
         ChatDecor.spoke(v.name());
-        ChatChannels.postTo(Minecraft.getInstance().gui.getChat(), text, null, tag, ch);
+        ChatChannels.postTo(Minecraft.getInstance().gui.hud.getChat(), text, null, tag, ch);
     }
 
     /** Updates the counts (and our own choice if we voted). */
@@ -124,7 +124,7 @@ final class ChatPolls {
     }
 
     /** Options (circle or check, text, share and bar), then the vote count. */
-    static void drawPoll(GuiGraphics g, PollInfo pi, int x, int footY, int lineH, float a) {
+    static void drawPoll(GuiGraphicsExtractor g, PollInfo pi, int x, int footY, int lineH, float a) {
         var font = Minecraft.getInstance().font;
         int n = pi.options.size(), total = 0;
         for (int c : pi.counts) {

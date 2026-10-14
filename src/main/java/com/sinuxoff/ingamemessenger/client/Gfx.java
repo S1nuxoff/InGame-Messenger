@@ -3,11 +3,11 @@ package com.sinuxoff.ingamemessenger.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
@@ -24,126 +24,126 @@ public final class Gfx {
 
     /** Saves the current transform; restore with pop. */
     //? if >=1.21.6 {
-    /*public static void push(GuiGraphics g) {
+    public static void push(GuiGraphicsExtractor g) {
         g.pose().pushMatrix();
     }
 
-    public static void pop(GuiGraphics g) {
+    public static void pop(GuiGraphicsExtractor g) {
         g.pose().popMatrix();
     }
 
-    /^* Translates what's drawn from now on. ^/
-    public static void move(GuiGraphics g, float x, float y) {
-        g.pose().translate(x, y);
-    }
-
-    /^* Translates, and raises by z where Minecraft still has depth. ^/
-    public static void move(GuiGraphics g, float x, float y, float z) {
-        g.pose().translate(x, y);
-    }
-
-    /^* Draws everything after this above what was drawn before (a window over the chat, a tooltip). ^/
-    public static void raise(GuiGraphics g, float z) {
-        g.nextStratum();
-    }
-
-    /^* Scales what's drawn from now on. ^/
-    public static void scale(GuiGraphics g, float x, float y) {
-        g.pose().scale(x, y);
-    }
-    *///?} else {
-    public static void push(GuiGraphics g) {
-        g.pose().pushPose();
-    }
-
-    public static void pop(GuiGraphics g) {
-        g.pose().popPose();
-    }
-
     /** Translates what's drawn from now on. */
-    public static void move(GuiGraphics g, float x, float y) {
-        g.pose().translate(x, y, 0);
+    public static void move(GuiGraphicsExtractor g, float x, float y) {
+        g.pose().translate(x, y);
     }
 
     /** Translates, and raises by z where Minecraft still has depth. */
-    public static void move(GuiGraphics g, float x, float y, float z) {
-        g.pose().translate(x, y, z);
+    public static void move(GuiGraphicsExtractor g, float x, float y, float z) {
+        g.pose().translate(x, y);
     }
 
     /** Draws everything after this above what was drawn before (a window over the chat, a tooltip). */
-    public static void raise(GuiGraphics g, float z) {
-        g.pose().translate(0, 0, z);
+    public static void raise(GuiGraphicsExtractor g, float z) {
+        g.nextStratum();
     }
 
     /** Scales what's drawn from now on. */
-    public static void scale(GuiGraphics g, float x, float y) {
+    public static void scale(GuiGraphicsExtractor g, float x, float y) {
+        g.pose().scale(x, y);
+    }
+    //?} else {
+    /*public static void push(GuiGraphicsExtractor g) {
+        g.pose().pushPose();
+    }
+
+    public static void pop(GuiGraphicsExtractor g) {
+        g.pose().popPose();
+    }
+
+    /^* Translates what's drawn from now on. ^/
+    public static void move(GuiGraphicsExtractor g, float x, float y) {
+        g.pose().translate(x, y, 0);
+    }
+
+    /^* Translates, and raises by z where Minecraft still has depth. ^/
+    public static void move(GuiGraphicsExtractor g, float x, float y, float z) {
+        g.pose().translate(x, y, z);
+    }
+
+    /^* Draws everything after this above what was drawn before (a window over the chat, a tooltip). ^/
+    public static void raise(GuiGraphicsExtractor g, float z) {
+        g.pose().translate(0, 0, z);
+    }
+
+    /^* Scales what's drawn from now on. ^/
+    public static void scale(GuiGraphicsExtractor g, float x, float y) {
         g.pose().scale(x, y, 1f);
     }
-    //?}
+    *///?}
 
     /**
      * Starts a new layer above everything drawn before. Needed on 26.x, which orders shapes, textures and text within a
      * layer by type, so a window over the chat needs a layer of its own.
      */
-    public static void layerAbove(GuiGraphics g) {
+    public static void layerAbove(GuiGraphicsExtractor g) {
         //? if >=1.21.6 {
-        /*g.nextStratum();
-        *///?}
+        g.nextStratum();
+        //?}
     }
 
     // Text
 
     /** Text with a shadow. A color without alpha is drawn opaque, as older versions did. */
-    public static void text(GuiGraphics g, Font font, String text, int x, int y, int color) {
+    public static void text(GuiGraphicsExtractor g, Font font, String text, int x, int y, int color) {
         text(g, font, text, x, y, color, true);
     }
 
-    public static void text(GuiGraphics g, Font font, String text, int x, int y, int color, boolean shadow) {
+    public static void text(GuiGraphicsExtractor g, Font font, String text, int x, int y, int color, boolean shadow) {
         //? if >=26.1 {
-        /*g.text(font, text, x, y, opaque(color), shadow);
-        *///?} else {
-        g.drawString(font, text, x, y, opaque(color), shadow);
-        //?}
+        g.text(font, text, x, y, opaque(color), shadow);
+        //?} else {
+        /*g.drawString(font, text, x, y, opaque(color), shadow);
+        *///?}
     }
 
-    public static void text(GuiGraphics g, Font font, Component text, int x, int y, int color) {
+    public static void text(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int color) {
         text(g, font, text, x, y, color, true);
     }
 
-    public static void text(GuiGraphics g, Font font, Component text, int x, int y, int color, boolean shadow) {
+    public static void text(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int color, boolean shadow) {
         //? if >=26.1 {
-        /*g.text(font, text, x, y, opaque(color), shadow);
-        *///?} else {
-        g.drawString(font, text, x, y, opaque(color), shadow);
-        //?}
+        g.text(font, text, x, y, opaque(color), shadow);
+        //?} else {
+        /*g.drawString(font, text, x, y, opaque(color), shadow);
+        *///?}
     }
 
-    public static void text(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color) {
+    public static void text(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color) {
         text(g, font, text, x, y, color, true);
     }
 
-    public static void text(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color, boolean shadow) {
+    public static void text(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color, boolean shadow) {
         //? if >=26.1 {
-        /*g.text(font, text, x, y, opaque(color), shadow);
-        *///?} else {
-        g.drawString(font, text, x, y, opaque(color), shadow);
-        //?}
+        g.text(font, text, x, y, opaque(color), shadow);
+        //?} else {
+        /*g.drawString(font, text, x, y, opaque(color), shadow);
+        *///?}
     }
 
-    public static void centeredText(GuiGraphics g, Font font, String text, int x, int y, int color) {
+    public static void centeredText(GuiGraphicsExtractor g, Font font, String text, int x, int y, int color) {
         text(g, font, text, x - font.width(text) / 2, y, color);
     }
 
-    public static void centeredText(GuiGraphics g, Font font, Component text, int x, int y, int color) {
+    public static void centeredText(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int color) {
         text(g, font, text, x - font.width(text) / 2, y, color);
     }
 
-    public static void centeredText(GuiGraphics g, Font font, FormattedCharSequence text, int x, int y, int color) {
+    public static void centeredText(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color) {
         text(g, font, text, x - font.width(text) / 2, y, color);
     }
 
     /** Text scaled down to fit maxWidth if needed (long translations on small buttons), vertically centered on its line. */
-    public static void fittedText(GuiGraphics g, Font font, Component text, int x, int y, int maxWidth, int color, boolean centered,
+    public static void fittedText(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int maxWidth, int color, boolean centered,
                                   boolean shadow) {
         int w = font.width(text);
         if (w <= maxWidth) {
@@ -166,57 +166,57 @@ public final class Gfx {
     // Textures and shapes
 
     /** Region (u, v, uw x vh of texW x texH) of a texture in a w x h box, tinted by argb. */
-    static void blit(GuiGraphics g, ResourceLocation tex, int x, int y, int w, int h, float u, float v, int uw, int vh,
+    static void blit(GuiGraphicsExtractor g, Identifier tex, int x, int y, int w, int h, float u, float v, int uw, int vh,
                      int texW, int texH, int argb) {
         //? if >=1.21.6 {
-        /*float u0 = u / texW, v0 = v / texH, u1 = (u + uw) / texW, v1 = (v + vh) / texH;
+        float u0 = u / texW, v0 = v / texH, u1 = (u + uw) / texW, v1 = (v + vh) / texH;
         shape(g, tex, new float[]{x, y, x, y + h, x + w, y + h, x + w, y}, new float[]{u0, v0, u0, v1, u1, v1, u1, v0},
                 new int[]{argb, argb, argb, argb});
-        *///?} else if >=1.21.4 {
+        //?} else if >=1.21.4 {
         /*g.blit(net.minecraft.client.renderer.RenderType::guiTextured, tex, x, y, u, v, w, h, uw, vh, texW, texH, argb);
         *///?} else {
-        g.setColor((argb >> 16 & 0xFF) / 255f, (argb >> 8 & 0xFF) / 255f, (argb & 0xFF) / 255f, (argb >>> 24) / 255f);
+        /*g.setColor((argb >> 16 & 0xFF) / 255f, (argb >> 8 & 0xFF) / 255f, (argb & 0xFF) / 255f, (argb >>> 24) / 255f);
         com.mojang.blaze3d.systems.RenderSystem.enableBlend();
         g.blit(tex, x, y, w, h, u, v, uw, vh, texW, texH);
         g.setColor(1f, 1f, 1f, 1f);
-        //?}
+        *///?}
     }
 
     /** A whole size x size texture at x, y with the given alpha. */
-    static void blit(GuiGraphics g, ResourceLocation tex, int x, int y, int size, float alpha) {
+    static void blit(GuiGraphicsExtractor g, Identifier tex, int x, int y, int size, float alpha) {
         blit(g, tex, x, y, size, size, 0, 0, size, size, size, size, white(alpha));
     }
 
     /** Clips drawing to this screen rectangle until unscissor, regardless of the current transform. */
-    public static void scissor(GuiGraphics g, int x0, int y0, int x1, int y1) {
+    public static void scissor(GuiGraphicsExtractor g, int x0, int y0, int x1, int y1) {
         //? if >=1.21.6 {
-        /*g.pose().pushMatrix();
+        g.pose().pushMatrix();
         g.pose().identity();
         g.enableScissor(x0, y0, x1, y1);
         g.pose().popMatrix();
         SCISSORS.push(new net.minecraft.client.gui.navigation.ScreenRectangle(x0, y0, x1 - x0, y1 - y0));
-        *///?} else if >=1.21.4 {
+        //?} else if >=1.21.4 {
         /*g.pose().pushPose();
         g.pose().last().pose().identity();
         g.enableScissor(x0, y0, x1, y1);
         g.pose().popPose();
         *///?} else {
-        g.enableScissor(x0, y0, x1, y1);
-        //?}
+        /*g.enableScissor(x0, y0, x1, y1);
+        *///?}
     }
 
     /** The current scissor box in screen coordinates (1.21.6+), or null. */
     //? if >=1.21.6 {
-    /*public static net.minecraft.client.gui.navigation.ScreenRectangle currentScissor() {
+    public static net.minecraft.client.gui.navigation.ScreenRectangle currentScissor() {
         return SCISSORS.peek();
     }
-    *///?}
+    //?}
 
-    public static void unscissor(GuiGraphics g) {
+    public static void unscissor(GuiGraphicsExtractor g) {
         g.disableScissor();
         //? if >=1.21.6 {
-        /*SCISSORS.poll();
-        *///?}
+        SCISSORS.poll();
+        //?}
     }
 
     /** White with this alpha (0..1), as a tint. */
@@ -228,10 +228,10 @@ public final class Gfx {
      * A triangle fan cut out of a texture: xy are screen points (x0, y0, x1, y1...), uv texture coordinates (0..1),
      * counterclockwise like Minecraft's quads, white with the given alpha.
      */
-    static void fan(GuiGraphics g, ResourceLocation tex, float[] xy, float[] uv, float alpha) {
+    static void fan(GuiGraphicsExtractor g, Identifier tex, float[] xy, float[] uv, float alpha) {
         int a = Math.round(alpha * 255), n = xy.length / 2;
         //? if >=1.21.4 {
-        /*// each triangle as a quad with the last corner repeated: GUI drawing takes quads
+        // each triangle as a quad with the last corner repeated: GUI drawing takes quads
         int q = Math.max(0, n - 2);
         float[] qxy = new float[q * 8], quv = new float[q * 8];
         int[] col = new int[q * 4];
@@ -245,10 +245,10 @@ public final class Gfx {
                 o += 2;
             }
         }
-        *///?}
+        //?}
         //? if >=1.21.6 {
-        /*shape(g, tex, qxy, quv, col);
-        *///?} else if >=1.21.4 {
+        shape(g, tex, qxy, quv, col);
+        //?} else if >=1.21.4 {
         /*Matrix4f m = g.pose().last().pose();
         g.drawSpecial(buffers -> {
             com.mojang.blaze3d.vertex.VertexConsumer b = buffers.getBuffer(net.minecraft.client.renderer.RenderType.guiTextured(tex));
@@ -257,7 +257,7 @@ public final class Gfx {
             }
         });
         *///?} else if >=1.21 {
-        Matrix4f m = g.pose().last().pose();
+        /*Matrix4f m = g.pose().last().pose();
         g.flush();
         com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, tex);
         com.mojang.blaze3d.systems.RenderSystem.setShader(net.minecraft.client.renderer.GameRenderer::getPositionTexColorShader);
@@ -270,7 +270,7 @@ public final class Gfx {
         com.mojang.blaze3d.systems.RenderSystem.disableCull();
         com.mojang.blaze3d.vertex.BufferUploader.drawWithShader(b.buildOrThrow());
         com.mojang.blaze3d.systems.RenderSystem.enableCull();
-        //?} else {
+        *///?} else {
         /*Matrix4f m = g.pose().last().pose();
         g.flush();
         com.mojang.blaze3d.systems.RenderSystem.setShaderTexture(0, tex);
@@ -288,11 +288,11 @@ public final class Gfx {
     }
 
     /** Quads with a color per corner (gradients): four points per quad in xy, one color per point in argb. */
-    static void shade(GuiGraphics g, float[] xy, int[] argb) {
+    static void shade(GuiGraphicsExtractor g, float[] xy, int[] argb) {
         int n = xy.length / 2;
         //? if >=1.21.6 {
-        /*shape(g, null, xy, null, argb);
-        *///?} else if >=1.21.4 {
+        shape(g, null, xy, null, argb);
+        //?} else if >=1.21.4 {
         /*Matrix4f m = g.pose().last().pose();
         g.drawSpecial(buffers -> {
             com.mojang.blaze3d.vertex.VertexConsumer b = buffers.getBuffer(net.minecraft.client.renderer.RenderType.gui());
@@ -301,7 +301,7 @@ public final class Gfx {
             }
         });
         *///?} else if >=1.21 {
-        Matrix4f m = g.pose().last().pose();
+        /*Matrix4f m = g.pose().last().pose();
         g.flush();
         com.mojang.blaze3d.systems.RenderSystem.enableBlend();
         com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
@@ -312,7 +312,7 @@ public final class Gfx {
             b.addVertex(m, xy[k * 2], xy[k * 2 + 1], 0).setColor(argb[k]);
         }
         com.mojang.blaze3d.vertex.BufferUploader.drawWithShader(b.buildOrThrow());
-        //?} else {
+        *///?} else {
         /*Matrix4f m = g.pose().last().pose();
         g.flush();
         com.mojang.blaze3d.systems.RenderSystem.enableBlend();
@@ -329,25 +329,25 @@ public final class Gfx {
     }
 
     //? if >=1.21.6 {
-    /*/^* Textures drawn without smoothing (player faces); everything else is smoothed when scaled. ^/
-    private static final java.util.Set<ResourceLocation> PIXELATED = java.util.concurrent.ConcurrentHashMap.newKeySet();
-    /^* Active scissor boxes in screen coordinates, newest first. ^/
+    /** Textures drawn without smoothing (player faces); everything else is smoothed when scaled. */
+    private static final java.util.Set<Identifier> PIXELATED = java.util.concurrent.ConcurrentHashMap.newKeySet();
+    /** Active scissor boxes in screen coordinates, newest first. */
     private static final java.util.ArrayDeque<net.minecraft.client.gui.navigation.ScreenRectangle> SCISSORS = new java.util.ArrayDeque<>();
 
-    /^* Quads (four points each), textured or plain (tex null), added to Minecraft's GUI render state. ^/
-    private static void shape(GuiGraphics g, ResourceLocation tex, float[] xy, float[] uv, int[] argb) {
+    /** Quads (four points each), textured or plain (tex null), added to Minecraft's GUI render state. */
+    private static void shape(GuiGraphicsExtractor g, Identifier tex, float[] xy, float[] uv, int[] argb) {
         org.joml.Matrix3x2f pose = new org.joml.Matrix3x2f(g.pose());
         net.minecraft.client.gui.render.TextureSetup setup;
-        com.mojang.blaze3d.pipeline.RenderPipeline pipeline;
+        com.mojang.renderpearl.api.pipeline.RenderPipeline pipeline;
         if (tex != null) {
             var t = Minecraft.getInstance().getTextureManager().getTexture(tex);
             //? if >=1.21.11 {
-            /^var sampler = PIXELATED.contains(tex) ? t.getSampler() : com.mojang.blaze3d.systems.RenderSystem.getSamplerCache()
-                    .getClampToEdge(com.mojang.blaze3d.textures.FilterMode.LINEAR);
+            var sampler = PIXELATED.contains(tex) ? t.getSampler() : com.mojang.blaze3d.systems.RenderSystem.getSamplerCache()
+                    .getClampToEdge(com.mojang.renderpearl.api.textures.FilterMode.LINEAR);
             setup = net.minecraft.client.gui.render.TextureSetup.singleTexture(t.getTextureView(), sampler);
-            ^///?} else {
-            /^setup = net.minecraft.client.gui.render.TextureSetup.singleTexture(t.getTextureView());
-            ^///?}
+            //?} else {
+            /*setup = net.minecraft.client.gui.render.TextureSetup.singleTexture(t.getTextureView());
+            *///?}
             pipeline = net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
         } else {
             setup = net.minecraft.client.gui.render.TextureSetup.noTexture();
@@ -365,37 +365,37 @@ public final class Gfx {
                 (int) Math.ceil(x1 - x0) + 1, (int) Math.ceil(y1 - y0) + 1).transformMaxBounds(pose);
         var shape = new Shape(pipeline, setup, pose, xy, uv, argb, scissor, scissor != null ? scissor.intersection(bounds) : bounds);
         //? if >=26.1 {
-        /^((com.sinuxoff.ingamemessenger.mixin.GuiGraphicsAccessor) g).ingamemessenger$state().addGuiElement(shape);
-        ^///?} else {
-        /^((com.sinuxoff.ingamemessenger.mixin.GuiGraphicsAccessor) g).ingamemessenger$state().submitGuiElement(shape);
-        ^///?}
+        ((com.sinuxoff.ingamemessenger.mixin.GuiGraphicsAccessor) g).ingamemessenger$state().addGuiElement(shape);
+        //?} else {
+        /*((com.sinuxoff.ingamemessenger.mixin.GuiGraphicsAccessor) g).ingamemessenger$state().submitGuiElement(shape);
+        *///?}
     }
 
-    /^* A custom element in Minecraft's GUI render state. ^/
-    private record Shape(com.mojang.blaze3d.pipeline.RenderPipeline pipeline, net.minecraft.client.gui.render.TextureSetup textureSetup,
+    /** A custom element in Minecraft's GUI render state. */
+    private record Shape(com.mojang.renderpearl.api.pipeline.RenderPipeline pipeline, net.minecraft.client.gui.render.TextureSetup textureSetup,
                          org.joml.Matrix3x2f pose, float[] xy, float[] uv, int[] argb,
                          net.minecraft.client.gui.navigation.ScreenRectangle scissorArea,
                          net.minecraft.client.gui.navigation.ScreenRectangle bounds)
-            implements net.minecraft.client.gui.render.state.GuiElementRenderState {
+            implements net.minecraft.client.renderer.state.gui.GuiElementRenderState {
         //? if >=1.21.9 {
-        /^@Override
+        @Override
         public void buildVertices(com.mojang.blaze3d.vertex.VertexConsumer b) {
             build(b, 0);
         }
-        ^///?} else {
-        /^@Override
+        //?} else {
+        /*@Override
         public void buildVertices(com.mojang.blaze3d.vertex.VertexConsumer b, float z) {
             build(b, z);
         }
-        ^///?}
+        *///?}
 
         private void build(com.mojang.blaze3d.vertex.VertexConsumer b, float z) {
             for (int k = 0; k < xy.length / 2; k++) {
                 //? if >=1.21.9 {
-                /^var v = b.addVertexWith2DPose(pose, xy[k * 2], xy[k * 2 + 1]);
-                ^///?} else {
-                /^var v = b.addVertexWith2DPose(pose, xy[k * 2], xy[k * 2 + 1], z);
-                ^///?}
+                var v = b.addVertexWith2DPose(pose, xy[k * 2], xy[k * 2 + 1]);
+                //?} else {
+                /*var v = b.addVertexWith2DPose(pose, xy[k * 2], xy[k * 2 + 1], z);
+                *///?}
                 if (uv != null) {
                     v = v.setUv(uv[k * 2], uv[k * 2 + 1]);
                 }
@@ -403,21 +403,21 @@ public final class Gfx {
             }
         }
     }
-    *///?}
+    //?}
 
     /** Draw this texture without smoothing (player faces). */
-    static void pixelated(ResourceLocation tex) {
+    static void pixelated(Identifier tex) {
         //? if >=1.21.11 {
-        /*PIXELATED.add(tex);
-        *///?}
+        PIXELATED.add(tex);
+        //?}
     }
 
     /** Smooth this texture when scaled (from 1.21.11 everything but faces is). */
     static void smooth(net.minecraft.client.renderer.texture.AbstractTexture texture) {
         //? if <1.21.11 {
-        texture.setFilter(true, false);
+        /*texture.setFilter(true, false);
         SMOOTH.add(texture);
-        //?}
+        *///?}
     }
 
     /** Textures we smooth (TextureFilterMixin keeps it on in 1.21.4-1.21.5). */
@@ -428,54 +428,54 @@ public final class Gfx {
         return SMOOTH.contains(texture);
     }
 
-    static void smooth(ResourceLocation tex) {
+    static void smooth(Identifier tex) {
         smooth(Minecraft.getInstance().getTextureManager().getTexture(tex));
     }
 
     /** Fades everything drawn after this by alpha; fade(g, 1) ends it. Does nothing on 26.x, which has no such tint. */
-    static void fade(GuiGraphics g, float alpha) {
+    static void fade(GuiGraphicsExtractor g, float alpha) {
         //? if >=1.21.4 && <1.21.6 {
         /*g.flush();
         com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
         *///?} else if <1.21.4 {
-        g.setColor(1f, 1f, 1f, alpha);
-        //?}
+        /*g.setColor(1f, 1f, 1f, alpha);
+        *///?}
     }
 
     /** Blurs what's drawn so far, like Minecraft does behind its menus. */
-    public static void blur(GuiGraphics g, float partialTick) {
+    public static void blur(GuiGraphicsExtractor g, float partialTick) {
         //? if >=1.21.6 {
-        /*g.blurBeforeThisStratum();
-        *///?} else if >=1.21.5 {
+        g.blurBeforeThisStratum();
+        //?} else if >=1.21.5 {
         /*Minecraft.getInstance().gameRenderer.processBlurEffect();
         *///?} else if >=1.21.4 {
         /*Minecraft.getInstance().gameRenderer.processBlurEffect();
         Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
         *///?} else if >=1.20.5 {
-        Minecraft.getInstance().gameRenderer.processBlurEffect(partialTick);
+        /*Minecraft.getInstance().gameRenderer.processBlurEffect(partialTick);
         Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
-        //?}
+        *///?}
     }
 
-    static void item(GuiGraphics g, net.minecraft.world.item.ItemStack stack, int x, int y) {
+    static void item(GuiGraphicsExtractor g, net.minecraft.world.item.ItemStack stack, int x, int y) {
         //? if >=26.1 {
-        /*g.item(stack, x, y);
-        *///?} else {
-        g.renderItem(stack, x, y);
-        //?}
+        g.item(stack, x, y);
+        //?} else {
+        /*g.renderItem(stack, x, y);
+        *///?}
     }
 
     /** Tooltip at the mouse, above everything. */
-    static void tooltip(GuiGraphics g, Font font, java.util.List<Component> lines, int mx, int my) {
+    static void tooltip(GuiGraphicsExtractor g, Font font, java.util.List<Component> lines, int mx, int my) {
         //? if >=1.21.6 {
-        /*g.setTooltipForNextFrame(font, lines.stream().map(Component::getVisualOrderText).toList(), mx, my);
-        *///?} else {
-        g.renderComponentTooltip(font, lines, mx, my);
-        //?}
+        g.setTooltipForNextFrame(font, lines.stream().map(Component::getVisualOrderText).toList(), mx, my);
+        //?} else {
+        /*g.renderComponentTooltip(font, lines, mx, my);
+        *///?}
     }
 
     /** One pixel wide rectangle outline. */
-    static void outline(GuiGraphics g, int x, int y, int w, int h, int argb) {
+    static void outline(GuiGraphicsExtractor g, int x, int y, int w, int h, int argb) {
         g.fill(x, y, x + w, y + 1, argb);
         g.fill(x, y + h - 1, x + w, y + h, argb);
         g.fill(x, y + 1, x + 1, y + h - 1, argb);
@@ -485,10 +485,10 @@ public final class Gfx {
     /** Partial tick (0..1) for drawing between ticks. */
     static float partialTick() {
         //? if >=1.21.4 {
-        /*return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
-        *///?} else if >=1.21 {
-        return Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
-        //?} else {
+        return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        //?} else if >=1.21 {
+        /*return Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        *///?} else {
         /*return Minecraft.getInstance().getFrameTime();
         *///?}
     }

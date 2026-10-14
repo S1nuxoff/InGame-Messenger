@@ -2,9 +2,9 @@ package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.Component;
@@ -38,7 +38,7 @@ final class Typing {
     /** Every tick: tells the server when typing starts, stops, and periodically while it lasts. */
     static void tick(Minecraft mc) {
         boolean want = false;
-        if (mc.screen instanceof ChatScreen chat && serverOn && Prefs.showMyTyping() && mc.getConnection() != null) {
+        if (mc.gui.screen() instanceof ChatScreen chat && serverOn && Prefs.showMyTyping() && mc.getConnection() != null) {
             String v = ((ChatScreenAccessor) chat).ingamemessenger$input().getValue();
             want = !v.isBlank() && !v.startsWith("/") && !ChatInput.searching() && !Ai.ID.equals(ChatChannels.channel())
                     && !ChatChannels.SERVER.equals(ChatChannels.channel());
@@ -115,7 +115,7 @@ final class Typing {
     }
 
     /** "Name is typing..." with animated dots; nothing if nobody is or the player hid it. */
-    static void render(GuiGraphics g, int x, int y) {
+    static void render(GuiGraphicsExtractor g, int x, int y) {
         long now = System.currentTimeMillis();
         others.values().removeIf(until -> until < now);
         List<String> names = here();

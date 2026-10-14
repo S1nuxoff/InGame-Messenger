@@ -1,9 +1,9 @@
 package com.sinuxoff.ingamemessenger.client;
 
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -19,12 +19,12 @@ public abstract class BaseScreen extends Screen {
     }
 
     /** Defaults to the vanilla background and widgets. */
-    protected void draw(GuiGraphics g, int mx, int my, float pt) {
+    protected void draw(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawScreen(g, mx, my, pt);
     }
 
     /** Defaults to the vanilla blurred background. */
-    protected void drawBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected void drawBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawDefaultBackground(g, mx, my, pt);
     }
 
@@ -49,74 +49,74 @@ public abstract class BaseScreen extends Screen {
     // Version-specific overrides
 
     //? if >=26.1 {
-    /*@Override
-    public final void extractRenderState(GuiGraphics g, int mx, int my, float pt) {
+    @Override
+    public final void extractRenderState(GuiGraphicsExtractor g, int mx, int my, float pt) {
         draw(g, mx, my, pt);
     }
 
-    /^* Minecraft's background and the widgets. *^/
-    protected final void drawScreen(GuiGraphics g, int mx, int my, float pt) {
+    /** Minecraft's background and the widgets. **/
+    protected final void drawScreen(GuiGraphicsExtractor g, int mx, int my, float pt) {
         super.extractRenderState(g, mx, my, pt);
     }
 
     @Override
-    public final void extractBackground(GuiGraphics g, int mx, int my, float pt) {
+    public final void extractBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawBackground(g, mx, my, pt);
     }
 
-    protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected final void drawDefaultBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         super.extractBackground(g, mx, my, pt);
     }
-    *///?} else if >=1.20 {
-    @Override
-    public final void render(GuiGraphics g, int mx, int my, float pt) {
+    //?} else if >=1.20 {
+    /*@Override
+    public final void render(GuiGraphicsExtractor g, int mx, int my, float pt) {
         draw(g, mx, my, pt);
     }
 
     //? if >=1.20.2 {
-    /** Vanilla background and widgets. */
-    protected final void drawScreen(GuiGraphics g, int mx, int my, float pt) {
+    /^* Vanilla background and widgets. ^/
+    protected final void drawScreen(GuiGraphicsExtractor g, int mx, int my, float pt) {
         super.render(g, mx, my, pt);
     }
 
     @Override
-    public final void renderBackground(GuiGraphics g, int mx, int my, float pt) {
+    public final void renderBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawBackground(g, mx, my, pt);
     }
 
-    protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected final void drawDefaultBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         super.renderBackground(g, mx, my, pt);
     }
     //?} else {
-    /*// before 1.20.2 render doesn't draw the background itself
-    protected final void drawScreen(GuiGraphics g, int mx, int my, float pt) {
+    /^// before 1.20.2 render doesn't draw the background itself
+    protected final void drawScreen(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawBackground(g, mx, my, pt);
         super.render(g, mx, my, pt);
     }
 
-    protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected final void drawDefaultBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         super.renderBackground(g);
     }
-    *///?}
-    //?} else {
-    /*// before 1.20 screens draw on a PoseStack, wrapped in our GuiGraphics
+    ^///?}
+    *///?} else {
+    /*// before 1.20 screens draw on a PoseStack, wrapped in our GuiGraphicsExtractor
     @Override
     public final void render(com.mojang.blaze3d.vertex.PoseStack pose, int mx, int my, float pt) {
-        draw(new GuiGraphics(pose), mx, my, pt);
+        draw(new GuiGraphicsExtractor(pose), mx, my, pt);
     }
 
-    protected final void drawScreen(GuiGraphics g, int mx, int my, float pt) {
+    protected final void drawScreen(GuiGraphicsExtractor g, int mx, int my, float pt) {
         drawBackground(g, mx, my, pt);
         super.render(g.pose(), mx, my, pt);
     }
 
-    protected final void drawDefaultBackground(GuiGraphics g, int mx, int my, float pt) {
+    protected final void drawDefaultBackground(GuiGraphicsExtractor g, int mx, int my, float pt) {
         super.renderBackground(g.pose());
     }
     *///?}
 
     //? if >=1.21.9 {
-    /*@Override
+    @Override
     public final boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent e, boolean doubleClick) {
         return click(e.x(), e.y(), Compat.button(e.button())) || super.mouseClicked(e, doubleClick);
     }
@@ -138,13 +138,13 @@ public abstract class BaseScreen extends Screen {
 
     private static int scan(net.minecraft.client.input.KeyEvent e) {
         //? if >=26.3 {
-        /^return e.keycode();
-        ^///?} else {
-        /^return e.scancode();
-        ^///?}
+        return e.keycode();
+        //?} else {
+        /*return e.scancode();
+        *///?}
     }
-    *///?} else {
-    @Override
+    //?} else {
+    /*@Override
     public final boolean mouseClicked(double mx, double my, int button) {
         return click(mx, my, button) || super.mouseClicked(mx, my, button);
     }
@@ -163,5 +163,5 @@ public abstract class BaseScreen extends Screen {
     public final boolean keyReleased(int key, int scan, int mods) {
         return keyUp(key, scan, mods) || super.keyReleased(key, scan, mods);
     }
-    //?}
+    *///?}
 }

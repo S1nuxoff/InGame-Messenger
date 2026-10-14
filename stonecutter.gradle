@@ -10,7 +10,7 @@ plugins {
     id 'net.minecraftforge.renamer' version '1.1.8' apply false   // Forge before 1.20.6 runs on SRG names
 }
 
-stonecutter.active '1.21.1-neoforge' /* [SC] DO NOT EDIT */
+stonecutter.active '26.3-fabric' /* [SC] DO NOT EDIT */
 
 // every version's jar from one command: gradle buildAll
 tasks.register('buildAll') {

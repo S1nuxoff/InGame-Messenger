@@ -6,12 +6,12 @@ import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 //? if >=1.20 {
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?} else {
-/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphics; // before 1.20: ours, on a PoseStack
+/*import com.sinuxoff.ingamemessenger.client.compat.GuiGraphicsExtractor; // before 1.20: ours, on a PoseStack
 *///?}
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import com.sinuxoff.ingamemessenger.InGameMessenger;
 import com.sinuxoff.ingamemessenger.Net;
 import com.sinuxoff.ingamemessenger.core.protocol.Packets;
@@ -49,7 +49,7 @@ final class Library {
     record Pack(String id, String title, List<Sticker> stickers, boolean emoji) {
     }
 
-    private record Tex(ResourceLocation rl, int texW, int texH, int frameW, int frameH, int frames, int fps, int cols) {
+    private record Tex(Identifier rl, int texW, int texH, int frameW, int frameH, int frames, int fps, int cols) {
     }
 
     /** Pack id used for sent pictures; their id is a URL or a server key. */
@@ -214,12 +214,12 @@ final class Library {
     }
 
     /** Fits the sticker into the box keeping proportions; animated; shows the preview until the full image is in. */
-    static void draw(GuiGraphics g, Sticker s, int x, int y, int w, int h, float alpha) {
+    static void draw(GuiGraphicsExtractor g, Sticker s, int x, int y, int w, int h, float alpha) {
         drawTinted(g, s, x, y, w, h, 1f, 1f, 1f, alpha);
     }
 
     /** Same, with the colors multiplied (black gives a shadow). */
-    static void drawTinted(GuiGraphics g, Sticker s, int x, int y, int w, int h, float r, float gr, float b, float alpha) {
+    static void drawTinted(GuiGraphicsExtractor g, Sticker s, int x, int y, int w, int h, float r, float gr, float b, float alpha) {
         Object t = textures.get(s.key());
         if (!(t instanceof Tex)) {
             request(s, false, NOW_FULL);
@@ -247,12 +247,12 @@ final class Library {
         Gfx.blit(g, tex.rl(), dx, dy, dw, dh, u, v, tex.frameW(), tex.frameH(), tex.texW(), tex.texH(), argb);
     }
 
-    static void drawRounded(GuiGraphics g, Sticker s, int x, int y, int w, int h, float r, float alpha) {
+    static void drawRounded(GuiGraphicsExtractor g, Sticker s, int x, int y, int w, int h, float r, float alpha) {
         drawRounded(g, s, x, y, w, h, r, alpha, false);
     }
 
     /** With rounded corners. cover = fill the box and crop, instead of fitting inside it. */
-    static void drawRounded(GuiGraphics g, Sticker s, int x, int y, int w, int h, float r, float alpha, boolean cover) {
+    static void drawRounded(GuiGraphicsExtractor g, Sticker s, int x, int y, int w, int h, float r, float alpha, boolean cover) {
         Object t = textures.get(s.key());
         if (!(t instanceof Tex tex)) {
             request(s, false, NOW_FULL);
@@ -287,13 +287,13 @@ final class Library {
     }
 
     /** Part of a texture (uv in 0..1) in a box with rounded corners. */
-    static void roundedTex(GuiGraphics g, ResourceLocation tex, float x, float y, float w, float h, float r,
+    static void roundedTex(GuiGraphicsExtractor g, Identifier tex, float x, float y, float w, float h, float r,
                            float u0, float v0, float u1, float v1, float alpha) {
         roundedFan(g, tex, x, y, w, h, r, 6, u0, v0, u1, v1, alpha);
     }
 
     /** A triangle fan from the center around the rounded outline, seg steps per corner. */
-    private static void roundedFan(GuiGraphics g, ResourceLocation tex, float x, float y, float w, float h, float r, int seg,
+    private static void roundedFan(GuiGraphicsExtractor g, Identifier tex, float x, float y, float w, float h, float r, int seg,
                                    float u0, float v0, float u1, float v1, float alpha) {
         r = Math.min(r, Math.min(w, h) / 2f);
         int n = 2 + 4 * (seg + 1);
@@ -433,7 +433,7 @@ final class Library {
             Gfx.smooth(dt);
             int texW = img.getWidth(), texH = img.getHeight();
             dt.setPixels(null); // uploaded: no need to keep a copy in memory
-            ResourceLocation rl = IMG.equals(s.pack())
+            Identifier rl = IMG.equals(s.pack())
                     ? InGameMessenger.id("dyn/img/" + Integer.toHexString(s.id().hashCode()) + "_" + s.id().length())
                     : InGameMessenger.id("dyn/" + s.pack().toLowerCase() + "/"
                     + s.id().toLowerCase().replaceAll("[^a-z0-9_./-]", "_") + (task.thumb ? "_t" : ""));
