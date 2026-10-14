@@ -6,15 +6,20 @@ import java.util.Map;
 /** Protocol version, channel namespace and packet encoding. Client and server talk only when their versions match. */
 public final class Protocol {
     /** Bump whenever the wire format of any packet changes. */
-    public static final String VERSION = "22";
+    public static final String VERSION = "23";
     public static final String NAMESPACE = "ingamemessenger";
     /** Number of built-in reactions ("0".."7"). */
     public static final int BUILT_IN_REACTIONS = 8;
 
     private static final Map<String, PacketType<?>> BY_ID = new HashMap<>();
+    /** Every packet: the channel protocol's and the ones it shares with the first one (Welcome, Hello, files...). */
+    public static final java.util.List<PacketType<?>> ALL;
 
     static {
-        for (PacketType<?> t : Packets.ALL) {
+        java.util.List<PacketType<?>> all = new java.util.ArrayList<>(Packets.ALL);
+        all.addAll(Proto.ALL);
+        ALL = java.util.List.copyOf(all);
+        for (PacketType<?> t : ALL) {
             if (BY_ID.put(t.id(), t) != null) {
                 throw new IllegalStateException("two packets with id " + t.id());
             }

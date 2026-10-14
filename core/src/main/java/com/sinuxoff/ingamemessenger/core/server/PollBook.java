@@ -48,6 +48,24 @@ public final class PollBook {
         return o.toString();
     }
 
+    /** How many options a poll's JSON has (0 if it isn't one). */
+    public static int options(String json) {
+        try {
+            return com.google.gson.JsonParser.parseString(json).getAsJsonObject().getAsJsonArray("o").size();
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    public static boolean multi(String json) {
+        try {
+            JsonObject o = com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+            return o.has("m") && o.get("m").getAsBoolean();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
     /** New bits after clicking an option: toggles it; single choice replaces the previous one. */
     public static int toggle(int had, int option, boolean multi) {
         int bit = 1 << option;
