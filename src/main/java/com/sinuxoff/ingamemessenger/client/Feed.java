@@ -243,7 +243,7 @@ final class Feed {
     }
 
     private static String timeOf(Messenger.Entry e) {
-        var at = java.time.Instant.ofEpochMilli(e.time).atZone(java.time.ZoneId.systemDefault());
+        var at = java.time.Instant.ofEpochMilli(e.time).atZone(ChatDates.zone());
         String t = at.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
         return e.edited > 0 ? Component.translatable("ingamemessenger.edited").getString() + " " + t : t;
     }

@@ -14,13 +14,67 @@ final class ChatDates {
     private ChatDates() {
     }
 
+    private static java.time.ZoneId zone;
+
+    /**
+     * The player's time zone. Java's default, unless a loader switched it to UTC on start (NeoForge 20.6 does): then
+     * the zone Java found at start, or on Windows the system's own (its name mapped by Java's tzmappings).
+     */
+    static java.time.ZoneId zone() {
+        if (zone == null) {
+            zone = findZone();
+        }
+        return zone;
+    }
+
+    private static java.time.ZoneId findZone() {
+        java.time.ZoneId def = java.time.ZoneId.systemDefault();
+        if (!def.normalized().equals(java.time.ZoneOffset.UTC)) {
+            return def;
+        }
+        try {
+            String prop = System.getProperty("user.timezone", "");
+            if (!prop.isBlank()) {
+                java.time.ZoneId z = java.time.ZoneId.of(prop);
+                if (!z.normalized().equals(java.time.ZoneOffset.UTC)) {
+                    return z;
+                }
+            }
+        } catch (RuntimeException ignored) {
+        }
+        if (!System.getProperty("os.name", "").startsWith("Windows")) {
+            return def;
+        }
+        try {
+            Process p = new ProcessBuilder("reg", "query", "HKLM\\SYSTEM\\CurrentControlSet\\Control\\TimeZoneInformation", "/v",
+                    "TimeZoneKeyName").redirectErrorStream(true).start();
+            String out = new String(p.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            p.waitFor(3, java.util.concurrent.TimeUnit.SECONDS);
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("TimeZoneKeyName\\s+REG_SZ\\s+(.+)").matcher(out);
+            if (!m.find()) {
+                return def;
+            }
+            String windows = m.group(1).strip();
+            String found = null;
+            for (String line : java.nio.file.Files.readAllLines(java.nio.file.Path.of(System.getProperty("java.home"), "lib", "tzmappings"))) {
+                String[] f = line.split(":");
+                if (f.length >= 3 && f[0].equals(windows) && (found == null || f[1].equals("001"))) {
+                    found = f[2];
+                }
+            }
+            return found != null ? java.time.ZoneId.of(found) : def;
+        } catch (Exception e) {
+            return def;
+        }
+    }
+
     static long dayOf(long ms) {
-        return java.time.Instant.ofEpochMilli(ms).atZone(java.time.ZoneId.systemDefault()).toLocalDate().toEpochDay();
+        return java.time.Instant.ofEpochMilli(ms).atZone(zone()).toLocalDate().toEpochDay();
     }
 
     /** "Today", "Yesterday" or "8 October", in the game's language. */
     private static String dateLabel(long day) {
-        long today = java.time.LocalDate.now().toEpochDay();
+        long today = java.time.LocalDate.now(zone()).toEpochDay();
         if (day == today) {
             return Component.translatable("ingamemessenger.date.today").getString();
         }
@@ -34,7 +88,7 @@ final class ChatDates {
         *///?}
         var locale = java.util.Locale.forLanguageTag(lang.replace('_', '-'));
         var date = java.time.LocalDate.ofEpochDay(day);
-        String pattern = date.getYear() == java.time.LocalDate.now().getYear() ? "d MMMM" : "d MMMM yyyy";
+        String pattern = date.getYear() == java.time.LocalDate.now(zone()).getYear() ? "d MMMM" : "d MMMM yyyy";
         return date.format(java.time.format.DateTimeFormatter.ofPattern(pattern, locale));
     }
 
@@ -47,8 +101,8 @@ final class ChatDates {
     }
     /** "14:32", or "03.10 14:32" if not today. */
     static String when(long ms) {
-        var at = java.time.Instant.ofEpochMilli(ms).atZone(java.time.ZoneId.systemDefault());
-        return at.toLocalDate().equals(java.time.LocalDate.now()) ? at.format(HH_MM) : at.format(DAY_HH_MM);
+        var at = java.time.Instant.ofEpochMilli(ms).atZone(zone());
+        return at.toLocalDate().equals(java.time.LocalDate.now(zone())) ? at.format(HH_MM) : at.format(DAY_HH_MM);
     }
 
     static void small(GuiGraphicsExtractor g, String text, float x, float y, int color) {

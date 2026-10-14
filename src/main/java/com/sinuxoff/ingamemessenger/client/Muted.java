@@ -39,7 +39,7 @@ final class Muted {
     /** "Muted until 18:30 · spam" for the empty input. */
     static Component hint() {
         long until = here();
-        ZoneId zone = ZoneId.systemDefault();
+        ZoneId zone = ChatDates.zone();
         var at = Instant.ofEpochMilli(until).atZone(zone);
         String when = at.format(DateTimeFormatter.ofPattern(at.toLocalDate().equals(LocalDate.now(zone)) ? "HH:mm" : "dd.MM HH:mm"));
         Component text = until == Long.MAX_VALUE ? Component.translatable("ingamemessenger.muted.forever")
