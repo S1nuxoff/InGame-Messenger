@@ -21,6 +21,11 @@ final class SettingsScreen extends BaseScreen {
     /** Remembered while the window is closed. */
     private static int tab = CHAT;
 
+    /** The tab the window opens on next (the test run goes through them). */
+    static void openOn(int t) {
+        tab = Math.max(0, Math.min(TABS - 1, t));
+    }
+
     private final Screen parent;
     private PackList list;
     private int shownVersion = -1;

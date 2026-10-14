@@ -29,7 +29,7 @@ final class AutoTest {
     private record Step(String name, Runnable action, BooleanSupplier done, int timeoutTicks, boolean shot) {
     }
 
-    private static final int SHOT_PAUSE = 40;
+    private static final int SHOT_PAUSE = 40, STEP_PAUSE = 15;
     private static List<Step> steps;
     private static Path log;
     private static int at, ticks, pause, passed, failed;
@@ -37,6 +37,7 @@ final class AutoTest {
     private static String token;
     /** What the steps act on: our text message and poll. */
     private static long textId, pollId, sentAt;
+    private static Messenger.Entry voice;
     private static String typing;
     private static int typed;
 
@@ -124,6 +125,7 @@ final class AutoTest {
             failed++;
         }
         write(s.name(), ok, note);
+        pause = STEP_PAUSE;
         if (s.shot()) {
             write("shot", true, s.name());
             pause = SHOT_PAUSE;
@@ -249,7 +251,43 @@ final class AutoTest {
             Messenger.Chan c = game();
             return c != null && c.list.stream().anyMatch(e -> "line".equals(e.kind) && e.arrived >= sentAt);
         }, 200, true));
-        s.add(new Step("delete", () -> ChatReplies.deleteMine(textId), () -> {
+        s.add(new Step("attach menu", () -> {
+            openChat();
+            ChatInput.attachOpen = true;
+        }, () -> ChatInput.attachOpen, 40, true));
+        s.add(new Step("picture", () -> {
+            ChatInput.attachOpen = false;
+            sentAt = System.currentTimeMillis();
+            Images.add(Minecraft.getInstance().gameDirectory.toPath().resolve("ingamemessenger-autotest.png"), false);
+            type("picture " + token);
+        }, () -> {
+            Messenger.Entry e = mine("images", token);
+            return e != null && e.arrived >= sentAt;
+        }, 600, true));
+        s.add(new Step("voice: recording", () -> {
+            openChat();
+            VoiceClient.start();
+        }, () -> VoiceClient.recording() && VoiceClient.recordingMs() >= 3000, 200, true));
+        s.add(new Step("voice: sent", () -> {
+            sentAt = System.currentTimeMillis();
+            VoiceClient.stop(true);
+        }, () -> {
+            Messenger.Entry e = mine("voice", null);
+            if (e != null && e.arrived >= sentAt) {
+                voice = e;
+            }
+            return voice != null;
+        }, 300, true));
+        s.add(new Step("voice: playing", () -> VoiceClient.toggle(voice.body.get("k").getAsString(), voice.name,
+                voice.body.has("ms") ? voice.body.get("ms").getAsInt() : 0),
+                () -> VoiceClient.playing(voice.body.get("k").getAsString()), 200, true));
+        s.add(new Step("voice: stopped", VoiceClient::stopPlaying, () -> !VoiceClient.playing(voice.body.get("k").getAsString()), 60, false));
+        s.add(new Step("new poll window", () -> Minecraft.getInstance().gui.setScreen(new PollScreen(chat(), -1)),
+                () -> Minecraft.getInstance().gui.screen() instanceof PollScreen, 60, true));
+        s.add(new Step("delete", () -> {
+            openChat();
+            ChatReplies.deleteMine(textId);
+        }, () -> {
             Messenger.Entry e = Messenger.byId(textId);
             return e == null || "deleted".equals(e.kind);
         }, 200, true));
@@ -257,10 +295,15 @@ final class AutoTest {
             openChat();
             Panel.openFresh();
         }, () -> Panel.open, 60, true));
-        s.add(new Step("settings", () -> {
-            Panel.open = false;
-            Minecraft.getInstance().gui.setScreen(new SettingsScreen(chat()));
-        }, () -> Minecraft.getInstance().gui.screen() instanceof SettingsScreen, 60, true));
+        for (int t = 0; t < 3; t++) {
+            int tab = t;
+            s.add(new Step("settings, tab " + (t + 1), () -> {
+                Panel.open = false;
+                openChat();
+                SettingsScreen.openOn(tab);
+                Minecraft.getInstance().gui.setScreen(new SettingsScreen(chat()));
+            }, () -> Minecraft.getInstance().gui.screen() instanceof SettingsScreen, 60, true));
+        }
         s.add(new Step("back to the game", () -> Minecraft.getInstance().gui.setScreen(null),
                 () -> Minecraft.getInstance().gui.screen() == null, 60, true));
         return s;
