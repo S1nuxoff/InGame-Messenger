@@ -87,6 +87,31 @@ final class Feed {
         return e.edited > 0 ? Component.translatable("ingamemessenger.edited").getString() + " " + t : t;
     }
 
+    private static ChatVoiceNotes.VoiceInfo voiceOf(Messenger.Entry e) {
+        byte[] wave;
+        try {
+            wave = java.util.HexFormat.of().parseHex(e.body.has("w") ? e.body.get("w").getAsString() : "");
+        } catch (RuntimeException ex) {
+            wave = new byte[0];
+        }
+        return new ChatVoiceNotes.VoiceInfo(e.body.has("k") ? e.body.get("k").getAsString() : "", e.body.has("ms") ? e.body.get("ms").getAsInt() : 0,
+                wave);
+    }
+
+    private static ChatAlbums.AlbumInfo albumOf(Messenger.Entry e) {
+        if (e.album == null) {
+            List<ChatAlbums.Pic> pics = new ArrayList<>();
+            if (e.body.has("i")) {
+                for (var el : e.body.getAsJsonArray("i")) {
+                    var o = el.getAsJsonObject();
+                    pics.add(new ChatAlbums.Pic(o.get("k").getAsString(), o.get("w").getAsInt(), o.get("h").getAsInt()));
+                }
+            }
+            e.album = ChatAlbums.album(pics, e.body.has("c") ? e.body.get("c").getAsString() : "");
+        }
+        return (ChatAlbums.AlbumInfo) e.album;
+    }
+
     private static int stickerH() {
         return Prefs.stickerLines() * LINE;
     }
@@ -102,6 +127,19 @@ final class Feed {
         int maxW = isPlayer(e) ? chatW - AV - 2 * PAD - 4 : chatW;
         if ("sticker".equals(e.kind)) {
             return new Box(e, (named ? LINE + 4 : 0) + stickerH() + (date ? DATE_H : 0), named, face, date, List.of(), stickerH(), false);
+        }
+        int timeW0 = ChatDates.timeWidth(timeOf(e) + (checks(e) ? " \u2713\u2713" : "")) + ChatDates.TIME_GAP;
+        if ("voice".equals(e.kind)) {
+            int w = Math.max(ChatVoiceNotes.VOICE_W + timeW0, named ? font.width(nameOf(e)) : 0);
+            return new Box(e, (named ? LINE : 0) + 19 + 2 * PAD_V + (date ? DATE_H : 0), named, face, date, List.of(), w, false);
+        }
+        if ("images".equals(e.kind)) {
+            ChatAlbums.AlbumInfo ai = albumOf(e);
+            List<FormattedCharSequence> cap = ai.caption().isEmpty() ? List.of() : font.split(Component.literal(ai.caption()), ai.width());
+            int w = Math.max(ai.width(), named ? font.width(nameOf(e)) : 0);
+            int h = (named ? LINE : 0) + ai.height() + 2 * ChatAlbums.ALBUM_PAD + cap.size() * LINE + (cap.isEmpty() ? 0 : PAD_V)
+                    + (date ? DATE_H : 0);
+            return new Box(e, h, named, face, date, cap, w, false);
         }
         List<FormattedCharSequence> lines = new ArrayList<>(font.split(textOf(e), maxW));
         if (lines.isEmpty()) {
@@ -169,7 +207,15 @@ final class Feed {
                 Gfx.text(g, font, nameOf(e), tx, ty, textCol, false);
                 ty += LINE;
             }
-            for (FormattedCharSequence l : b.lines()) {
+            if ("voice".equals(e.kind)) {
+                ChatVoiceNotes.drawVoice(g, voiceOf(e), e.name, tx, ty - 1, a);
+            } else if ("images".equals(e.kind)) {
+                ChatAlbums.AlbumInfo ai = albumOf(e);
+                int ax = bx + (bw - ai.width()) / 2;
+                ChatAlbums.drawAlbum(g, ai, e.name, ax, ty - 1 + ChatAlbums.ALBUM_PAD - PAD_V, a);
+                ty += ai.height() + 2 * ChatAlbums.ALBUM_PAD - PAD_V;
+            }
+            for (FormattedCharSequence l : "voice".equals(e.kind) ? List.<FormattedCharSequence>of() : b.lines()) {
                 Gfx.text(g, font, l, tx, ty, textCol, false);
                 ty += LINE;
             }
@@ -257,6 +303,8 @@ final class Feed {
             target = at = 0;
         }
 
+        ChatUi.clearHits();
+        ChatUi.frame(s, 0, top, bottom, ChatMotion.shiftX(chat));
         Gfx.scissor(g, 0, Math.round(top * s + ChatMotion.shiftYNow), g.guiWidth(), Math.round(bottom * s + ChatMotion.shiftYNow) + 2);
         Gfx.push(g);
         Gfx.scale(g, s, s);

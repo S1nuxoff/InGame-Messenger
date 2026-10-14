@@ -190,6 +190,7 @@ final class Images {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
+        long channel = Messenger.current; // where they go, even if another chat is open when they're ready
         sending = true;
         sendTotal = list.size();
         sendDone = 0;
@@ -213,10 +214,10 @@ final class Images {
                         sendDone++;
                         sendStep = System.currentTimeMillis();
                     }
-                    mc.execute(() -> Net.toServer(new Packets.ImageLinks(data.toString(), caption, replyTo)));
+                    mc.execute(() -> Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.LinksUp(channel, "", data.toString(), caption, 0)));
                 } else {
                     int album = ++albumId;
-                    mc.execute(() -> Net.toServer(new Packets.AlbumStart(album, ready.size(), caption, replyTo)));
+                    mc.execute(() -> Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.AlbumUp(album, channel, "", ready.size(), caption, 0)));
                     for (int i = 0; i < ready.size(); i++) {
                         Att a = ready.get(i);
                         int index = i;

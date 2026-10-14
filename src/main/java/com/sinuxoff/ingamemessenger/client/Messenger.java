@@ -46,6 +46,8 @@ public final class Messenger {
         String nonce = ""; // ours, until the server's copy comes back
         /** When it arrived live (for the fade on the closed chat); 0 for history. */
         long arrived;
+        /** The pictures' layout, made when first drawn. */
+        Object album;
         /** Lines of the game's chat joined in this one (a command's answer). */
         int lines = 1;
 

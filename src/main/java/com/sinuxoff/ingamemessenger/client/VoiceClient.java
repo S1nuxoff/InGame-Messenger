@@ -179,7 +179,8 @@ final class VoiceClient {
             return;
         }
         int id = ++uploadId;
-        Net.toServer(new Packets.VoiceStart(id, data.length, frames * 20, wave, ChatInput.takeReply()));
+        ChatInput.takeReply();
+        Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.VoiceUp(id, Messenger.current, "", data.length, frames * 20, wave, 0));
         for (int off = 0; off < data.length; off += 30_000) {
             byte[] part = java.util.Arrays.copyOfRange(data, off, Math.min(data.length, off + 30_000));
             Net.toServer(new Packets.VoiceChunk(id, off, part));
