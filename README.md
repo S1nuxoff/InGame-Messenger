@@ -7,12 +7,13 @@
 **A real messenger inside the Minecraft chat.**<br>
 Stickers, voice messages, pictures, reactions, replies, private chats, polls and search, for every player on your server.
 
+[![Download](https://img.shields.io/github/v/release/S1nuxoff/InGame-Messenger?style=for-the-badge&label=Download&color=2EA043)](https://github.com/S1nuxoff/InGame-Messenger/releases/latest)
+
 [![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
 [![Tested in game](https://img.shields.io/badge/tested-in%20game-2EA043)](https://s1nuxoff.github.io/InGame-Messenger-tests/)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.19.2%20%E2%80%93%2026.3%20(22%20versions)-62B47A)](#supported-versions)
-[![Loaders](https://img.shields.io/badge/NeoForge%20%C2%B7%20Fabric%20%C2%B7%20Quilt%20%C2%B7%20Forge-mod-8A5CF5)](#supported-versions)
-[![Plugin](https://img.shields.io/badge/Paper%20%C2%B7%20Spigot%20%C2%B7%20Purpur%20%C2%B7%20Folia-plugin-F7CF0D)](#supported-versions)
+
+<table><tr><td align="center" width="84"><img src="docs/images/platforms/minecraft.png" width="36" height="36" alt=""><br><sub><b>1.19.2 – 26.3</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/fabric.png" width="36" height="36" alt=""><br><sub><b>Fabric</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/quilt.png" width="36" height="36" alt=""><br><sub><b>Quilt</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/neoforge.png" width="36" height="36" alt=""><br><sub><b>NeoForge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/forge.png" width="36" height="36" alt=""><br><sub><b>Forge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/paper.png" width="36" height="36" alt=""><br><sub><b>Paper</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/spigot.svg" width="36" height="36" alt=""><br><sub><b>Spigot</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/purpur.png" width="36" height="36" alt=""><br><sub><b>Purpur</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/folia.png" width="36" height="36" alt=""><br><sub><b>Folia</b></sub></td></tr></table>
 
 [Features](#features) · [Installation](#installation) · [Versions](#supported-versions) · [Server guide](docs/server.md) · [Contributing](CONTRIBUTING.md)
 
@@ -93,19 +94,20 @@ packs, commands and permissions.
 
 ## Supported versions
 
-**22 Minecraft versions, from 1.19.2 to 26.3.**
+<img src="docs/images/platforms/minecraft.png" width="20" height="20" alt=""> **22 Minecraft versions, from 1.19.2 to 26.3.**
 
-| | Versions |
-|---|---|
-| **Fabric, Quilt** | 1.19.2 · 1.20 · 1.20.1 · 1.20.3 · 1.20.4 · 1.20.5 · 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
-| **NeoForge** | 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
-| **Forge** | 1.19.2 · 1.20.1 · 1.20.4 · 1.20.6 · 1.21.1 · 1.21.4 · 1.21.5 · 1.21.8 · 1.21.10 · 1.21.11 · 26.1.2 · 26.2 · 26.3 |
-| **Plugin** (Paper, Spigot, Purpur) | 1.20.1 and newer; Folia where Folia has a release |
+| | Platform | Versions |
+|:-:|---|---|
+| <img src="docs/images/platforms/fabric.png" width="20" height="20" alt=""> <img src="docs/images/platforms/quilt.png" width="20" height="20" alt=""> | **Fabric, Quilt** | 1.19.2 · 1.20 · 1.20.1 · 1.20.3 · 1.20.4 · 1.20.5 · 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
+| <img src="docs/images/platforms/neoforge.png" width="20" height="20" alt=""> | **NeoForge** | 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
+| <img src="docs/images/platforms/forge.png" width="20" height="20" alt=""> | **Forge** | 1.19.2 · 1.20.1 · 1.20.4 · 1.20.6 · 1.21.1 · 1.21.4 · 1.21.5 · 1.21.8 · 1.21.10 · 1.21.11 · 26.1.2 · 26.2 · 26.3 |
+| <img src="docs/images/platforms/paper.png" width="20" height="20" alt=""> <img src="docs/images/platforms/spigot.svg" width="20" height="20" alt=""> <img src="docs/images/platforms/purpur.png" width="20" height="20" alt=""> | **Paper, Spigot, Purpur** (plugin) | 1.20.1 and newer |
+| <img src="docs/images/platforms/folia.png" width="20" height="20" alt=""> | **Folia** (plugin) | every Folia release from 1.21.4 |
 
 <details>
 <summary><b>Full table</b> (every version, loader and the Java it needs)</summary>
 
-| Minecraft | NeoForge | Fabric | Quilt | Forge | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
+| Minecraft | <img src="docs/images/platforms/neoforge.png" width="16" height="16" alt=""><br>NeoForge | <img src="docs/images/platforms/fabric.png" width="16" height="16" alt=""><br>Fabric | <img src="docs/images/platforms/quilt.png" width="16" height="16" alt=""><br>Quilt | <img src="docs/images/platforms/forge.png" width="16" height="16" alt=""><br>Forge | <img src="docs/images/platforms/paper.png" width="16" height="16" alt=""> <img src="docs/images/platforms/spigot.svg" width="16" height="16" alt=""> <img src="docs/images/platforms/purpur.png" width="16" height="16" alt=""><br>Paper, Spigot, Purpur | <img src="docs/images/platforms/folia.png" width="16" height="16" alt=""><br>Folia | Java |
 |-----------|:--------:|:------:|:-----:|:-----:|:------------------------------:|:--------------:|:----:|
 | 1.19.2    |    —     |   ✓    |   ✓   |   ✓   |               —                |       —        |  17  |
 | 1.20      |    —     |   ✓    |   ✓   |   —   |               —                |       —        |  17  |
@@ -129,7 +131,6 @@ packs, commands and permissions.
 | 26.1.2    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  25  |
 | 26.2      |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  25  |
 | 26.3      |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  25  |
-Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
 
 - Fabric builds need [Fabric API](https://modrinth.com/mod/fabric-api). On Quilt, use the Fabric jar with Fabric API.
 - Some versions share a jar: the 1.20.1 Fabric jar also runs on 1.20, the 1.20.4 one on 1.20.3, the 1.20.6 one on
