@@ -86,7 +86,8 @@ final class Feed {
     private static Box box(Messenger.Entry e, Messenger.Entry prev, Messenger.Entry next, int chatW, Font font) {
         boolean date = prev == null || ChatDates.dayOf(prev.time) != ChatDates.dayOf(e.time);
         if (!isPlayer(e)) { // a line of the server or the game: centered, as it came
-            List<FormattedCharSequence> lines = font.split(textOf(e), chatW - AV - 2 * PAD - 4);
+            // the server lays its lines out for the game's chat width: they get the whole width
+            List<FormattedCharSequence> lines = font.split(textOf(e), chatW - 2 * PAD);
             int w = 0;
             for (FormattedCharSequence l : lines) {
                 w = Math.max(w, font.width(l));
@@ -140,7 +141,7 @@ final class Feed {
         if (!isPlayer(e)) {
             // one short line (a join, a death) centered; a longer answer (a command's) as a block on the left
             boolean block = b.lines().size() > 1;
-            int bw = b.w() + 2 * PAD, bx = block ? AV - PAD : (chatW - bw) / 2, by = y - b.lines().size() * LINE - 2 * PAD_V;
+            int bw = b.w() + 2 * PAD, bx = block ? 0 : (chatW - bw) / 2, by = y - b.lines().size() * LINE - 2 * PAD_V;
             Panel.round(g, bx, by, bw, b.lines().size() * LINE + 2 * PAD_V, block ? 8 : 6, (int) (a * 0x90) << 24 | BUBBLE_SYSTEM);
             int ly = by + PAD_V + 1;
             for (FormattedCharSequence l : b.lines()) {

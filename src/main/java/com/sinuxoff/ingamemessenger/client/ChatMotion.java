@@ -98,9 +98,9 @@ final class ChatMotion {
         return shiftYNow;
     }
 
-    /** No wider than the space next to the input, at least 160. */
+    /** As wide as the game's setting (servers lay their messages out for it), if the screen has room; at least 160. */
     public static int clampWidth(int w) {
-        int room = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 - SIDEBAR;
+        int room = Minecraft.getInstance().getWindow().getGuiScaledWidth() - SIDEBAR - 60;
         return Math.min(w, Math.max(room, Math.min(w, 160)));
     }
 
