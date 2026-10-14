@@ -402,6 +402,14 @@ public final class Messenger {
                 ping();
             }
         }
+        if (!e.mine() && e.name != null && !c.dm()) { // @us or an answer to us: said above the hotbar
+            Entry answered = byId(replyOf(e));
+            if ("text".equals(e.kind) && ChatDecor.mentionsMe(Component.literal(e.text()), e.name)) {
+                ChatDecor.notifyMention(e.name);
+            } else if (answered != null && answered.mine()) {
+                ChatDecor.notifyReply(e.name);
+            }
+        }
         Feed.arrived(c);
     }
 

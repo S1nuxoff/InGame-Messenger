@@ -334,4 +334,11 @@ final class ChatDecor {
                 net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL/*? if >=1.19.3 {*/.value()/*?}*/, 1.2f, 0.9f));
         mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.mention", who).withStyle(s -> s.withColor(MENTION_ME)), false);
     }
+
+    static void notifyReply(String who) {
+        Minecraft mc = Minecraft.getInstance();
+        mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL/*? if >=1.19.3 {*/.value()/*?}*/, 1.2f, 0.9f));
+        mc.gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.replied", who).withStyle(s -> s.withColor(MENTION_ME)), false);
+    }
 }

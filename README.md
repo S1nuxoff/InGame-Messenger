@@ -8,7 +8,7 @@ A messenger inside the Minecraft chat.
 
 [![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.19.2%20to%2026.3-62B47A)](#supported-versions)
+[![Minecraft](https://img.shields.io/badge/Minecraft-16%20versions-62B47A)](#supported-versions)
 [![NeoForge](https://img.shields.io/badge/NeoForge-supported-E68C37)](#supported-versions)
 [![Fabric](https://img.shields.io/badge/Fabric-supported-C6BBA5)](#supported-versions)
 [![Quilt](https://img.shields.io/badge/Quilt-supported-8A5CF5)](#supported-versions)
@@ -19,10 +19,12 @@ A messenger inside the Minecraft chat.
 
 </div>
 
-InGame Messenger replaces the vanilla chat with a full messenger: message bubbles with player faces, stickers and
-custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history. It runs on
-NeoForge, Fabric, Quilt and Forge, from Minecraft 1.19.2 to 26.3, and the server side also runs as a plugin on Paper,
-Spigot, Purpur and Folia.
+InGame Messenger turns the Minecraft chat into a messenger for your server: message bubbles with player faces,
+stickers and custom emoji, reactions, replies, private chats, pictures, voice messages, polls and searchable history.
+The server's chat stays the place where everyone talks and where commands are typed; the messenger just makes it
+better. It runs on NeoForge, Fabric, Quilt and Forge, on Minecraft 1.19.2, 1.20.1, 1.21.1, 1.21.4, 1.21.5, 1.21.6,
+1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3 (see [the table](#supported-versions)
+for each loader), and the server side also runs as a plugin on Paper, Spigot, Purpur and Folia.
 
 Players install the mod; the server runs either the mod or the plugin. Clients and servers on different loaders work
 together.
@@ -31,19 +33,24 @@ together.
 
 **Chat**
 - Messages are shown as bubbles with the sender's face, name and time. Consecutive messages from one player are
-  grouped. Date separators between days.
+  grouped, the last one with a tail towards the face. Date separators between days. Your own messages can be shown on
+  the right, like on a phone.
+- The server's own lines (joins, deaths, announcements, command answers) come from the server, with its name and icon,
+  and keep their colors, links and hover texts. Links open after the game's usual question, commands in them run or go
+  to the input.
+- Names look the way the server shows them: ranks and colors from the server or LuckPerms/Vault.
 - Replies with a quote of the original message. Click the quote to jump to it, even if it is far back in the history.
 - Editing and deleting your own messages. Operators can delete any message.
-- Reactions: eight built-in ones plus any emoji from the server's emoji packs. Double-click a message to react with a
-  heart.
+- Reactions: eight built-in ones plus any emoji from the server's emoji packs, on messages and stickers alike.
+  Double-click a message to react with a heart.
 - @mentions with autocompletion. Mentions of you are highlighted and announced above the hotbar.
 - "Player is typing..." indicator.
-- Read receipts: one check when sent, two when someone has read it. Hover to see who.
-- Smooth scrolling, new messages slide in, the chat can be placed on the right side of the screen.
+- Commands can be typed anywhere. Typed in a private chat, the answer is shown right there, visible only to you.
 
 **Private chats**
-- One-to-one conversations in a chat list next to the main chat, with unread counters and notifications.
-- Private messages are stored on the server like public ones and are only delivered to the two participants.
+- One-to-one conversations in a chat list next to the server's chat, with unread counters and notifications.
+- Read receipts: one check when sent, two when the other player has read it.
+- Private messages are stored on the server like the rest of the chat and are only delivered to the two players.
 
 **Stickers and emoji**
 - Sticker and emoji packs are provided by the server (PNG, JPG and animated GIF).
@@ -60,7 +67,7 @@ together.
 
 **More**
 - Polls with single or multiple choice.
-- Full-text search through the whole chat history (Ctrl+F).
+- Full-text search through the history of every chat you can see (Ctrl+F); a result opens its chat at the message.
 - Settings for chat size and scale, sticker size, microphone and output device, gain, noise gate and more.
 - Translated into 40 languages: English, Arabic, Belarusian, Bulgarian, Chinese (Simplified and Traditional), Croatian,
   Czech, Danish, Dutch, Estonian, Finnish, French, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Japanese,
@@ -70,6 +77,11 @@ together.
 **For server owners**
 - Runs as a mod on NeoForge, Fabric and Forge, or as a plugin on Paper, Spigot, Purpur and Folia.
 - Players without the mod can still join: they see stickers, voice messages, pictures and polls as short text lines.
+- Works with chat plugins such as EssentialsX Chat: a player's line is shown once, as a messenger message, with the
+  rank and colors the server gives it.
+- Mutes: in the server's chat, in private chats or both, for a time or for good, with a reason. They also stop /msg
+  and /me. Mutes from EssentialsX, LiteBans and AdvancedBan count too (plugin).
+- The server's name and icon in the messenger: the MOTD's first line and the server list icon by default.
 - History is stored in a database: H2 by default (a file in the world folder, nothing to configure), or MySQL,
   MariaDB and PostgreSQL. Drivers for external databases are downloaded automatically on first start.
 - Voice messages and pictures are stored in the world folder or in any S3-compatible storage (AWS S3, Cloudflare R2,
@@ -79,35 +91,43 @@ together.
 
 ## Supported versions
 
-| Minecraft          | NeoForge | Fabric | Quilt |    Forge     | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
-|--------------------|:--------:|:------:|:-----:|:------------:|:------------------------------:|:--------------:|:----:|
-| 1.19.2             |    —     |   ✓    |   ✓   |      ✓       |               —                |       —        |  17  |
-| 1.20.1             |    —     |   ✓    |   ✓   |      ✓       |               ✓                |       —        |  17  |
-| 1.21.1             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       —        |  21  |
-| 1.21.4             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
-| 1.21.5             |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
-| 1.21.6 – 1.21.8    |    ✓     |   ✓    |   ✓   | 1.21.8 only  |               ✓                |       ✓        |  21  |
-| 1.21.9 – 1.21.10   |    ✓     |   ✓    |   ✓   | 1.21.10 only |               ✓                |       —        |  21  |
-| 1.21.11            |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  21  |
-| 26.1 – 26.1.2      |    ✓     |   ✓    |   ✓   | 26.1.2 only  |               ✓                |       ✓        |  25  |
-| 26.2               |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       ✓        |  25  |
-| 26.3               |    ✓     |   ✓    |   ✓   |      ✓       |               ✓                |       —        |  25  |
+| Minecraft | NeoForge | Fabric | Quilt | Forge | Paper, Spigot, Purpur (plugin) | Folia (plugin) | Java |
+|-----------|:--------:|:------:|:-----:|:-----:|:------------------------------:|:--------------:|:----:|
+| 1.19.2    |    —     |   ✓    |   ✓   |   ✓   |               —                |       —        |  17  |
+| 1.20.1    |    —     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  17  |
+| 1.21.1    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  21  |
+| 1.21.4    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  21  |
+| 1.21.5    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  21  |
+| 1.21.6    |    ✓     |   ✓    |   ✓   |   —   |               ✓                |       ✓        |  21  |
+| 1.21.7    |    ✓     |   ✓    |   ✓   |   —   |               ✓                |       ✓        |  21  |
+| 1.21.8    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  21  |
+| 1.21.9    |    ✓     |   ✓    |   ✓   |   —   |               ✓                |       —        |  21  |
+| 1.21.10   |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  21  |
+| 1.21.11   |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  21  |
+| 26.1      |    ✓     |   ✓    |   ✓   |   —   |               ✓                |       ✓        |  25  |
+| 26.1.1    |    ✓     |   ✓    |   ✓   |   —   |               ✓                |       ✓        |  25  |
+| 26.1.2    |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  25  |
+| 26.2      |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       ✓        |  25  |
+| 26.3      |    ✓     |   ✓    |   ✓   |   ✓   |               ✓                |       —        |  25  |
 
 Fabric builds require [Fabric API](https://modrinth.com/mod/fabric-api).
 
 On Quilt, use the Fabric jar together with Fabric API (not Quilted Fabric API, which stops at 1.21).
 
-Forge builds are made for one Minecraft release each, as Forge itself is.
+Some versions share a jar: one NeoForge or Fabric jar covers 1.21.6, 1.21.7 and 1.21.8, another 1.21.9 and 1.21.10,
+another 26.1, 26.1.1 and 26.1.2. The jar's name shows the newest of them. Forge builds are made for one Minecraft release each,
+as Forge itself is.
 
 ### Server plugin
 
-One plugin jar covers every version in the table from 1.20.1. Folia is marked where Folia itself has a release. Players join a
+One plugin jar covers every version in the table except 1.19.2. Folia is marked where Folia itself has a release. Players join a
 server with the plugin with the mod on any loader.
+
+Each mod jar installs only on the versions it is made for. Versions missing from the table (1.19.3, 1.19.4, 1.20.2,
+1.20.3, 1.20.4, 1.20.5, 1.20.6, 1.21.2 and 1.21.3) are not supported yet; 1.20.4 comes next.
 
 Velocity and BungeeCord work too: install the mod or the plugin on the servers behind the proxy, nothing on the proxy.
 Each server keeps its own chat. See [Proxies](docs/server.md#proxies-velocity-bungeecord).
-
-Minecraft 1.18.2 and 1.16.5 are planned.
 
 ## Installation
 
@@ -146,11 +166,12 @@ packs and commands.
 | Preview a sticker              | Press and hold it in the panel                                           |
 | React to a message             | Hover the message and click the reaction button, or double-click it      |
 | Reply, copy, edit, delete      | Right-click the message                                                  |
-| Player menu                    | Click a player's face or name                                            |
+| Jump to the quoted message     | Click the quote                                                          |
+| Player menu (private chat, mention) | Click a player's face                                               |
 | Voice message                  | Hold the microphone button (shown when the input is empty)               |
 | Attach a picture, location, poll | Paper clip button                                                      |
 | Paste a picture                | Ctrl+V with an image in the clipboard                                    |
-| Search                         | Ctrl+F or the magnifier above the chat                                   |
+| Search                         | Ctrl+F or the magnifier at the bottom of the chat list                   |
 | Settings                       | Gear button at the bottom of the chat list                               |
 
 ## Privacy

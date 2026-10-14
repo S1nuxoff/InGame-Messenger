@@ -25,15 +25,18 @@ When a new string is added to `en_us.json`, missing translations fall back to En
 
 ```
 core/                     Plain Java, no Minecraft. Shared by every platform and covered by unit tests.
-  protocol/               Packets and their wire format.
-  server/                 The chat server: validation, delivery, private chats, uploads, sticker packs.
-  storage/                Database (JDBC) and file storage (local, S3).
+  hub/                    The chat's server: channels (the server's chat, private chats), permissions, moderation,
+                          delivery, history, voice and picture uploads.
+  protocol/               Packets and their wire format: Proto (the chat) and Packets (handshake, stickers, files).
+  server/                 Settings, the platform interface, sticker packs, polls.
+  storage/                Database (Store, JDBC) and file storage (local, S3).
   audio/ image/ text/     Opus codec, picture processing, text rules.
   web/                    HTTP helpers.
 
 src/main/java/com/sinuxoff/ingamemessenger/
   *.java                  The Minecraft server side: platform glue, commands, config.
-  client/                 Everything the player sees: chat rendering, input, panels, screens, audio.
+  client/                 Everything the player sees. Messenger keeps the chats the server sent, Feed draws them
+                          where the game's chat is; then input, panels, screens, audio.
   mixin/                  Mixins shared by all loaders.
   hooks/                  Mixins for HUD, typed characters and frame start, used on loaders without such events
                           (Fabric, Forge).
@@ -64,7 +67,7 @@ later builds use the cache.
 ## Multiple Minecraft versions
 
 All versions are built from the same sources with [Stonecutter](https://stonecutter.kikugie.dev/). The sources in git
-are written for the *VCS version*, `1.21.1-neoforge`. Code that differs between versions is wrapped in conditional
+are written for the *VCS version*, `26.3-fabric`. Code that differs between versions is wrapped in conditional
 comments:
 
 ```java
@@ -82,7 +85,7 @@ Renames that apply to every file (for example `ResourceLocation` to `Identifier`
 replacements in `build.gradle` instead of conditions in each file.
 
 To edit and run a specific version in your IDE, switch the active project with the Stonecutter Gradle task
-`Set active project to <target>`. Switch back to `1.21.1-neoforge` before committing, so the sources in git stay in
+`Set active project to <target>`. Switch back to `26.3-fabric` before committing, so the sources in git stay in
 the VCS version.
 
 ### Where version differences live
@@ -114,17 +117,19 @@ feature to one implementation for all targets.
 
 ## Code style
 
-- Java 21 language level in shared code.
+- `core` and the plugin compile for Java 17 (1.19.2 and 1.20.1 run on it): no pattern matching in `switch`, no other
+  newer language features there.
 - Four spaces, braces on every block, lines up to about 140 characters.
 - Comments explain why, not what. Keep them short.
 - Packet handlers run on the server thread. Anything that touches the database or file storage goes through
-  `ChatServer.db(...)` or the storage's executors, and comes back with `ServerPlatform.execute(...)` to send packets.
+  `Hub.db(...)` or the storage's executors, and comes back with `ServerPlatform.execute(...)` to send packets.
 - Validate everything that comes from a client: lengths, ids, keys, rates.
 - When the wire format of a packet changes, bump `Protocol.VERSION`.
 
 ## Tests
 
-`core` has unit tests for the protocol, the server logic, the database layer, audio and picture processing. Run them
+`core` has unit tests for the protocol, the hub (channels, permissions, mutes, history), audio, picture processing
+and text rules. Run them
 with `./gradlew :core:test`. New server-side behaviour should come with a test in `core/src/test`.
 
 The Minecraft side is tested in game. Please mention in the pull request which versions and loaders you tried.

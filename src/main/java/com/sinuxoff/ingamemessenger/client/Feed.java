@@ -483,6 +483,9 @@ final class Feed {
         if (b.face() && !onRight(e)) {
             if (isPlayer(e)) {
                 Faces.drawFace(g, e.sender, e.name, 0, y - FACE, a);
+                if (open && !e.mine()) {
+                    ChatUi.face(e.sender, e.name, 0, y - FACE, FACE, FACE);
+                }
             } else {
                 ServerIcon.draw(g, 0, y - FACE, FACE, a);
             }

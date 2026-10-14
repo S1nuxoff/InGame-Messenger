@@ -23,8 +23,9 @@ storage, sticker packs and commands.
 1. On a modded server, download the jar for your Minecraft version and loader (NeoForge, Fabric or Forge) and put it in
    `mods/`. On Fabric, Fabric API is required. Quilt runs the Fabric jar, also with Fabric API.
 
-   On Paper, Spigot, Purpur or Folia, put the plugin's jar in `plugins/`. One jar covers 1.20.1 and newer (Folia from
-   1.21.4); it needs Java 17 or newer. On first start the server downloads the plugin's libraries (the H2 database and the Opus
+   On Paper, Spigot, Purpur or Folia, put the plugin's jar in `plugins/`. One jar covers 1.20.1, 1.21.1, 1.21.4,
+   1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3 (on Folia, the
+   versions marked in the README's table); it needs Java 17 or newer. On first start the server downloads the plugin's libraries (the H2 database and the Opus
    codec) from Maven Central.
 2. Start the server. It creates `config/ingamemessenger/` with `server.toml` and the `stickers/` and `emoji/`
    folders. With the plugin this folder is `plugins/InGameMessenger/`; everything in it works the same.
@@ -63,6 +64,13 @@ with `/messenger reload`. Changes to `[database]` and `[storage]` need a server 
 
 When a newer version of the mod adds options, they are appended to the existing file with their default values.
 
+### [server]
+
+| Option | Default             | Description                                                                          |
+|--------|---------------------|--------------------------------------------------------------------------------------|
+| `name` | `""`                | The server's name in the messenger, over its lines and in the chat list. Empty: the first line of the MOTD. |
+| `icon` | `"server-icon.png"` | Its icon: a PNG in the server's folder (the server list's icon by default, up to 256 KB). Empty: none. |
+
 ### [chat]
 
 | Option   | Default | Description                                                                 |
@@ -98,7 +106,7 @@ What players without the mod see. See [Players without the mod](#players-without
 
 | Option         | Default | Description                                                                          |
 |----------------|---------|--------------------------------------------------------------------------------------|
-| `plainLines`   | `true`  | Show stickers, voice messages, pictures, polls and private messages as chat lines.  |
+| `plainLines`   | `true`  | Show stickers, voice messages, pictures and polls as chat lines.                     |
 | `installHint`  | `true`  | Tell them once, a few seconds after joining, that the server uses InGame Messenger. |
 | `installText`  | `""`    | Your own text for that line. Empty uses the default.                                 |
 | `stickerText`  | `""`    | Your own text for a sticker. `%s`: player.                                           |
@@ -106,7 +114,6 @@ What players without the mod see. See [Players without the mod](#players-without
 | `pictureText`  | `""`    | One picture. `%s`: player, caption.                                                  |
 | `picturesText` | `""`    | Several pictures. `%s`: player, number, caption.                                     |
 | `pollText`     | `""`    | Poll. `%s`: player, question.                                                        |
-| `dmText`       | `""`    | Private message. `%s`: sender, text.                                                 |
 
 The texts take `&` color codes, for example `stickerText = "&e%s&7 sent a sticker"`.
 
@@ -137,7 +144,8 @@ The texts take `&` color codes, for example `stickerText = "&e%s&7 sent a sticke
 
 ## Database
 
-The chat history, reactions, poll votes, read receipts and private chats are stored in a database.
+The chats (the server's chat and private chats), their history, reactions, poll votes, read marks, roles,
+permissions and mutes are stored in a database.
 
 ### H2 (default)
 
@@ -313,8 +321,9 @@ Players without the mod still see what others send through the messenger, as pla
 <Alex> [voice message, 4 s]
 <Alex> [picture] look at this
 <Alex> [poll] Where do we build the base?
-[Alex -> you] see you at spawn
 ```
+
+Private chats are messenger-only: players without the mod don't get them.
 
 The wording of these lines and the install note can be changed or turned off in [`[withoutMod]`](#withoutmod).
 
@@ -344,10 +353,14 @@ compatibility mod on the NeoForge server. Clients on other loaders join such a s
 
 ## Commands
 
-All commands require operator permission. With the plugin, the permission `ingamemessenger.admin` grants them too.
+All commands require operator permission. With the plugin, `ingamemessenger.admin` grants all of them and
+`ingamemessenger.mute` only the mute commands.
 
 | Command                                   | Description                                                   |
 |-------------------------------------------|---------------------------------------------------------------|
+| `/messenger mute <player> [time] [where] [reason]` | Mute a player. Time: `10m`, `2h`, `3d` or `forever` (default). Where: `chat` (the server's chat, default), `dm` (private chats) or `all`. |
+| `/messenger unmute <player> [where]`      | Lift a mute, everywhere by default.                           |
+| `/messenger mutes`                        | List the current mutes.                                       |
 | `/messenger reload`                       | Reload `server.toml` and the sticker and emoji packs.         |
 | `/messenger typing <true\|false>`         | Turn the typing indicator on or off.                          |
 | `/messenger voice <true\|false>`          | Turn voice messages on or off.                                |
@@ -357,6 +370,10 @@ All commands require operator permission. With the plugin, the permission `ingam
 Commands that change a setting also write it to `server.toml`.
 
 Operators can delete any message from its context menu.
+
+A muted player can't write where the mute holds, and their messenger says so in the input. A mute in private chats
+also stops `/msg`, `/tell`, `/w`, `/r` and the like (EssentialsX's too), a chat mute stops `/me`. On the plugin, a mute from EssentialsX, LiteBans or AdvancedBan keeps the player out
+of the server's chat too.
 
 ## Backups
 
