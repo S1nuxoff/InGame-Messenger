@@ -16,6 +16,7 @@ import com.sinuxoff.ingamemessenger.client.ChatHooks;
  */
 @Mixin(ChatListener.class)
 public abstract class ChatListenerMixin {
+    //? if >=1.19.3 {
     @Inject(method = "showMessageToPlayer", at = @At("HEAD"), cancellable = true)
     private void ingamemessenger$ownLine(ChatType.Bound type, net.minecraft.network.chat.PlayerChatMessage message, Component decorated,
                                          com.mojang.authlib.GameProfile sender, boolean onlySecure, java.time.Instant received,
@@ -31,4 +32,23 @@ public abstract class ChatListenerMixin {
             ci.cancel();
         }
     }
+    //?} else {
+    /*// 1.19.2: the sender is a PlayerInfo, and lines without a known sender take their own way
+    @Inject(method = "showMessageToPlayer", at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$ownLine(ChatType.Bound type, net.minecraft.network.chat.PlayerChatMessage message, Component decorated,
+                                         net.minecraft.client.multiplayer.PlayerInfo sender, boolean onlySecure, java.time.Instant received,
+                                         CallbackInfoReturnable<Boolean> cir) {
+        if (ChatHooks.ownChatLine(type)) {
+            cir.setReturnValue(true);
+        }
+    }
+
+    @Inject(method = "processNonPlayerChatMessage", at = @At("HEAD"), cancellable = true)
+    private void ingamemessenger$ownUnknown(ChatType.Bound type, net.minecraft.network.chat.PlayerChatMessage message, Component decorated,
+                                            CallbackInfoReturnable<Boolean> cir) {
+        if (ChatHooks.ownChatLine(type)) {
+            cir.setReturnValue(true);
+        }
+    }
+    *///?}
 }
