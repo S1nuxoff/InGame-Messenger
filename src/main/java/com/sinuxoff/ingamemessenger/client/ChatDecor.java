@@ -232,6 +232,13 @@ final class ChatDecor {
         return insertion != null && insertion.startsWith(EMOJI_MARK);
     }
 
+    private static final net.minecraft.resources.Identifier SMOOTH_FONT = InGameMessenger.id("smooth");
+
+    /** Message text in the smooth font when the player chose it (emoji keep theirs). */
+    static Component smooth(Component text) {
+        return Prefs.smoothFont() ? Component.empty().withStyle(st -> Compat.font(st, SMOOTH_FONT)).append(text) : text;
+    }
+
     static Component highlightMentions(Component text) {
         String plain = text.getString();
         if (!plain.contains("@") && !plain.contains(":")) {

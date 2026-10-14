@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Izvan mreže",
   "ingamemessenger.card.wrote": "Napisao/la: %s",
   "ingamemessenger.card.mention": "Spominjanje",
-  "ingamemessenger.screen.own_right": "Moje poruke s desne strane"
+  "ingamemessenger.screen.own_right": "Moje poruke s desne strane",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

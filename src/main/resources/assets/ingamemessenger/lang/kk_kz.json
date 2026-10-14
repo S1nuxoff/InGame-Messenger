@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Желіден тыс",
   "ingamemessenger.card.wrote": "Жазды: %s",
   "ingamemessenger.card.mention": "Аталу",
-  "ingamemessenger.screen.own_right": "Менің хабарламаларым оң жақта"
+  "ingamemessenger.screen.own_right": "Менің хабарламаларым оң жақта",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

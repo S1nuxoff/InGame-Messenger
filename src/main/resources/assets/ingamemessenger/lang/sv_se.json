@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "Skrev: %s",
   "ingamemessenger.card.mention": "Omnämnande",
-  "ingamemessenger.screen.own_right": "Mina meddelanden till höger"
+  "ingamemessenger.screen.own_right": "Mina meddelanden till höger",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

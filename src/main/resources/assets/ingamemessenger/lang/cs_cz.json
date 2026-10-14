@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "Napsal(a): %s",
   "ingamemessenger.card.mention": "Zmínka",
-  "ingamemessenger.screen.own_right": "Moje zprávy vpravo"
+  "ingamemessenger.screen.own_right": "Moje zprávy vpravo",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

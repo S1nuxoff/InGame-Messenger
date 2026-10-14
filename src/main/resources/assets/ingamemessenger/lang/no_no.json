@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Frakoblet",
   "ingamemessenger.card.wrote": "Skrev: %s",
   "ingamemessenger.card.mention": "Omtale",
-  "ingamemessenger.screen.own_right": "Mine meldinger til høyre"
+  "ingamemessenger.screen.own_right": "Mine meldinger til høyre",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

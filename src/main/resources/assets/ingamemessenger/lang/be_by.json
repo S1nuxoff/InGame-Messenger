@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Не ў сетцы",
   "ingamemessenger.card.wrote": "Напісаў(ла): %s",
   "ingamemessenger.card.mention": "Згадка",
-  "ingamemessenger.screen.own_right": "Мае паведамленні справа"
+  "ingamemessenger.screen.own_right": "Мае паведамленні справа",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

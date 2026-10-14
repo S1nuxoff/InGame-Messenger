@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Võrguühenduseta",
   "ingamemessenger.card.wrote": "Kirjutas: %s",
   "ingamemessenger.card.mention": "Mainimine",
-  "ingamemessenger.screen.own_right": "Minu sõnumid paremal"
+  "ingamemessenger.screen.own_right": "Minu sõnumid paremal",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

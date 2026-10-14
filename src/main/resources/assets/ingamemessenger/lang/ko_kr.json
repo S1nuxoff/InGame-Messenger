@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "오프라인",
   "ingamemessenger.card.wrote": "작성자: %s",
   "ingamemessenger.card.mention": "언급",
-  "ingamemessenger.screen.own_right": "내 메시지를 오른쪽에"
+  "ingamemessenger.screen.own_right": "내 메시지를 오른쪽에",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

@@ -127,6 +127,7 @@
   "ingamemessenger.card.wrote": "Писав: %s",
   "ingamemessenger.card.mention": "Згадати",
   "ingamemessenger.screen.own_right": "Мої повідомлення праворуч",
+  "ingamemessenger.screen.smooth_font": "Гладкий шрифт у повідомленнях",
   "ingamemessenger.server.missing": "На цьому сервері немає InGame Messenger, тому чат працює як звичайно.",
   "ingamemessenger.server.other_version": "На сервері InGame Messenger %s, а у вас %s. Поки версії не збігаються, чат працює як звичайно.",
   "ingamemessenger.plain.sticker": "<%s> [стікер]",

@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "Napisał(a): %s",
   "ingamemessenger.card.mention": "Wspomnienie",
-  "ingamemessenger.screen.own_right": "Moje wiadomości po prawej"
+  "ingamemessenger.screen.own_right": "Moje wiadomości po prawej",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

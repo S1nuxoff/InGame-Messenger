@@ -177,6 +177,11 @@ final class Feed {
 
     /** The quote line over a reply: the author and the start of the answered message. */
     private static Component quote(Messenger.Entry e) {
+        Component q = quoteText(e);
+        return q == null ? null : ChatDecor.smooth(q);
+    }
+
+    private static Component quoteText(Messenger.Entry e) {
         long r = Messenger.replyOf(e);
         if (r <= 0) {
             return null;
@@ -215,8 +220,8 @@ final class Feed {
 
     /** The name over a run: the player's (with the server's look of it), or the server's own. */
     private static Component nameOf(Messenger.Entry e) {
-        return isPlayer(e) ? ChatDecor.nameLine(e.name)
-                : Component.literal(ServerIcon.name()).withStyle(st -> st.withBold(true).withColor(0xC8CCD8));
+        return ChatDecor.smooth(isPlayer(e) ? ChatDecor.nameLine(e.name)
+                : Component.literal(ServerIcon.name()).withStyle(st -> st.withBold(true).withColor(0xC8CCD8)));
     }
 
     private static boolean isPlayer(Messenger.Entry e) {
@@ -311,21 +316,21 @@ final class Feed {
         }
         if ("poll".equals(e.kind)) { // the question, two rows per option, the votes' line
             int n = e.body.has("o") ? e.body.getAsJsonArray("o").size() : 0;
-            List<FormattedCharSequence> q = font.split(Component.literal(e.body.has("q") ? e.body.get("q").getAsString() : "")
-                    .withStyle(st -> st.withBold(true)), ChatPolls.POLL_W);
+            List<FormattedCharSequence> q = font.split(ChatDecor.smooth(Component.literal(e.body.has("q") ? e.body.get("q").getAsString() : "")
+                    .withStyle(st -> st.withBold(true))), ChatPolls.POLL_W);
             int w = Math.max(ChatPolls.POLL_W, named ? font.width(nameOf(e)) : 0);
             int h = (named ? LINE : 0) + q.size() * LINE + 3 + n * 2 * LINE + LINE + 2 * PAD_V + (date ? DATE_H : 0);
             return new Box(e, h, named, face, date, q, w, false);
         }
         if ("images".equals(e.kind)) {
             ChatAlbums.AlbumInfo ai = albumOf(e);
-            List<FormattedCharSequence> cap = ai.caption().isEmpty() ? List.of() : font.split(Component.literal(ai.caption()), ai.width());
+            List<FormattedCharSequence> cap = ai.caption().isEmpty() ? List.of() : font.split(ChatDecor.smooth(Component.literal(ai.caption())), ai.width());
             int w = Math.max(ai.width(), named ? font.width(nameOf(e)) : 0);
             int h = (named ? LINE : 0) + ai.height() + 2 * ChatAlbums.ALBUM_PAD + cap.size() * LINE + (cap.isEmpty() ? 0 : PAD_V)
                     + (date ? DATE_H : 0);
             return new Box(e, h, named, face, date, cap, w, false);
         }
-        List<FormattedCharSequence> lines = new ArrayList<>(font.split(textOf(e), maxW));
+        List<FormattedCharSequence> lines = new ArrayList<>(font.split(ChatDecor.smooth(textOf(e)), maxW));
         if (lines.isEmpty()) {
             lines.add(FormattedCharSequence.EMPTY);
         }
@@ -392,7 +397,7 @@ final class Feed {
             }
             int sy = y - sh;
             if (b.named()) {
-                Component name = ChatDecor.nameLine(e.name);
+                Component name = ChatDecor.smooth(ChatDecor.nameLine(e.name));
                 int nw = font.width(name);
                 bubble(g, sx - PAD, sy - LINE - 4 - PAD_V, nw + 2 * PAD, LINE + 2 * PAD_V - 2, BUBBLE, a);
                 Gfx.text(g, font, name, sx, sy - LINE - 4, textCol, false);
@@ -431,7 +436,8 @@ final class Feed {
                 String[] qi = ChatReplies.replyInfo((int) Messenger.replyOf(e));
                 g.fill(tx - 2, ty, tx, ty + 9, (int) (a * 255) << 24 | (qi != null && qi[0] != null ? ChatDecor.nameColor(qi[0]) : 0x8E95A6));
                 Gfx.text(g, font, font.plainSubstrByWidth(q.getString(), qw - 2).length() >= q.getString().length() ? q
-                        : Component.literal(font.plainSubstrByWidth(q.getString(), qw - 8) + "\u2026").withStyle(st -> st.withColor(0xB8BECC)), tx + 3, ty, textCol, false);
+                        : ChatDecor.smooth(Component.literal(font.plainSubstrByWidth(q.getString(), qw - 8) + "\u2026").withStyle(st -> st.withColor(0xB8BECC))),
+                        tx + 3, ty, textCol, false);
                 ty += QUOTE_H;
             }
             var loc = "text".equals(e.kind) ? com.sinuxoff.ingamemessenger.core.text.ChatText.parseLocation(e.text()) : null;

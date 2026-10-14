@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "ออฟไลน์",
   "ingamemessenger.card.wrote": "เขียนว่า: %s",
   "ingamemessenger.card.mention": "การกล่าวถึง",
-  "ingamemessenger.screen.own_right": "ข้อความของฉันอยู่ทางขวา"
+  "ingamemessenger.screen.own_right": "ข้อความของฉันอยู่ทางขวา",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

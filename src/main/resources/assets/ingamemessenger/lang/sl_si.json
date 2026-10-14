@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Brez povezave",
   "ingamemessenger.card.wrote": "Napisal: %s",
   "ingamemessenger.card.mention": "Omemba",
-  "ingamemessenger.screen.own_right": "Moja sporočila na desni"
+  "ingamemessenger.screen.own_right": "Moja sporočila na desni",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

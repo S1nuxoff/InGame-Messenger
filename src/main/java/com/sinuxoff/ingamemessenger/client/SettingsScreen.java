@@ -82,6 +82,9 @@ final class SettingsScreen extends BaseScreen {
             addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.own_right"),
                     Prefs::ownRight, () -> true, Prefs::toggleOwnRight));
             y += ROW + GAP;
+            addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.smooth_font"),
+                    Prefs::smoothFont, () -> true, Prefs::toggleSmoothFont));
+            y += ROW + GAP;
             addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.hide_hotbar"),
                     Prefs::hideHotbar, () -> true, Prefs::toggleHideHotbar));
             y += ROW + GAP;

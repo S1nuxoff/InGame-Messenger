@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "A scris: %s",
   "ingamemessenger.card.mention": "Mențiune",
-  "ingamemessenger.screen.own_right": "Mesajele mele în dreapta"
+  "ingamemessenger.screen.own_right": "Mesajele mele în dreapta",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

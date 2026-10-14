@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Desconectado",
   "ingamemessenger.card.wrote": "Escribió: %s",
   "ingamemessenger.card.mention": "Mención",
-  "ingamemessenger.screen.own_right": "Mis mensajes a la derecha"
+  "ingamemessenger.screen.own_right": "Mis mensajes a la derecha",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

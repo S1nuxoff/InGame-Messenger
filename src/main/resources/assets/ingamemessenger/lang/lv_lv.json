@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Bezsaistē",
   "ingamemessenger.card.wrote": "Uzrakstīja: %s",
   "ingamemessenger.card.mention": "Pieminēšana",
-  "ingamemessenger.screen.own_right": "Manas ziņas labajā pusē"
+  "ingamemessenger.screen.own_right": "Manas ziņas labajā pusē",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }

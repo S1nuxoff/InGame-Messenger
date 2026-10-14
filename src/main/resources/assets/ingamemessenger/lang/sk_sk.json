@@ -124,5 +124,6 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "Napísal(a): %s",
   "ingamemessenger.card.mention": "Spomenutie",
-  "ingamemessenger.screen.own_right": "Moje správy vpravo"
+  "ingamemessenger.screen.own_right": "Moje správy vpravo",
+  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
 }
