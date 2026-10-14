@@ -61,6 +61,11 @@ public interface ServerPlatform {
         say(player, bodyKey, "<%s> " + bodyFallback, all);
     }
 
+    /** The server's MOTD (its description in the server list), "" if unknown. */
+    default String motd() {
+        return "";
+    }
+
     /** The mod's version, e.g. "1.0.0". */
     String modVersion();
 

@@ -103,7 +103,8 @@ public final class Messenger {
         }
     }
 
-    record Space(long id, String kind, String name, boolean isPublic) {
+    /** icon: base64 PNG, or null. */
+    record Space(long id, String kind, String name, boolean isPublic, String icon) {
     }
 
     static UUID me;
@@ -238,7 +239,7 @@ public final class Messenger {
         for (JsonElement e : o.getAsJsonArray("spaces")) {
             JsonObject s = e.getAsJsonObject();
             spaces.put(s.get("id").getAsLong(), new Space(s.get("id").getAsLong(), s.get("kind").getAsString(), s.get("name").getAsString(),
-                    s.get("public").getAsBoolean()));
+                    s.get("public").getAsBoolean(), s.has("icon") ? s.get("icon").getAsString() : null));
         }
         for (JsonElement e : o.getAsJsonArray("channels")) {
             channel(e.getAsJsonObject());

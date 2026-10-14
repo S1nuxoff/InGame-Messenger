@@ -6,6 +6,16 @@ import com.sinuxoff.ingamemessenger.core.storage.StorageConfig;
 /** Server config, read by each platform from config/ingamemessenger/server.toml. */
 public interface ServerSettings {
     /** Show who's typing. */
+    /** The server's own space's name; "" = the first line of the server's MOTD. */
+    default String serverName() {
+        return "";
+    }
+
+    /** Its icon: a PNG file, relative to the server's folder; "" = none. */
+    default String serverIcon() {
+        return "server-icon.png";
+    }
+
     boolean typing();
 
     /** Minimum time between two stickers from one player. */

@@ -102,6 +102,13 @@ final class BukkitPlatform implements ServerPlatform {
     }
 
     @Override
+    @SuppressWarnings("deprecation") // the legacy text: what Spigot has too
+    public String motd() {
+        String m = Bukkit.getMotd();
+        return m == null ? "" : m;
+    }
+
+    @Override
     public UUID idOf(String name) {
         Player p = Bukkit.getPlayerExact(name);
         return p != null ? p.getUniqueId() : null;

@@ -359,9 +359,10 @@ public final class Hub {
                         JsonObject so = new JsonObject();
                         so.addProperty("id", s.id());
                         so.addProperty("kind", s.kind());
-                        so.addProperty("name", s.name());
-                        if (s.icon() != null) {
-                            so.addProperty("icon", s.icon());
+                        so.addProperty("name", s.id() == Store.MAIN ? mainName() : s.name());
+                        String icon = s.id() == Store.MAIN ? mainIcon() : null;
+                        if (icon != null) {
+                            so.addProperty("icon", icon);
                         }
                         so.addProperty("public", s.isPublic());
                         sp.add(so);
@@ -387,6 +388,37 @@ public final class Hub {
         JsonObject o = new JsonObject();
         m.forEach((k, v) -> o.addProperty(String.valueOf(k), v));
         return o;
+    }
+
+    /** The server's own space's name: the config's, else the MOTD's first line, else "Server". */
+    String mainName() {
+        String n = platform.settings().serverName().strip();
+        if (n.isEmpty()) {
+            String motd = platform.motd().replaceAll("\u00A7.", "").split("\n", 2)[0].strip();
+            n = motd.isEmpty() ? "Server" : motd;
+        }
+        return n.length() > 40 ? n.substring(0, 40) : n;
+    }
+
+    private String iconPath;
+    private String iconData;
+
+    /** Its icon as base64 PNG (the server list's by default), or null. Read once per file. */
+    String mainIcon() {
+        String path = platform.settings().serverIcon().strip();
+        if (!path.equals(iconPath)) {
+            iconPath = path;
+            iconData = null;
+            try {
+                java.nio.file.Path f = java.nio.file.Path.of(path);
+                if (!path.isEmpty() && java.nio.file.Files.isRegularFile(f) && java.nio.file.Files.size(f) <= 256 * 1024) {
+                    iconData = java.util.Base64.getEncoder().encodeToString(java.nio.file.Files.readAllBytes(f));
+                }
+            } catch (Exception e) {
+                platform.warn("Can't read the server's icon " + path + ": " + e);
+            }
+        }
+        return iconData;
     }
 
     JsonObject features() {

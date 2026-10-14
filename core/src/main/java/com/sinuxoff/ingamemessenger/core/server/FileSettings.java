@@ -19,6 +19,10 @@ public final class FileSettings implements ModSettings {
     private record Key(String section, String name, Object def, String comment) {
     }
 
+    private static final Key SERVER_NAME = new Key("server", "name", "",
+            "The server's name in the messenger, over its lines and in the chat list. Empty = the first line of its MOTD.");
+    private static final Key SERVER_ICON = new Key("server", "icon", "server-icon.png",
+            "Its icon: a PNG in the server's folder (the server list's icon by default). Empty = none.");
     private static final Key TYPING = new Key("chat", "typing", true,
             "Show who's typing. Players can also turn it off for themselves.");
     private static final Key STICKER_COOLDOWN = new Key("stickers", "cooldownMs", 700,
@@ -81,7 +85,7 @@ public final class FileSettings implements ModSettings {
     private static final Key S3_PATH_STYLE = new Key("storage", "pathStyle", true,
             "true: endpoint/bucket/key URLs (works almost everywhere); false: bucket.endpoint/key.");
     private static final Key S3_PREFIX = new Key("storage", "prefix", "", "Folder inside the bucket (empty = the root).");
-    private static final Key[] ALL = {TYPING, STICKER_COOLDOWN, VOICE_ON, VOICE_MAX, VOICE_KEEP, IMAGES, IMGBB_KEY, IMAGE_KEEP, IMAGE_MAX,
+    private static final Key[] ALL = {SERVER_NAME, SERVER_ICON, TYPING, STICKER_COOLDOWN, VOICE_ON, VOICE_MAX, VOICE_KEEP, IMAGES, IMGBB_KEY, IMAGE_KEEP, IMAGE_MAX,
             PLAIN_ON, INSTALL_HINT, TEXT_INSTALL, TEXT_STICKER, TEXT_VOICE, TEXT_PICTURE, TEXT_PICTURES, TEXT_POLL, TEXT_DM,
             DB_TYPE, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_PREFIX,
             FILES_TYPE, S3_ENDPOINT, S3_REGION, S3_BUCKET, S3_ACCESS, S3_SECRET, S3_PATH_STYLE, S3_PREFIX};
@@ -200,6 +204,16 @@ public final class FileSettings implements ModSettings {
     private synchronized void set(Key k, Object v) {
         values.put(k, v);
         save();
+    }
+
+    @Override
+    public String serverName() {
+        return str(SERVER_NAME);
+    }
+
+    @Override
+    public String serverIcon() {
+        return str(SERVER_ICON);
     }
 
     @Override

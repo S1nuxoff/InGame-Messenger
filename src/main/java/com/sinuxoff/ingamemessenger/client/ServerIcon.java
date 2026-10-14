@@ -22,21 +22,31 @@ final class ServerIcon {
     private static Object loadedFor;
     private static Identifier tex;
 
-    /** The server's name as the player calls it in their server list. */
+    /** The server's name: its space's (set by the server), else as the player calls it in their server list. */
     static String name() {
+        Messenger.Space s = Messenger.spaces.get(1L);
+        if (s != null && !s.name().isBlank()) {
+            return s.name();
+        }
         var sd = Minecraft.getInstance().getCurrentServer();
         return sd != null && sd.name != null && !sd.name.isBlank() ? sd.name : "Server";
     }
 
+    private static String loadedIcon;
+
+    /** Its space's icon (sent by the server), else the server list's. */
     private static void load() {
         Object c = Minecraft.getInstance().getConnection();
-        if (c == loadedFor) {
+        Messenger.Space s = Messenger.spaces.get(1L);
+        String given = s == null ? null : s.icon();
+        if (c == loadedFor && java.util.Objects.equals(given, loadedIcon)) {
             return;
         }
         loadedFor = c;
+        loadedIcon = given;
         tex = null;
         var sd = Minecraft.getInstance().getCurrentServer();
-        byte[] png = sd == null ? null : sd.getIconBytes();
+        byte[] png = given != null ? java.util.Base64.getDecoder().decode(given) : sd == null ? null : sd.getIconBytes();
         if (png == null) {
             return;
         }

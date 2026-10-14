@@ -162,6 +162,12 @@ final class ServerSide implements ServerPlatform {
     }
 
     @Override
+    public String motd() {
+        String m = server.getMotd();
+        return m == null ? "" : m;
+    }
+
+    @Override
     public String modVersion() {
         return Platform.get().modVersion();
     }
