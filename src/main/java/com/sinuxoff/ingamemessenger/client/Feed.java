@@ -133,6 +133,10 @@ final class Feed {
             int w = Math.max(ChatVoiceNotes.VOICE_W + timeW0, named ? font.width(nameOf(e)) : 0);
             return new Box(e, (named ? LINE : 0) + 19 + 2 * PAD_V + (date ? DATE_H : 0), named, face, date, List.of(), w, false);
         }
+        if ("text".equals(e.kind) && com.sinuxoff.ingamemessenger.core.text.ChatText.parseLocation(e.text()) != null) { // a location card
+            int w = Math.max(ChatLocations.LOC_W + timeW0, named ? font.width(nameOf(e)) : 0);
+            return new Box(e, (named ? LINE : 0) + 2 * LINE + 2 * PAD_V + (date ? DATE_H : 0), named, face, date, List.of(), w, false);
+        }
         if ("images".equals(e.kind)) {
             ChatAlbums.AlbumInfo ai = albumOf(e);
             List<FormattedCharSequence> cap = ai.caption().isEmpty() ? List.of() : font.split(Component.literal(ai.caption()), ai.width());
@@ -207,7 +211,10 @@ final class Feed {
                 Gfx.text(g, font, nameOf(e), tx, ty, textCol, false);
                 ty += LINE;
             }
-            if ("voice".equals(e.kind)) {
+            var loc = "text".equals(e.kind) ? com.sinuxoff.ingamemessenger.core.text.ChatText.parseLocation(e.text()) : null;
+            if (loc != null) {
+                ChatLocations.drawLoc(g, loc, tx, ty - 1, a);
+            } else if ("voice".equals(e.kind)) {
                 ChatVoiceNotes.drawVoice(g, voiceOf(e), e.name, tx, ty - 1, a);
             } else if ("images".equals(e.kind)) {
                 ChatAlbums.AlbumInfo ai = albumOf(e);
@@ -215,7 +222,7 @@ final class Feed {
                 ChatAlbums.drawAlbum(g, ai, e.name, ax, ty - 1 + ChatAlbums.ALBUM_PAD - PAD_V, a);
                 ty += ai.height() + 2 * ChatAlbums.ALBUM_PAD - PAD_V;
             }
-            for (FormattedCharSequence l : "voice".equals(e.kind) ? List.<FormattedCharSequence>of() : b.lines()) {
+            for (FormattedCharSequence l : "voice".equals(e.kind) || loc != null ? List.<FormattedCharSequence>of() : b.lines()) {
                 Gfx.text(g, font, l, tx, ty, textCol, false);
                 ChatDecor.drawInlineEmoji(g, font, l, tx, ty, a); // emoji over their blank places in the text
                 ty += LINE;
