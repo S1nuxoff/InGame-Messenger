@@ -747,6 +747,10 @@ public final class ChatInput {
     public static String send(String text) {
         editId = -1;
         replyTo = -1;
+        if (!Images.atts.isEmpty() && !text.startsWith("/")) { // pictures attached: the text is their caption
+            Images.sendAlbum(expand(text).strip(), -1);
+            return "";
+        }
         if (text.isBlank()) {
             return "";
         }

@@ -217,6 +217,7 @@ final class Feed {
             }
             for (FormattedCharSequence l : "voice".equals(e.kind) ? List.<FormattedCharSequence>of() : b.lines()) {
                 Gfx.text(g, font, l, tx, ty, textCol, false);
+                ChatDecor.drawInlineEmoji(g, font, l, tx, ty, a); // emoji over their blank places in the text
                 ty += LINE;
             }
             String t = timeOf(e);
