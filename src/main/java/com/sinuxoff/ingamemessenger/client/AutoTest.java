@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 /**
- * A test run that plays the messenger by itself, for an outside test script: it starts only when the
- * game folder has ingamemessenger-autotest.json, which it deletes. Each step does what a player would (through the
+ * A test run that plays the messenger by itself, for an outside test script. Off unless the game was started with
+ * -Dingamemessenger.autotest=true (it records the microphone, so a file alone mustn't start it); then it starts when
+ * the game folder has ingamemessenger-autotest.json, which it deletes. Each step does what a player would (through the
  * same input), waits for the server to confirm it, and writes the result to ingamemessenger-autotest.log; steps that
  * show something ask the script for a screenshot. At the end the game closes.
  */
@@ -72,7 +73,12 @@ final class AutoTest {
     private static int typed;
 
     /** Every client tick. */
+    private static final boolean ENABLED = Boolean.getBoolean("ingamemessenger.autotest");
+
     static void tick() {
+        if (!ENABLED) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (!started) {
             Path order = mc.gameDirectory.toPath().resolve("ingamemessenger-autotest.json");
@@ -314,7 +320,10 @@ final class AutoTest {
         s.add(new Step("voice: stopped", VoiceClient::stopPlaying, () -> !VoiceClient.playing(voice.body.get("k").getAsString()), 60, false));
         s.add(new Step("new poll window", () -> Minecraft.getInstance().gui.setScreen(new PollScreen(chat(), -1)),
                 () -> Minecraft.getInstance().gui.screen() instanceof PollScreen, 60, true));
-        s.add(new Step("bot: private message", () -> peer("dm hi " + token), () -> fromPeer(dm(), token) != null, 200, true));
+        s.add(new Step("bot: private message", () -> {
+            openChat();
+            peer("dm hi " + token);
+        }, () -> fromPeer(dm(), token) != null, 200, true));
         s.add(new Step("private chat open", () -> {
             openChat();
             Messenger.select(dm().id);
