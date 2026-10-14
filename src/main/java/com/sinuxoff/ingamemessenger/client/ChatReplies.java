@@ -46,17 +46,29 @@ final class ChatReplies {
 
     /** Full text of a text message, or null. */
     static String fullText(int mid) {
+        Messenger.Entry e = Messenger.byId(mid);
+        if (e != null) {
+            return "text".equals(e.kind) ? Messenger.body(e) : null;
+        }
         GuiMessageTag tag = ChatModel.byMid.get(mid);
         return tag == null ? null : ChatModel.fullTextOf.get(tag);
     }
 
     /** Our own text message (editable). */
     static boolean isMineText(int mid) {
+        Messenger.Entry e = Messenger.byId(mid);
+        if (e != null) {
+            return e.mine() && "text".equals(e.kind) && com.sinuxoff.ingamemessenger.core.text.ChatText.parseLocation(e.text()) == null;
+        }
         ChatModel.Msg m = msgOf(mid);
         return mine(m) && !m.sticker() && fullText(mid) != null && !ChatLocations.locOf.containsKey(ChatModel.byMid.get(mid)) && !ChatAlbums.albumOf.containsKey(ChatModel.byMid.get(mid));
     }
 
     static boolean isMineAny(int mid) {
+        Messenger.Entry e = Messenger.byId(mid);
+        if (e != null) {
+            return e.mine();
+        }
         return mine(msgOf(mid));
     }
 
@@ -68,7 +80,7 @@ final class ChatReplies {
     }
 
     static void deleteMine(int mid) {
-        Net.toServer(new Packets.DeleteMsg(mid));
+        Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.Delete(mid));
     }
 
     /** Rebuilds an edited message (name, quote and date kept) with "edited" next to the time. */
@@ -163,6 +175,11 @@ final class ChatReplies {
 
     /** {author or null for system, text} of message mid, or null if not loaded. */
     static String[] replyInfo(int mid) {
+        Messenger.Entry e = Messenger.byId(mid);
+        if (e != null) {
+            String what = "text".equals(e.kind) ? Messenger.body(e) : e.raw != null ? e.raw.getString() : "[" + e.kind + "]";
+            return new String[]{e.name, ChatDecor.snippet(what)};
+        }
         GuiMessageTag tag = ChatModel.byMid.get(mid);
         return tag == null ? null : infoOf.get(tag);
     }

@@ -745,9 +745,19 @@ public final class ChatInput {
      * bridges see it, and it comes back as our message); in any other channel it's sent as our message.
      */
     public static String send(String text) {
+        int edit = editId, reply = replyTo;
         editId = -1;
-        replyTo = -1;
+        if (edit >= 0) { // editing: sent as an edit, the reply it had kept
+            if (!text.isBlank() && !text.startsWith("/")) {
+                Messenger.Entry e = Messenger.byId(edit);
+                String body = expand(text.strip());
+                boolean marked = e != null && com.sinuxoff.ingamemessenger.core.text.ChatText.replyTarget(e.text()) >= 0;
+                Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.Edit(edit, marked ? "\u21A9" + com.sinuxoff.ingamemessenger.core.text.ChatText.replyTarget(e.text()) + " " + body : body));
+            }
+            return "";
+        }
         if (!Images.atts.isEmpty() && !text.startsWith("/")) { // pictures attached: the text is their caption
+            replyTo = -1;
             Images.sendAlbum(expand(text).strip(), -1);
             return "";
         }
@@ -758,8 +768,13 @@ public final class ChatInput {
             CommandAnswer.sent(text);
             return text;
         }
+        replyTo = -1;
         String out = expand(text).strip();
-        return Messenger.sendText(out, 0) ? "" : out;
+        if (Messenger.sendText(out, Math.max(0, reply))) {
+            return "";
+        }
+        // the game's chat carries a reply as a mark at the text's start
+        return reply >= 0 ? "\u21A9" + reply + " " + out : out;
     }
 
     private static int[] barRect(int sw, int sh) {

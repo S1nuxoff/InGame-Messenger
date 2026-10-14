@@ -45,6 +45,33 @@ final class Feed {
                        boolean timeRow) {
     }
 
+    private static final int QUOTE_H = LINE + 3, RX_H = 14;
+
+    /** The quote line over a reply: the author and the start of the answered message. */
+    private static Component quote(Messenger.Entry e) {
+        long r = Messenger.replyOf(e);
+        if (r <= 0) {
+            return null;
+        }
+        if (e.replyGone) {
+            return Component.translatable("ingamemessenger.reply.deleted").withStyle(st -> st.withItalic(true).withColor(0x8E95A6));
+        }
+        String[] info = ChatReplies.replyInfo((int) r);
+        if (info == null) {
+            return Component.literal("\u2026").withStyle(st -> st.withColor(0x8E95A6));
+        }
+        return Component.literal(info[0] == null ? "" : info[0]).withStyle(st -> st.withColor(info[0] == null ? 0x8E95A6 : ChatDecor.nameColor(info[0])))
+                .append(Component.literal(" " + info[1]).withStyle(st -> st.withColor(0xB8BECC)));
+    }
+
+    private static List<ChatModel.Reaction> reactions(Messenger.Entry e) {
+        return e.reactions.isEmpty() ? List.of() : ChatModel.parseReactions(e.reactions);
+    }
+
+    private static int pillW(ChatModel.Reaction r, Font font) {
+        return 4 + 9 + 3 + font.width(String.valueOf(r.names().size())) + 5;
+    }
+
     /** One sender (a player, or the server for its lines), at most 2 minutes apart, the same day. */
     private static boolean sameRun(Messenger.Entry a, Messenger.Entry b) {
         if (a == null || b == null || Math.abs(a.time - b.time) >= 120_000 || ChatDates.dayOf(a.time) != ChatDates.dayOf(b.time)) {
@@ -66,7 +93,7 @@ final class Feed {
     /** What a message shows as text (pictures, voice and polls in words until they're drawn as such). */
     private static Component textOf(Messenger.Entry e) {
         return switch (e.kind) {
-            case "text" -> ChatDecor.highlightMentions(Component.literal(e.text()));
+            case "text" -> ChatDecor.highlightMentions(Component.literal(Messenger.body(e)));
             case "voice" -> Component.literal("▶ " + (e.body.has("ms") ? Math.max(1, Math.round(e.body.get("ms").getAsInt() / 1000f)) + " s" : ""));
             case "images" -> Component.literal("[" + (e.body.has("i") ? e.body.getAsJsonArray("i").size() : 1) + " ▣] "
                     + (e.body.has("c") ? e.body.get("c").getAsString() : ""));
@@ -116,8 +143,20 @@ final class Feed {
         return Prefs.stickerLines() * LINE;
     }
 
-    /** Lays out a message; prev is the one above it (for the name, the face's run and the date). */
+    /** Lays out a message, with room for its quote and its reactions. */
     private static Box box(Messenger.Entry e, Messenger.Entry prev, Messenger.Entry next, int chatW, Font font) {
+        Box b = layout(e, prev, next, chatW, font);
+        int extra = (quote(e) != null && !"sticker".equals(e.kind) ? QUOTE_H : 0) + (reactions(e).isEmpty() ? 0 : RX_H);
+        int w = b.w();
+        Component q = quote(e);
+        if (q != null && !"sticker".equals(e.kind)) {
+            w = Math.max(w, Math.min(font.width(q) + 6, chatW - AV - 2 * PAD - 4));
+        }
+        return extra == 0 && w == b.w() ? b : new Box(e, b.h() + extra, b.named(), b.face(), b.date(), b.lines(), w, b.timeRow());
+    }
+
+    /** Lays out a message; prev is the one above it (for the name, the face's run and the date). */
+    private static Box layout(Messenger.Entry e, Messenger.Entry prev, Messenger.Entry next, int chatW, Font font) {
         boolean date = prev == null || ChatDates.dayOf(prev.time) != ChatDates.dayOf(e.time);
         Messenger.Chan ch = Messenger.channels.get(e.channel);
         boolean right = e.mine() && Prefs.ownRight(); // ours on the right: no name, no face (like a phone's messenger)
@@ -202,7 +241,23 @@ final class Feed {
             Panel.round(g, sx + sw - tw - 2, y - 11, tw, 9, 4, (int) (a * 0x90) << 24);
             ChatDates.smallText(g, t, sx + sw - tw + 2, y - 9, (int) (a * 0xE0) << 24 | 0xE4E6EE);
         } else {
-            int bw = b.w() + 2 * PAD, bh = b.h() - (b.date() ? DATE_H : 0);
+            List<ChatModel.Reaction> rx = reactions(e);
+            if (!rx.isEmpty()) { // the reactions' row under the bubble
+                int px = right ? chatW - 2 - (b.w() + 2 * PAD) : AV - PAD;
+                for (ChatModel.Reaction r : rx) {
+                    int w = pillW(r, font);
+                    boolean mine = r.mine();
+                    Panel.round(g, px, y - 12, w, 11, 5, mine ? (int) (a * 0xE0) << 24 | 0x5B4BD6 : (int) (a * 0x50) << 24 | 0x2A3040);
+                    ChatUi.emoji(g, r.emoji(), px + 4, y - 11, 9, a);
+                    Gfx.text(g, font, String.valueOf(r.names().size()), px + 16, y - 10, (int) (a * 255) << 24 | (mine ? 0xFFFFFF : 0xC8CCD8), false);
+                    if (e.id > 0) {
+                        ChatUi.pill((int) e.id, r, px, y - 12, w, 11);
+                    }
+                    px += w + 3;
+                }
+                y -= RX_H;
+            }
+            int bw = b.w() + 2 * PAD, bh = b.h() - (b.date() ? DATE_H : 0) - (rx.isEmpty() ? 0 : RX_H);
             int bx = right ? chatW - 2 - bw : AV - PAD, by = y - bh;
             boolean me = !e.mine() && "text".equals(e.kind) && ChatDecor.mentionsMe(Component.literal(e.text()), e.name);
             bubble(g, bx, by, bw, bh, !isPlayer(e) ? BUBBLE_SYSTEM : me ? 0x332A5C : e.mine() ? BUBBLE_MINE : BUBBLE, e.nonce.isEmpty() ? a : a * 0.6f);
@@ -210,6 +265,16 @@ final class Feed {
             if (b.named()) {
                 Gfx.text(g, font, nameOf(e), tx, ty, textCol, false);
                 ty += LINE;
+            }
+            Component q = quote(e);
+            if (q != null) { // the answered message: a bar in its author's color, the author, the start of it
+                int qw = Math.min(font.width(q) + 6, bw - 2 * PAD);
+                Panel.round(g, tx - 3, ty - 1, qw + 4, LINE + 1, 4, (int) (a * 0x26) << 24 | 0xFFFFFF);
+                String[] qi = ChatReplies.replyInfo((int) Messenger.replyOf(e));
+                g.fill(tx - 2, ty, tx, ty + 9, (int) (a * 255) << 24 | (qi != null && qi[0] != null ? ChatDecor.nameColor(qi[0]) : 0x8E95A6));
+                Gfx.text(g, font, font.plainSubstrByWidth(q.getString(), qw - 2).length() >= q.getString().length() ? q
+                        : Component.literal(font.plainSubstrByWidth(q.getString(), qw - 8) + "\u2026").withStyle(st -> st.withColor(0xB8BECC)), tx + 3, ty, textCol, false);
+                ty += QUOTE_H;
             }
             var loc = "text".equals(e.kind) ? com.sinuxoff.ingamemessenger.core.text.ChatText.parseLocation(e.text()) : null;
             if (loc != null) {
@@ -237,6 +302,14 @@ final class Feed {
                 Panel.drawIcon(g, read ? "check2" : "check1", timeX + ChatDates.timeWidth(t + " ") - 1, timeY - 2.5f, 9,
                         (int) (a * 0xF0) << 24 | (read ? 0x6CC6FF : 0x8E95A6));
             }
+        }
+        if (e.id > 0 && isPlayer(e) && Messenger.channels.containsKey(e.channel)) {
+            int bw = b.w() + 2 * PAD, bh = b.h() - (b.date() ? DATE_H : 0) - (reactions(e).isEmpty() ? 0 : RX_H);
+            boolean right2 = e.mine() && Prefs.ownRight();
+            int bx = "sticker".equals(e.kind) ? (right2 ? chatW - 2 - b.w() : AV) : right2 ? chatW - 2 - bw : AV - PAD;
+            // the text bubble's branch already moved y above the reactions' row
+            int bot = "sticker".equals(e.kind) || reactions(e).isEmpty() ? y : y;
+            ChatUi.bubble((int) e.id, bx, bot - bh, bx + ("sticker".equals(e.kind) ? b.w() : bw), bot);
         }
         if (b.face()) {
             if (isPlayer(e)) {

@@ -213,6 +213,35 @@ public final class Messenger {
         }
     }
 
+    /** A loaded message by its id, in any channel; null if not loaded. */
+    static Entry byId(long id) {
+        if (id <= 0) {
+            return null;
+        }
+        for (Chan c : channels.values()) {
+            for (Entry e : c.list) {
+                if (e.id == id) {
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** The message a message answers (its field, or in the game's chat the mark at the start of its text); 0 if none. */
+    static long replyOf(Entry e) {
+        if (e.replyTo > 0) {
+            return e.replyTo;
+        }
+        return "text".equals(e.kind) ? Math.max(0, com.sinuxoff.ingamemessenger.core.text.ChatText.replyTarget(e.text())) : 0;
+    }
+
+    /** The text without the reply mark at its start. */
+    static String body(Entry e) {
+        String t = e.text();
+        return com.sinuxoff.ingamemessenger.core.text.ChatText.replyTarget(t) >= 0 ? t.substring(com.sinuxoff.ingamemessenger.core.text.ChatText.replyMarkLength(t)).stripLeading() : t;
+    }
+
     private static Entry find(long channel, long id) {
         Chan c = channels.get(channel);
         if (c == null) {
@@ -358,6 +387,9 @@ public final class Messenger {
             c.list.add(e);
         }
         c.typing.remove(e.sender);
+        if (e.mine() && "images".equals(e.kind)) {
+            Images.sent(); // our pictures arrived: the progress bar goes
+        }
         if (!e.mine() && !(c.id == current && Feed.atBottom() && Feed.visible())) {
             c.unread++;
             if (c.dm() && c.id != current) {

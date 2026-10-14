@@ -234,7 +234,7 @@ final class ChatModel {
 
     static void react(int mid, String emoji) {
         Prefs.usedReaction(emoji);
-        Net.toServer(new Packets.React(mid, emoji));
+        Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.React(mid, emoji));
     }
 
     // Building messages
