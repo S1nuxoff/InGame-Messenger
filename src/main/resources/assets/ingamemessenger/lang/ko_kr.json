@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "테스트 중지",
   "ingamemessenger.sound.hear": "내 소리 듣기",
   "ingamemessenger.screen.voice_volume": "음성 메시지 볼륨: %s%%",
-  "ingamemessenger.screen.chat_right": "오른쪽 채팅",
   "ingamemessenger.msg.reply": "답장",
   "ingamemessenger.msg.copy": "텍스트 복사",
   "ingamemessenger.msg.edit": "편집",

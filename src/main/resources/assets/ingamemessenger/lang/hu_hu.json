@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "Teszt leállítása",
   "ingamemessenger.sound.hear": "Saját hangom hallgatása",
   "ingamemessenger.screen.voice_volume": "Hangüzenetek hangereje: %s%%",
-  "ingamemessenger.screen.chat_right": "Chat a jobb oldalon",
   "ingamemessenger.msg.reply": "Válasz",
   "ingamemessenger.msg.copy": "Szöveg másolása",
   "ingamemessenger.msg.edit": "Szerkesztés",

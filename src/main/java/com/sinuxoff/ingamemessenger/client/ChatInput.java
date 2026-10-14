@@ -94,13 +94,13 @@ public final class ChatInput {
         var font = mc.font;
         float open = ChatMotion.openness();
         items.clear();
-        sideX = Prefs.chatRight() ? Math.round(ChatMotion.shiftX(mc.gui.hud.getChat())) - ChatMotion.SIDEBAR : 0;
+        sideX = 0;
         int top = 8, foot = footTop(sh), bottom = foot - 4;
         int cx = sideX + (ChatMotion.SIDEBAR - ICON) / 2;
         Gfx.push(g);
         Gfx.raise(g, 360);
         // thin line on the chat side
-        int lx = Prefs.chatRight() ? sideX : sideX + ChatMotion.SIDEBAR - 1;
+        int lx = sideX + ChatMotion.SIDEBAR - 1;
         g.fill(lx, 6, lx + 1, sh - 6, Math.round(open * 0x38) << 24 | 0xFFFFFF);
         drawFoot(g, sh, mx, my, cx);
         if (searching) { // searching: only a close button at the top
@@ -177,7 +177,7 @@ public final class ChatInput {
         }
         if (hover != null && !picking) { // name next to the column
             String n = hover.name();
-            int tw = font.width(n) + 12, tx = Prefs.chatRight() ? sideX - tw - 3 : sideX + ChatMotion.SIDEBAR + 3;
+            int tw = font.width(n) + 12, tx = sideX + ChatMotion.SIDEBAR + 3;
             glassBox(g, tx, hover.y() + 4, tw, 14);
             Gfx.text(g, font, n, tx + 6, hover.y() + 7, 0xFFF2F3F7, false);
         }
@@ -251,7 +251,7 @@ public final class ChatInput {
 
     private static int[] pickerRect() {
         int n = Math.max(1, candidates().size()), h = n * 14 + 6;
-        int x = Prefs.chatRight() ? sideX - 134 : sideX + ChatMotion.SIDEBAR + 4;
+        int x = sideX + ChatMotion.SIDEBAR + 4;
         int y = Math.max(4, Math.min(plusY, Minecraft.getInstance().getWindow().getGuiScaledHeight() - h - 4));
         return new int[]{x, y, 130, h};
     }

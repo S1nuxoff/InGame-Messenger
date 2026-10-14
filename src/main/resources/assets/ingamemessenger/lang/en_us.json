@@ -112,7 +112,6 @@
   "ingamemessenger.sound.test_stop": "Stop the test",
   "ingamemessenger.sound.hear": "Hear myself",
   "ingamemessenger.screen.voice_volume": "Voice messages volume: %s%%",
-  "ingamemessenger.screen.chat_right": "Chat on the right",
   "ingamemessenger.msg.reply": "Reply",
   "ingamemessenger.msg.copy": "Copy text",
   "ingamemessenger.msg.edit": "Edit",

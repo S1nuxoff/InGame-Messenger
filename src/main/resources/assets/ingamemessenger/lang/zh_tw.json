@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "停止測試",
   "ingamemessenger.sound.hear": "聽到自己的聲音",
   "ingamemessenger.screen.voice_volume": "語音訊息音量：%s%%",
-  "ingamemessenger.screen.chat_right": "聊天室在右側",
   "ingamemessenger.msg.reply": "回覆",
   "ingamemessenger.msg.copy": "複製文字",
   "ingamemessenger.msg.edit": "編輯",

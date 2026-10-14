@@ -36,12 +36,7 @@ final class ChatMotion {
     }
 
     public static float shiftX(ChatComponent chat) {
-        if (!Prefs.chatRight()) {
-            return (SIDEBAR + 8) * shade; // room for the chat list on the left of the open chat
-        }
-        float scale = (float) Compat.chatScale(chat);
-        int sw = Minecraft.getInstance().getWindow().getGuiScaledWidth();
-        return Math.max(0, sw - (Compat.chatWidth(chat) / scale + 4 + 44) * scale);
+        return (SIDEBAR + 8) * shade; // room for the chat list on the left of the open chat
     }
 
     /**
@@ -165,7 +160,6 @@ final class ChatMotion {
         }
         float sw = g.guiWidth(), sh = g.guiHeight();
         float w = Math.min(sw, Compat.chatWidth(chat) + 4 + ChatRenderer.AV + 90);
-        boolean right = Prefs.chatRight();
         int full = Math.round(shade * 0xA0), mid = Math.round(shade * 0x50);
         // two stretches: from the edge to the middle of the chat, then out to transparent
         float[] xs = {0, w * 0.55f, w};
@@ -173,9 +167,8 @@ final class ChatMotion {
         float[] xy = new float[16];
         int[] col = new int[8];
         for (int i = 0; i < 2; i++) {
-            float x0 = right ? sw - xs[i] : xs[i], x1 = right ? sw - xs[i + 1] : xs[i + 1];
-            float l = Math.min(x0, x1), r = Math.max(x0, x1);
-            int al = right ? as[i + 1] : as[i], ar = right ? as[i] : as[i + 1];
+            float l = xs[i], r = xs[i + 1];
+            int al = as[i], ar = as[i + 1];
             float[] q = {l, 0, l, sh, r, sh, r, 0};
             System.arraycopy(q, 0, xy, i * 8, 8);
             col[i * 4] = col[i * 4 + 1] = al << 24;

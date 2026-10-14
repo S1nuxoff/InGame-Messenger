@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "Спиране на теста",
   "ingamemessenger.sound.hear": "Да чувам себе си",
   "ingamemessenger.screen.voice_volume": "Сила на звука за гласови съобщения: %s%%",
-  "ingamemessenger.screen.chat_right": "Чат вдясно",
   "ingamemessenger.msg.reply": "Отговор",
   "ingamemessenger.msg.copy": "Копиране на текста",
   "ingamemessenger.msg.edit": "Редактиране",

@@ -43,7 +43,7 @@ final class Prefs {
     private static int chatScale = 100;
     private static boolean pinned;
     private static boolean showTyping = true, seeTyping = true;
-    private static boolean chatRight, ownRight, keepOpen;
+    private static boolean ownRight, keepOpen;
     private static boolean serverNotices = true;
     private static boolean hideHotbar = true, blurBehind = true;
     /** Line spacing was raised once for the bubbles; not again if the player lowers it. */
@@ -80,7 +80,6 @@ final class Prefs {
             pinned = getBool(o, "pinned", pinned);
             showTyping = getBool(o, "showTyping", showTyping);
             seeTyping = getBool(o, "seeTyping", seeTyping);
-            chatRight = getBool(o, "chatRight", chatRight);
             ownRight = getBool(o, "ownRight", ownRight);
             keepOpen = getBool(o, "keepOpen", keepOpen);
             serverNotices = getBool(o, "serverNotices", serverNotices);
@@ -111,7 +110,6 @@ final class Prefs {
         o.addProperty("pinned", pinned);
         o.addProperty("showTyping", showTyping);
         o.addProperty("seeTyping", seeTyping);
-        o.addProperty("chatRight", chatRight);
         o.addProperty("ownRight", ownRight);
         o.addProperty("keepOpen", keepOpen);
         o.addProperty("serverNotices", serverNotices);
@@ -264,17 +262,6 @@ final class Prefs {
     static void setPinned(boolean on) {
         load();
         pinned = on;
-        save();
-    }
-
-    static boolean chatRight() {
-        load();
-        return chatRight;
-    }
-
-    static void toggleChatRight() {
-        load();
-        chatRight = !chatRight;
         save();
     }
 

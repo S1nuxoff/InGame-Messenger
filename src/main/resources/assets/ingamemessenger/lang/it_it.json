@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "Ferma il test",
   "ingamemessenger.sound.hear": "Ascolta me stesso",
   "ingamemessenger.screen.voice_volume": "Volume dei messaggi vocali: %s%%",
-  "ingamemessenger.screen.chat_right": "Chat a destra",
   "ingamemessenger.msg.reply": "Rispondi",
   "ingamemessenger.msg.copy": "Copia testo",
   "ingamemessenger.msg.edit": "Modifica",

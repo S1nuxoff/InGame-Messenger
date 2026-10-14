@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "Тексеруді тоқтату",
   "ingamemessenger.sound.hear": "Өзімді есту",
   "ingamemessenger.screen.voice_volume": "Дауыстық хабарламалардың дыбыс деңгейі: %s%%",
-  "ingamemessenger.screen.chat_right": "Чат оң жақта",
   "ingamemessenger.msg.reply": "Жауап беру",
   "ingamemessenger.msg.copy": "Мәтінді көшіру",
   "ingamemessenger.msg.edit": "Өңдеу",

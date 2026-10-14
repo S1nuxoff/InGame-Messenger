@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "テストを停止",
   "ingamemessenger.sound.hear": "自分の声を聞く",
   "ingamemessenger.screen.voice_volume": "ボイスメッセージの音量: %s%%",
-  "ingamemessenger.screen.chat_right": "右側にチャット",
   "ingamemessenger.msg.reply": "返信",
   "ingamemessenger.msg.copy": "テキストをコピー",
   "ingamemessenger.msg.edit": "編集",

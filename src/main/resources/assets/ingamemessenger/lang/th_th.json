@@ -110,7 +110,6 @@
   "ingamemessenger.sound.test_stop": "หยุดการทดสอบ",
   "ingamemessenger.sound.hear": "ได้ยินเสียงตัวเอง",
   "ingamemessenger.screen.voice_volume": "ระดับเสียงข้อความเสียง: %s%%",
-  "ingamemessenger.screen.chat_right": "แชทอยู่ทางขวา",
   "ingamemessenger.msg.reply": "ตอบกลับ",
   "ingamemessenger.msg.copy": "คัดลอกข้อความ",
   "ingamemessenger.msg.edit": "แก้ไข",

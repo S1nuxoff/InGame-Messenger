@@ -76,9 +76,6 @@ final class SettingsScreen extends BaseScreen {
             addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.see_typing2"),
                     Prefs::seeTyping, () -> Typing.serverOn, Prefs::toggleSeeTyping));
             y += ROW + GAP;
-            addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.chat_right"),
-                    Prefs::chatRight, () -> true, Prefs::toggleChatRight));
-            y += ROW + GAP;
             addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.own_right"),
                     Prefs::ownRight, () -> true, Prefs::toggleOwnRight));
             y += ROW + GAP;
