@@ -65,6 +65,7 @@ public final class ClientEvents {
     public static void tickStart() {
         VoiceClient.tick();
         Images.tick();
+        AutoTest.tick();
         ModCompat.tick();
         Minecraft mc = Minecraft.getInstance();
         if (!Session.on()) { // Minecraft's own chat

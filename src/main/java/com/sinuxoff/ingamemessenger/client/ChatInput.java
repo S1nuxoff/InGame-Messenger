@@ -387,6 +387,10 @@ public final class ChatInput {
     private static java.util.List<Found> found = java.util.List.of();
     private static int foundSel, foundTop;
 
+    static int foundCount() {
+        return found.size();
+    }
+
     public static boolean searching() {
         return searching;
     }
