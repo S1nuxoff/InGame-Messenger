@@ -22,7 +22,7 @@ final class CommandAnswer {
 
     /** How long after a command its answer is taken, and how long it stays. */
     private static final long WAIT_MS = 2500, STAY_MS = 20_000;
-    private static final int MAX_LINES = 8, LINE = 10;
+    private static final int MAX_LINES = 12, LINE = 10;
 
     private static String command;
     private static long sentAt, shownAt;
@@ -60,8 +60,10 @@ final class CommandAnswer {
             return;
         }
         var font = Minecraft.getInstance().font;
-        int x = ChatInput.fieldX(screen.width), w = ChatInput.fieldW(screen.width);
-        List<FormattedCharSequence> lines = font.split(answer.raw, w - 20);
+        // as wide as the game's chat (servers lay their answers out for it), at least as wide as the input
+        int wrap = Compat.chatWidth(Minecraft.getInstance().gui.hud.getChat());
+        int x = ChatInput.fieldX(screen.width), w = Math.min(screen.width - x - 6, Math.max(ChatInput.fieldW(screen.width), wrap + 16));
+        List<FormattedCharSequence> lines = font.split(answer.raw, w - 16);
         int shown = Math.min(MAX_LINES, lines.size()), more = lines.size() - shown;
         int h = 16 + shown * LINE + (more > 0 ? LINE + 2 : 0) + 6;
         int y = ChatInput.fieldY(screen.height) - 6 - h - ChatInput.barH();
