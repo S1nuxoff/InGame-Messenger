@@ -46,7 +46,12 @@ final class ServerIcon {
         loadedIcon = given;
         tex = null;
         var sd = Minecraft.getInstance().getCurrentServer();
-        byte[] png = given != null ? java.util.Base64.getDecoder().decode(given) : sd == null ? null : sd.getIconBytes();
+        //? if >=1.19.4 {
+        byte[] listed = sd == null ? null : sd.getIconBytes();
+        //?} else {
+        /*byte[] listed = sd == null || sd.getIconB64() == null ? null : java.util.Base64.getDecoder().decode(sd.getIconB64());
+        *///?}
+        byte[] png = given != null ? java.util.Base64.getDecoder().decode(given) : listed;
         if (png == null) {
             return;
         }

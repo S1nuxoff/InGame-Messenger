@@ -70,7 +70,7 @@ final class CommandAnswer {
         Gfx.push(g);
         Gfx.raise(g, 380);
         ChatInput.glassBox(g, x, y, w, h, 0xF0);
-        Gfx.text(g, font, Component.translatableWithFallback("ingamemessenger.answer.title", "Only you see this · %s", command), x + 8, y + 5,
+        Gfx.text(g, font, Component.translatable("ingamemessenger.answer.title", command), x + 8, y + 5,
                 0xFF9C8CFF, false);
         close = new int[]{x + w - 14, y + 3, 11, 11};
         boolean overClose = in(close, mx, my);
@@ -81,7 +81,7 @@ final class CommandAnswer {
             ly += LINE;
         }
         if (more > 0) {
-            Gfx.text(g, font, Component.translatableWithFallback("ingamemessenger.answer.more", "%s more lines: open the chat", String.valueOf(more)),
+            Gfx.text(g, font, Component.translatable("ingamemessenger.answer.more", String.valueOf(more)),
                     x + 8, ly + 2, 0xFF6CC6FF, false);
         }
         box = new int[]{x, y, w, h};

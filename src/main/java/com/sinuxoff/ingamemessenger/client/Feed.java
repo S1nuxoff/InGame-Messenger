@@ -130,9 +130,10 @@ final class Feed {
         //? if >=26.1 {
         ((com.sinuxoff.ingamemessenger.mixin.GuiGraphicsAccessor) g).ingamemessenger$hover(font, style, x, y);
         g.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND);
-        //?} else {
+        //?} else if >=1.20 {
         /*g.renderComponentHoverEffect(font, style, x, y);
         *///?}
+        // before 1.20: no tooltip (the chat has no graphics object to draw it with)
     }
 
     /** The tooltip of the text under the mouse. */

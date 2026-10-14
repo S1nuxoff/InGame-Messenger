@@ -45,7 +45,23 @@ public final class ChatHooks {
 
     /** Whether the game's own copy of a player's chat line is left out (ours comes from the server). */
     public static boolean ownChatLine(net.minecraft.network.chat.ChatType.Bound type) {
-        return on() && type.chatType().is(net.minecraft.network.chat.ChatType.CHAT);
+        if (!on()) {
+            return false;
+        }
+        //? if >=1.20.5 {
+        return type.chatType().is(net.minecraft.network.chat.ChatType.CHAT);
+        //?} else {
+        /*var level = net.minecraft.client.Minecraft.getInstance().level;
+        if (level == null) {
+            return false;
+        }
+        //? if >=1.19.3 {
+        var types = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.CHAT_TYPE);
+        //?} else {
+        /^var types = level.registryAccess().registryOrThrow(net.minecraft.core.Registry.CHAT_TYPE_REGISTRY);
+        ^///?}
+        return types.getResourceKey(type.chatType()).filter(net.minecraft.network.chat.ChatType.CHAT::equals).isPresent();
+        *///?}
     }
 
     // Size and position
