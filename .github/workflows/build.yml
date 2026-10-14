@@ -15,6 +15,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # the release on a tag
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
@@ -52,3 +54,13 @@ jobs:
             !versions/*/build/libs/*-mojmap.jar
           if-no-files-found: error
           retention-days: 7
+
+      # a version tag becomes a release with every jar (not -slim, -mojmap); the text is .github/release-notes/<tag>.md
+      - if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: .github/release-notes/${{ github.ref_name }}.md
+          fail_on_unmatched_files: true
+          files: |
+            versions/*/build/libs/ingamemessenger-*[0-9].jar
+            plugin/build/libs/ingamemessenger-plugin-*[0-9].jar

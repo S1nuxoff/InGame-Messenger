@@ -8,6 +8,7 @@
 Stickers, voice messages, pictures, reactions, replies, private chats, polls and search, for every player on your server.
 
 [![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
+[![Tested in game](https://img.shields.io/badge/tested-in%20game-2EA043)](https://s1nuxoff.github.io/InGame-Messenger-tests/)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.19.2%20%E2%80%93%2026.3%20(22%20versions)-62B47A)](#supported-versions)
 [![Loaders](https://img.shields.io/badge/NeoForge%20%C2%B7%20Fabric%20%C2%B7%20Quilt%20%C2%B7%20Forge-mod-8A5CF5)](#supported-versions)
@@ -76,7 +77,7 @@ reactions and replies, plus private chats next to it.
 ## Installation
 
 ### Players
-1. Download the jar for your Minecraft version and loader.
+1. Download the jar for your Minecraft version and loader from [Releases](https://github.com/S1nuxoff/InGame-Messenger/releases/latest).
 2. Put it in your `mods` folder. On Fabric and Quilt, also install [Fabric API](https://modrinth.com/mod/fabric-api).
 3. Join a server that has the mod or the plugin.
 
