@@ -751,6 +751,7 @@ public final class ChatInput {
             return "";
         }
         if (text.startsWith("/")) {
+            CommandAnswer.sent(text);
             return text;
         }
         String out = expand(text).strip();
@@ -803,22 +804,17 @@ public final class ChatInput {
         int w = screen.width, h = screen.height;
         int x = fieldX(w), y = fieldY(h), fw = fieldW(w);
         String text = ((ChatScreenAccessor) screen).ingamemessenger$input().getValue();
-        // a command started in another chat goes on in the server chat, which takes commands without the "/"
-        boolean commands = ChatChannels.SERVER.equals(ChatChannels.channel());
-        if (text.startsWith("/") && editId < 0 && !searching && !commands) {
-            ChatChannels.openChannel(ChatChannels.SERVER, null);
-            commands = true;
-            text = text.substring(1);
-            ((ChatScreenAccessor) screen).ingamemessenger$input().setValue(text);
-        }
+        boolean commands = false; // commands are typed with "/" in any channel, like in the game
         var suggest = (com.sinuxoff.ingamemessenger.mixin.CommandSuggestionsAccessor) ((ChatScreenAccessor) screen).ingamemessenger$suggestions();
-        if (suggest.ingamemessenger$commandsOnly() != commands) {
-            suggest.ingamemessenger$setCommandsOnly(commands);
+        if (suggest.ingamemessenger$commandsOnly()) {
+            suggest.ingamemessenger$setCommandsOnly(false);
             ((ChatScreenAccessor) screen).ingamemessenger$suggestions().updateCommandInfo();
         }
         Panel.round(g, x - 1, y - 1, fw + 2, H + 2, H / 2 + 1, 0x24FFFFFF); // thin light border
         Panel.round(g, x, y, fw, H, H / 2, 0x9C161A23);
         drawBar(g, w, h, (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
+                (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()));
+        CommandAnswer.draw(g, screen, (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
                 (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()));
         // mini player, centered above the input (and above the sticker panel when it's open)
         int mpY = Panel.open && !Panel.command ? y - 5 - barH() - Panel.panelHeight() - MP_H - 6 : y - barH() - MP_H - 6;

@@ -1,4 +1,6 @@
 {
+  "ingamemessenger.answer.title": "Видно только тебе · %s",
+  "ingamemessenger.answer.more": "Ещё строк: %s, открыть в чате",
   "ingamemessenger.mute.chat": "Ты в муте в общем чате. %s",
   "ingamemessenger.mute.chat_for": "Ты в муте в общем чате ещё %s. %s",
   "ingamemessenger.mute.dm": "Ты в муте в личных сообщениях. %s",

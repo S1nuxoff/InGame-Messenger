@@ -46,6 +46,8 @@ public final class Messenger {
         String nonce = ""; // ours, until the server's copy comes back
         /** When it arrived live (for the fade on the closed chat); 0 for history. */
         long arrived;
+        /** Lines of the game's chat joined in this one (a command's answer). */
+        int lines = 1;
 
         String text() {
             return body.has("t") ? body.get("t").getAsString() : "";
@@ -392,6 +394,15 @@ public final class Messenger {
         if (c == null) {
             return;
         }
+        long now = System.currentTimeMillis();
+        Entry last = c.list.isEmpty() ? null : c.list.get(c.list.size() - 1);
+        if (last != null && "line".equals(last.kind) && now - last.arrived < 150 && last.lines < 60) { // a command's answer: one block
+            last.raw = Component.empty().append(last.raw).append("\n").append(content);
+            last.lines++;
+            last.arrived = now;
+            CommandAnswer.line(last);
+            return;
+        }
         Entry e = new Entry();
         e.channel = c.id;
         e.kind = "line";
@@ -401,6 +412,7 @@ public final class Messenger {
         if (c.list.size() > 2000) {
             c.list.remove(0);
         }
+        CommandAnswer.line(e);
         Feed.arrived(c);
     }
 

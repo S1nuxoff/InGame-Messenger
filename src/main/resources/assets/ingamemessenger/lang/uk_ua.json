@@ -1,4 +1,6 @@
 {
+  "ingamemessenger.answer.title": "Бачиш тільки ти · %s",
+  "ingamemessenger.answer.more": "Ще рядків: %s, відкрити в чаті",
   "ingamemessenger.mute.chat": "Вас заглушено в загальному чаті. %s",
   "ingamemessenger.mute.chat_for": "Вас заглушено в загальному чаті ще на %s. %s",
   "ingamemessenger.mute.dm": "Вас заглушено в особистих повідомленнях. %s",

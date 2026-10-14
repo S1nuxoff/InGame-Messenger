@@ -66,6 +66,12 @@ final class Feed {
         };
     }
 
+    /** Our own messages in a private chat show whether they were read. */
+    private static boolean checks(Messenger.Entry e) {
+        Messenger.Chan c = Messenger.channels.get(e.channel);
+        return e.mine() && e.id > 0 && c != null && c.dm();
+    }
+
     private static String timeOf(Messenger.Entry e) {
         var at = java.time.Instant.ofEpochMilli(e.time).atZone(java.time.ZoneId.systemDefault());
         String t = at.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
@@ -80,7 +86,7 @@ final class Feed {
     private static Box box(Messenger.Entry e, Messenger.Entry prev, Messenger.Entry next, int chatW, Font font) {
         boolean date = prev == null || ChatDates.dayOf(prev.time) != ChatDates.dayOf(e.time);
         if (!isPlayer(e)) { // a line of the server or the game: centered, as it came
-            List<FormattedCharSequence> lines = font.split(textOf(e), chatW - 40);
+            List<FormattedCharSequence> lines = font.split(textOf(e), chatW - AV - 2 * PAD - 4);
             int w = 0;
             for (FormattedCharSequence l : lines) {
                 w = Math.max(w, font.width(l));
@@ -88,8 +94,9 @@ final class Feed {
             return new Box(e, lines.size() * LINE + 2 * PAD_V + (date ? DATE_H : 0), false, false, date, lines, w, false);
         }
         Messenger.Chan ch = Messenger.channels.get(e.channel);
-        boolean named = !e.mine() && (date || !sameRun(prev, e)) && (ch == null || !ch.dm());
-        boolean face = !e.mine() && !sameRun(e, next);
+        boolean right = e.mine() && Prefs.ownRight(); // ours on the right: no name, no face (like a phone's messenger)
+        boolean named = !right && (date || !sameRun(prev, e)) && (ch == null || !ch.dm());
+        boolean face = !right && !sameRun(e, next);
         int maxW = chatW - AV - 2 * PAD - 4;
         if ("sticker".equals(e.kind)) {
             return new Box(e, (named ? LINE + 4 : 0) + stickerH() + (date ? DATE_H : 0), named, face, date, List.of(), stickerH(), false);
@@ -105,7 +112,7 @@ final class Feed {
         if (named) {
             w = Math.max(w, font.width(ChatDecor.nameLine(e.name)));
         }
-        int timeW = ChatDates.timeWidth(timeOf(e)) + ChatDates.TIME_GAP;
+        int timeW = ChatDates.timeWidth(timeOf(e) + (checks(e) ? " ✓✓" : "")) + ChatDates.TIME_GAP;
         int last = font.width(lines.get(lines.size() - 1));
         boolean timeRow = last + timeW > maxW;
         w = Math.max(w, timeRow ? timeW : last + timeW);
@@ -131,11 +138,13 @@ final class Feed {
         }
         int textCol = (int) (a * 255) << 24 | 0xFFFFFF;
         if (!isPlayer(e)) {
-            int bw = b.w() + 2 * PAD, bx = (chatW - bw) / 2, by = y - b.lines().size() * LINE - 2 * PAD_V;
-            Panel.round(g, bx, by, bw, b.lines().size() * LINE + 2 * PAD_V, 6, (int) (a * 0x90) << 24 | BUBBLE_SYSTEM);
+            // one short line (a join, a death) centered; a longer answer (a command's) as a block on the left
+            boolean block = b.lines().size() > 1;
+            int bw = b.w() + 2 * PAD, bx = block ? AV - PAD : (chatW - bw) / 2, by = y - b.lines().size() * LINE - 2 * PAD_V;
+            Panel.round(g, bx, by, bw, b.lines().size() * LINE + 2 * PAD_V, block ? 8 : 6, (int) (a * 0x90) << 24 | BUBBLE_SYSTEM);
             int ly = by + PAD_V + 1;
             for (FormattedCharSequence l : b.lines()) {
-                Gfx.text(g, font, l, (chatW - font.width(l)) / 2, ly, (int) (a * 255) << 24 | 0xC8CCD8, false);
+                Gfx.text(g, font, l, block ? bx + PAD : (chatW - font.width(l)) / 2, ly, (int) (a * 255) << 24 | 0xC8CCD8, false);
                 ly += LINE;
             }
             return top;
@@ -175,12 +184,14 @@ final class Feed {
                 ty += LINE;
             }
             String t = timeOf(e);
-            float timeX = bx + bw - PAD - ChatDates.timeWidth(t) + 2, timeY = y - PAD_V - 7;
+            boolean checks = checks(e);
+            float timeX = bx + bw - PAD - ChatDates.timeWidth(t + (checks ? " ✓✓" : "")) + 2, timeY = y - PAD_V - 7;
             ChatDates.drawTime(g, t, timeX, timeY, a);
-            Messenger.Chan c = Messenger.channels.get(e.channel);
-            if (e.mine() && c != null && c.dm() && e.id > 0) { // read checks in private chats
-                String checks = e.id <= c.peerRead ? "✓✓" : "✓";
-                ChatDates.smallText(g, checks, bx + bw + 2, timeY, (int) (a * 0xE0) << 24 | (e.id <= c.peerRead ? 0x9C8CFF : 0x8E95A6));
+            if (checks) { // sent / read, after the time
+                Messenger.Chan c = Messenger.channels.get(e.channel);
+                boolean read = c != null && e.id <= c.peerRead;
+                Panel.drawIcon(g, read ? "check2" : "check1", timeX + ChatDates.timeWidth(t + " ") - 1, timeY - 2.5f, 9,
+                        (int) (a * 0xF0) << 24 | (read ? 0x6CC6FF : 0x8E95A6));
             }
         }
         if (b.face()) {

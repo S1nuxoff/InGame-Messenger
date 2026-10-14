@@ -290,7 +290,8 @@ public final class ClientEvents {
             return false;
         }
         if (screen0 instanceof ChatScreen screen
-                && (ChatInput.clickTabs(screen, x, y, button)
+                && (button == 0 && CommandAnswer.click(x, y)
+                || ChatInput.clickTabs(screen, x, y, button)
                 || ChatUi.clickDown(x, y, button)
                 || button == 0 && (ChatInput.clickMention(screen, x, y)
                 || ChatInput.click(screen, x, y))

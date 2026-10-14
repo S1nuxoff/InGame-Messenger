@@ -1,4 +1,6 @@
 {
+  "ingamemessenger.answer.title": "Only you see this · %s",
+  "ingamemessenger.answer.more": "%s more lines: open the chat",
   "ingamemessenger.mute.chat": "You are muted in the chat. %s",
   "ingamemessenger.mute.chat_for": "You are muted in the chat for %s more. %s",
   "ingamemessenger.mute.dm": "You are muted in private chats. %s",
