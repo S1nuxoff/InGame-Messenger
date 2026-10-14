@@ -96,13 +96,13 @@ packs, commands and permissions.
 
 <img src="docs/images/platforms/minecraft.png" width="20" height="20" alt=""> **22 Minecraft versions, from 1.19.2 to 26.3.**
 
-| | Platform | Versions |
-|:-:|---|---|
-| <img src="docs/images/platforms/fabric.png" width="20" height="20" alt=""> <img src="docs/images/platforms/quilt.png" width="20" height="20" alt=""> | **Fabric, Quilt** | 1.19.2 · 1.20 · 1.20.1 · 1.20.3 · 1.20.4 · 1.20.5 · 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
-| <img src="docs/images/platforms/neoforge.png" width="20" height="20" alt=""> | **NeoForge** | 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
-| <img src="docs/images/platforms/forge.png" width="20" height="20" alt=""> | **Forge** | 1.19.2 · 1.20.1 · 1.20.4 · 1.20.6 · 1.21.1 · 1.21.4 · 1.21.5 · 1.21.8 · 1.21.10 · 1.21.11 · 26.1.2 · 26.2 · 26.3 |
-| <img src="docs/images/platforms/paper.png" width="20" height="20" alt=""> <img src="docs/images/platforms/spigot.svg" width="20" height="20" alt=""> <img src="docs/images/platforms/purpur.png" width="20" height="20" alt=""> | **Paper, Spigot, Purpur** (plugin) | 1.20.1 and newer |
-| <img src="docs/images/platforms/folia.png" width="20" height="20" alt=""> | **Folia** (plugin) | every Folia release from 1.21.4 |
+| Platform | Versions |
+|---|---|
+| <img src="docs/images/platforms/fabric.png" width="18" height="18" alt=""> **Fabric** · <img src="docs/images/platforms/quilt.png" width="18" height="18" alt=""> **Quilt** | 1.19.2 · 1.20 · 1.20.1 · 1.20.3 · 1.20.4 · 1.20.5 · 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
+| <img src="docs/images/platforms/neoforge.png" width="18" height="18" alt=""> **NeoForge** | 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
+| <img src="docs/images/platforms/forge.png" width="18" height="18" alt=""> **Forge** | 1.19.2 · 1.20.1 · 1.20.4 · 1.20.6 · 1.21.1 · 1.21.4 · 1.21.5 · 1.21.8 · 1.21.10 · 1.21.11 · 26.1.2 · 26.2 · 26.3 |
+| <img src="docs/images/platforms/paper.png" width="18" height="18" alt=""> **Paper** · <img src="docs/images/platforms/spigot.svg" width="18" height="18" alt=""> **Spigot** · <img src="docs/images/platforms/purpur.png" width="18" height="18" alt=""> **Purpur** | the plugin, 1.20.1 and newer |
+| <img src="docs/images/platforms/folia.png" width="18" height="18" alt=""> **Folia** | the plugin, every Folia release from 1.21.4 |
 
 <details>
 <summary><b>Full table</b> (every version, loader and the Java it needs)</summary>
