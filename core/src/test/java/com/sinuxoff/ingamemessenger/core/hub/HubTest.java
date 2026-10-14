@@ -12,7 +12,6 @@ import com.sinuxoff.ingamemessenger.core.protocol.Proto;
 import com.sinuxoff.ingamemessenger.core.protocol.Protocol;
 import com.sinuxoff.ingamemessenger.core.server.ServerPlatform;
 import com.sinuxoff.ingamemessenger.core.server.ServerSettings;
-import com.sinuxoff.ingamemessenger.core.storage.ChatStore;
 import com.sinuxoff.ingamemessenger.core.storage.Database;
 import com.sinuxoff.ingamemessenger.core.storage.DatabaseConfig;
 import com.sinuxoff.ingamemessenger.core.storage.LocalBlobStore;
@@ -423,20 +422,6 @@ class HubTest {
         assertFalse(h2.mayChat(C));
         h2.chatLine(A, "Alice", "next");
         assertTrue(json(p2.last(B, Proto.Msg.class).json()).get("i").getAsLong() > first, "ids go on");
-        h2.close();
-    }
-
-    @Test
-    void theFirstTestDatabaseIsDropped() throws Exception {
-        h.close();
-        Path old = dir.resolve("old");
-        java.nio.file.Files.createDirectories(old);
-        Database db = Database.open(DatabaseConfig.h2(), old, old, msg -> {
-        });
-        new ChatStore(db).init();
-        db.close();
-        Hub h2 = hub(new FakePlatform(old), old);
-        assertEquals(1, h2.gameChat());
         h2.close();
     }
 

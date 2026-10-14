@@ -42,40 +42,14 @@ public final class ClientEvents {
         // on the main thread, after Features: the stickers it fetches need the messenger on
         InGameMessenger.onStickerIndex = p -> Minecraft.getInstance().execute(() -> Library.onIndex(p.json()));
         InGameMessenger.onStickerData = Library::onData; // a loader thread is waiting for it
-        InGameMessenger.onHistory = p -> Minecraft.getInstance().execute(() -> ChatPages.onHistory(p));
-        InGameMessenger.onShow = s -> Minecraft.getInstance().execute(() -> ChatMessages.add(s));
-        InGameMessenger.onTypingState = t -> Minecraft.getInstance().execute(() -> Typing.onState(t, ChatChannels.takeRoute()));
         InGameMessenger.onFeatures = f -> Minecraft.getInstance().execute(() -> {
             Session.onFeatures();
             Typing.onFeatures(f);
             VoiceClient.onFeatures(f);
             Images.onFeatures(f);
         });
-        InGameMessenger.onVoiceShow = v -> Minecraft.getInstance().execute(() -> ChatVoiceNotes.addVoice(v));
-        InGameMessenger.onEdited = v -> Minecraft.getInstance().execute(() -> ChatReplies.onEdited(v));
-        InGameMessenger.onDeleted = v -> Minecraft.getInstance().execute(() -> ChatReplies.onDeleted(v));
         InGameMessenger.onVoiceData = v -> Minecraft.getInstance().execute(() -> VoiceClient.onData(v));
-        InGameMessenger.onImageShow = v -> Minecraft.getInstance().execute(() -> {
-            var me = Minecraft.getInstance().player;
-            if (me != null && me.getUUID().equals(v.sender())) {
-                Images.sent(); // our pictures arrived: hide the progress bar
-            }
-            ChatAlbums.addImage(v);
-        });
         InGameMessenger.onImageData = Images::onData; // a loader thread is waiting for it
-        InGameMessenger.onTag = t -> Minecraft.getInstance().execute(() -> ChatModel.onTag(t));
-        InGameMessenger.onPollShow = v -> Minecraft.getInstance().execute(() -> ChatPolls.addPoll(v));
-        InGameMessenger.onReadState = v -> Minecraft.getInstance().execute(() -> ChatReads.onReadState(v));
-        InGameMessenger.onDmShow = v -> Minecraft.getInstance().execute(() -> ChatChannels.onDmShow(v));
-        InGameMessenger.onRoute = v -> Minecraft.getInstance().execute(() -> ChatChannels.onRoute(v));
-        InGameMessenger.onDmReadState = v -> Minecraft.getInstance().execute(() -> ChatChannels.onDmReadState(v));
-        InGameMessenger.onDmChats = v -> Minecraft.getInstance().execute(() -> ChatChannels.onDmChats(v));
-        InGameMessenger.onReadAll = v -> Minecraft.getInstance().execute(() -> { // sent once, on join
-            ChatReads.onReadAll(v);
-            ChatPages.startHistory();
-        });
-        InGameMessenger.onPollState = v -> Minecraft.getInstance().execute(() -> ChatPolls.onPollState(v));
-        InGameMessenger.onMuteState = v -> Minecraft.getInstance().execute(() -> Muted.on(v));
         InGameMessenger.onNames = v -> Minecraft.getInstance().execute(() -> ChatDecor.onNames(v.data()));
         InGameMessenger.onProto = v -> Minecraft.getInstance().execute(() -> {
             if (v instanceof com.sinuxoff.ingamemessenger.core.protocol.Proto.Snapshot) {
@@ -83,7 +57,6 @@ public final class ClientEvents {
             }
             Messenger.handle(v);
         });
-        InGameMessenger.onReactions = r -> Minecraft.getInstance().execute(() -> ChatModel.onReactions(r));
     }
 
     // Ticks and frames
@@ -92,7 +65,6 @@ public final class ClientEvents {
     public static void tickStart() {
         VoiceClient.tick();
         Images.tick();
-        ChatMessages.flushHeld();
         ModCompat.tick();
         Minecraft mc = Minecraft.getInstance();
         if (!Session.on()) { // Minecraft's own chat
@@ -155,7 +127,6 @@ public final class ClientEvents {
     public static void loggedOut() {
         Typing.reset();
         VoiceClient.reset();
-        ChatChannels.resetChannels();
     }
 
     // HUD
@@ -190,7 +161,7 @@ public final class ClientEvents {
         }
         Minecraft mc = Minecraft.getInstance();
         if (mc.gui.screen() == null && !Compat.hudHidden(mc)) {
-            ChatRenderer.drawTyping(g0);
+            Faces.drawTyping(g0);
             if (Images.sending) { // upload progress above the hotbar while the chat is closed
                 var gg = g0;
                 int bw = 180, bx = (gg.guiWidth() - bw) / 2, by = gg.guiHeight() - 72;
@@ -205,20 +176,11 @@ public final class ClientEvents {
 
     // Chat screen
 
-    private static Screen lastChatScreen;
-
     /** Opened or resized: room for the smiley button, and the pinned panel. */
     public static void screenInit(Screen screen0) {
         if (screen0 instanceof ChatScreen screen && Session.on()) {
             var input = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input();
             ChatInput.place(input, screen.width, screen.height);
-            if (screen != lastChatScreen) { // opened, not resized
-                lastChatScreen = screen;
-                // the chat key opens a chat for talking; the server chat (commands) is where "/" leads
-                if (ChatChannels.SERVER.equals(ChatChannels.channel()) && !input.getValue().startsWith("/")) {
-                    ChatChannels.leaveServer();
-                }
-            }
             if (Prefs.pinned() && !Panel.open) {
                 Panel.openFresh();
             }

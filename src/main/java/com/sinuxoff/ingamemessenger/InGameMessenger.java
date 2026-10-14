@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
 import com.sinuxoff.ingamemessenger.core.protocol.Packets.*;
-import com.sinuxoff.ingamemessenger.core.server.ChatServer;
 
 import java.util.function.Consumer;
 
@@ -126,51 +125,11 @@ public final class InGameMessenger {
     };
     public static volatile Consumer<StickerData> onStickerData = h -> {
     };
-    public static volatile Consumer<Show> onShow = s -> {
-    };
-    public static volatile Consumer<Tag> onTag = t -> {
-    };
-    public static volatile Consumer<Reactions> onReactions = r -> {
-    };
-    public static volatile Consumer<HistoryPage> onHistory = h -> {
-    };
-    public static volatile Consumer<TypingState> onTypingState = t -> {
-    };
     public static volatile Consumer<Features> onFeatures = f -> {
-    };
-    public static volatile Consumer<VoiceShow> onVoiceShow = v -> {
-    };
-    public static volatile Consumer<Edited> onEdited = v -> {
-    };
-    public static volatile Consumer<Deleted> onDeleted = v -> {
     };
     public static volatile Consumer<VoiceData> onVoiceData = v -> {
     };
-    public static volatile Consumer<ImageShow> onImageShow = v -> {
-    };
-    public static volatile Consumer<SearchRes> onSearch = v -> {
-    };
-    public static volatile Consumer<PollShow> onPollShow = v -> {
-    };
-    public static volatile Consumer<ReadState> onReadState = v -> {
-    };
-    public static volatile Consumer<DmShow> onDmShow = v -> {
-    };
-    public static volatile Consumer<Route> onRoute = v -> {
-    };
-    public static volatile Consumer<DmHistory> onDmHistory = v -> {
-    };
-    public static volatile Consumer<DmReadState> onDmReadState = v -> {
-    };
-    public static volatile Consumer<DmChats> onDmChats = v -> {
-    };
-    public static volatile Consumer<ReadAll> onReadAll = v -> {
-    };
-    public static volatile Consumer<PollState> onPollState = v -> {
-    };
     public static volatile Consumer<ImageData> onImageData = v -> {
-    };
-    public static volatile Consumer<MuteState> onMuteState = v -> {
     };
     public static volatile Consumer<Names> onNames = v -> {
     };
@@ -185,52 +144,12 @@ public final class InGameMessenger {
             onStickerIndex.accept(p);
         } else if (packet instanceof StickerData p) {
             onStickerData.accept(p);
-        } else if (packet instanceof Show p) {
-            onShow.accept(p);
-        } else if (packet instanceof Tag p) {
-            onTag.accept(p);
-        } else if (packet instanceof Reactions p) {
-            onReactions.accept(p);
-        } else if (packet instanceof HistoryPage p) {
-            onHistory.accept(p);
-        } else if (packet instanceof TypingState p) {
-            onTypingState.accept(p);
         } else if (packet instanceof Features p) {
             onFeatures.accept(p);
-        } else if (packet instanceof VoiceShow p) {
-            onVoiceShow.accept(p);
-        } else if (packet instanceof Edited p) {
-            onEdited.accept(p);
-        } else if (packet instanceof Deleted p) {
-            onDeleted.accept(p);
         } else if (packet instanceof VoiceData p) {
             onVoiceData.accept(p);
-        } else if (packet instanceof ImageShow p) {
-            onImageShow.accept(p);
         } else if (packet instanceof ImageData p) {
             onImageData.accept(p);
-        } else if (packet instanceof SearchRes p) {
-            onSearch.accept(p);
-        } else if (packet instanceof PollShow p) {
-            onPollShow.accept(p);
-        } else if (packet instanceof ReadState p) {
-            onReadState.accept(p);
-        } else if (packet instanceof DmShow p) {
-            onDmShow.accept(p);
-        } else if (packet instanceof Route p) {
-            onRoute.accept(p);
-        } else if (packet instanceof DmHistory p) {
-            onDmHistory.accept(p);
-        } else if (packet instanceof DmReadState p) {
-            onDmReadState.accept(p);
-        } else if (packet instanceof DmChats p) {
-            onDmChats.accept(p);
-        } else if (packet instanceof ReadAll p) {
-            onReadAll.accept(p);
-        } else if (packet instanceof PollState p) {
-            onPollState.accept(p);
-        } else if (packet instanceof MuteState p) {
-            onMuteState.accept(p);
         } else if (packet instanceof Names p) {
             onNames.accept(p);
         } else if (packet.type().id().startsWith("c_")) {

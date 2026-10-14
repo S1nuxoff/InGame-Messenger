@@ -5,11 +5,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
 import com.sinuxoff.ingamemessenger.core.protocol.Packet;
-import com.sinuxoff.ingamemessenger.core.server.ChatServer;
 import com.sinuxoff.ingamemessenger.core.server.ServerPlatform;
 import com.sinuxoff.ingamemessenger.core.server.ServerSettings;
 import com.sinuxoff.ingamemessenger.core.storage.BlobStore;
-import com.sinuxoff.ingamemessenger.core.storage.ChatStore;
 import com.sinuxoff.ingamemessenger.core.storage.Database;
 import com.sinuxoff.ingamemessenger.core.storage.LocalBlobStore;
 import com.sinuxoff.ingamemessenger.core.storage.S3BlobStore;
@@ -23,8 +21,6 @@ import java.util.UUID;
 
 /** {@link ServerPlatform} for a running Minecraft server. */
 final class ServerSide implements ServerPlatform {
-    /** The old chat server: no longer started (the test bots and test chat still refer to it). */
-    static volatile ChatServer chat;
     /** Null while no server runs. */
     static volatile com.sinuxoff.ingamemessenger.core.hub.Hub hub;
 
@@ -75,16 +71,12 @@ final class ServerSide implements ServerPlatform {
         return out;
     }
 
-    /** Online players, test bots, then the server's profile cache. */
+    /** Online players, then the server's profile cache. */
     @Override
     public String nameOf(UUID id) {
         ServerPlayer p = server.getPlayerList().getPlayer(id);
         if (p != null) {
             return p.getGameProfile().name();
-        }
-        String bot = FakeBots.nameOf(id);
-        if (bot != null) {
-            return bot;
         }
         return ServerCompat.knownName(server, id);
     }

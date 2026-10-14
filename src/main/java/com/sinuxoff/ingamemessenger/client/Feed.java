@@ -27,7 +27,7 @@ final class Feed {
     private Feed() {
     }
 
-    private static final int AV = ChatRenderer.AV, FACE = 16, PAD = 8, PAD_V = 3, LINE = 10, GAP = 3, RUN_GAP = 7, DATE_H = 16;
+    private static final int AV = Faces.AV, FACE = 16, PAD = 8, PAD_V = 3, LINE = 10, GAP = 3, RUN_GAP = 7, DATE_H = 16;
     private static final int BUBBLE = 0x1E2333, BUBBLE_MINE = 0x33287A, BUBBLE_SYSTEM = 0x15181F, BUBBLE_ALPHA = 0xA8;
     /** How long a message stays on the closed chat. */
     private static final long SHOWN_MS = 10_000;
@@ -192,11 +192,11 @@ final class Feed {
                 .append(Component.literal(" " + info[1]).withStyle(st -> st.withColor(0xB8BECC)));
     }
 
-    private static List<ChatModel.Reaction> reactions(Messenger.Entry e) {
-        return e.reactions.isEmpty() ? List.of() : ChatModel.parseReactions(e.reactions);
+    private static List<Messenger.Reaction> reactions(Messenger.Entry e) {
+        return e.reactions.isEmpty() ? List.of() : Messenger.reactions(e.reactions);
     }
 
-    private static int pillW(ChatModel.Reaction r, Font font) {
+    private static int pillW(Messenger.Reaction r, Font font) {
         return 4 + 9 + 3 + font.width(String.valueOf(r.names().size())) + 5;
     }
 
@@ -358,8 +358,8 @@ final class Feed {
     }
 
     /** A message's reactions as pills from x, their bottom at y. */
-    private static void drawReactions(GuiGraphicsExtractor g, Messenger.Entry e, List<ChatModel.Reaction> rx, int px, int y, float a, Font font) {
-        for (ChatModel.Reaction r : rx) {
+    private static void drawReactions(GuiGraphicsExtractor g, Messenger.Entry e, List<Messenger.Reaction> rx, int px, int y, float a, Font font) {
+        for (Messenger.Reaction r : rx) {
             int w = pillW(r, font);
             boolean mine = r.mine();
             Panel.round(g, px, y - 12, w, 11, 5, mine ? (int) (a * 0xE0) << 24 | 0x5B4BD6 : (int) (a * 0x50) << 24 | 0x2A3040);
@@ -385,7 +385,7 @@ final class Feed {
             Library.Sticker st = Library.get(e.body.has("p") ? e.body.get("p").getAsString() : "", e.body.has("s") ? e.body.get("s").getAsString() : "");
             int sh = stickerH(), sw = st == null ? sh : Math.round(Math.min(sh * st.aspect(), sh * 1.6f));
             int sx = right ? chatW - 2 - sw : AV;
-            List<ChatModel.Reaction> rx = reactions(e);
+            List<Messenger.Reaction> rx = reactions(e);
             if (!rx.isEmpty()) {
                 drawReactions(g, e, rx, sx, y, a, font);
                 y -= RX_H;
@@ -407,7 +407,7 @@ final class Feed {
             Panel.round(g, sx + sw - tw - 2, y - 11, tw, 9, 4, (int) (a * 0x90) << 24);
             ChatDates.smallText(g, t, sx + sw - tw + 2, y - 9, (int) (a * 0xE0) << 24 | 0xE4E6EE);
         } else {
-            List<ChatModel.Reaction> rx = reactions(e);
+            List<Messenger.Reaction> rx = reactions(e);
             if (!rx.isEmpty()) { // the reactions' row under the bubble
                 drawReactions(g, e, rx, right ? chatW - 2 - (b.w() + 2 * PAD) : AV - PAD, y, a, font);
                 y -= RX_H;
@@ -481,7 +481,7 @@ final class Feed {
         }
         if (b.face() && !onRight(e)) {
             if (isPlayer(e)) {
-                ChatRenderer.drawFace(g, e.sender, e.name, 0, y - FACE, a);
+                Faces.drawFace(g, e.sender, e.name, 0, y - FACE, a);
             } else {
                 ServerIcon.draw(g, 0, y - FACE, FACE, a);
             }

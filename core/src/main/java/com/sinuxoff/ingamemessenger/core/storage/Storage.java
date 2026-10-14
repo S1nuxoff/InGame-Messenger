@@ -10,16 +10,13 @@ import java.util.concurrent.TimeUnit;
  * own threads), so the server thread never waits for either.
  */
 public final class Storage {
-    public final ChatStore chat;
-    /** The channel model's database (null while the old one is used). */
     public final Store store;
     public final BlobStore files;
     public final Executor db;
     public final Executor io;
     private final ExecutorService ownDb, ownIo;
 
-    private Storage(ChatStore chat, Store store, BlobStore files, Executor db, Executor io, ExecutorService ownDb, ExecutorService ownIo) {
-        this.chat = chat;
+    private Storage(Store store, BlobStore files, Executor db, Executor io, ExecutorService ownDb, ExecutorService ownIo) {
         this.store = store;
         this.files = files;
         this.db = db;
@@ -29,27 +26,15 @@ public final class Storage {
     }
 
     /** With background threads, for a real server. */
-    public static Storage threaded(ChatStore chat, BlobStore files) {
-        ExecutorService db = Executors.newSingleThreadExecutor(r -> daemon(r, "InGameMessenger db"));
-        ExecutorService io = Executors.newFixedThreadPool(4, r -> daemon(r, "InGameMessenger files"));
-        return new Storage(chat, null, files, db, io, db, io);
-    }
-
-    /** With background threads, for a real server. */
     public static Storage threaded(Store store, BlobStore files) {
         ExecutorService db = Executors.newSingleThreadExecutor(r -> daemon(r, "InGameMessenger db"));
         ExecutorService io = Executors.newFixedThreadPool(4, r -> daemon(r, "InGameMessenger files"));
-        return new Storage(null, store, files, db, io, db, io);
+        return new Storage(store, files, db, io, db, io);
     }
 
     /** Runs everything on the calling thread, for tests. */
     public static Storage inline(Store store, BlobStore files) {
-        return new Storage(null, store, files, Runnable::run, Runnable::run, null, null);
-    }
-
-    /** Runs everything on the calling thread, for tests. */
-    public static Storage inline(ChatStore chat, BlobStore files) {
-        return new Storage(chat, null, files, Runnable::run, Runnable::run, null, null);
+        return new Storage(store, files, Runnable::run, Runnable::run, null, null);
     }
 
     private static Thread daemon(Runnable r, String name) {
@@ -70,11 +55,6 @@ public final class Storage {
                 }
             }
         }
-        if (chat != null) {
-            chat.close();
-        }
-        if (store != null) {
-            store.close();
-        }
+        store.close();
     }
 }

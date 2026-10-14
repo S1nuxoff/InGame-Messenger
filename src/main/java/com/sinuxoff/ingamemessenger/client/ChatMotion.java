@@ -52,7 +52,7 @@ final class ChatMotion {
         Minecraft mc = Minecraft.getInstance();
         float target = 40 - ChatInput.BOTTOM - ChatInput.H - 6 - newestGap * (float) Compat.chatScale(chat);
         if (Typing.showing()) { // the typing line gets its own row
-            target -= ChatRenderer.TYPING_ROW;
+            target -= Faces.TYPING_ROW;
         }
         if (chatOpen(mc)) {
             target -= ChatInput.barH(); // the chat moves up above the reply bar and the picture tray
@@ -159,7 +159,7 @@ final class ChatMotion {
             return;
         }
         float sw = g.guiWidth(), sh = g.guiHeight();
-        float w = Math.min(sw, Compat.chatWidth(chat) + 4 + ChatRenderer.AV + 90);
+        float w = Math.min(sw, Compat.chatWidth(chat) + 4 + Faces.AV + 90);
         int full = Math.round(shade * 0xA0), mid = Math.round(shade * 0x50);
         // two stretches: from the edge to the middle of the chat, then out to transparent
         float[] xs = {0, w * 0.55f, w};

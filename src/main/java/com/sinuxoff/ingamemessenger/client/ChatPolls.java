@@ -54,8 +54,6 @@ final class ChatPolls {
         }
     }
 
-    static final Map<GuiMessageTag, PollInfo> pollOf = new IdentityHashMap<>();
-    static PollInfo pendingPoll;
     static final int POLL_W = 170;
 
     /** A poll message of the channels' model, with its counts and our choice. */
@@ -69,71 +67,6 @@ final class ChatPolls {
         pi.counts(e.pollCounts);
         pi.mine = e.myVote;
         return pi;
-    }
-
-    static PollInfo parsePoll(int mid, String json) {
-        com.google.gson.JsonObject o = com.google.gson.JsonParser.parseString(json).getAsJsonObject();
-        List<String> opts = new ArrayList<>();
-        o.getAsJsonArray("o").forEach(e -> opts.add(e.getAsString()));
-        return new PollInfo(mid, o.get("q").getAsString(), opts, o.has("m") && o.get("m").getAsBoolean());
-    }
-
-    /** Question (bold, wrapped), two lines per option, a line for the vote count. */
-    static void appendPoll(MutableComponent out, PollInfo pi) {
-        out.append(Component.literal(pi.question).withStyle(s -> s.withColor(0xFFFFFF))).append("\n");
-        for (int i = 0; i < pi.options.size() * 2 + 1; i++) {
-            out.append(i == pi.options.size() * 2 ? " " : " \n");
-        }
-        out.append("\n ");
-    }
-
-    static String pollWord(PollInfo pi) {
-        return Component.translatable("ingamemessenger.poll.word").getString() + ": " + ChatDecor.snippet(pi.question);
-    }
-
-    static void addPoll(Packets.PollShow v) {
-        UUID ch = ChatChannels.takeRoute();
-        int hash = Protocol.print("poll:" + v.json());
-        int mid = ChatModel.takeTag(v.sender(), hash);
-        PollInfo pi;
-        try {
-            pi = parsePoll(mid, v.json());
-        } catch (RuntimeException e) {
-            return;
-        }
-        boolean named = ch == null && ChatModel.named(v.sender(), false);
-        long now = System.currentTimeMillis();
-        MutableComponent text = Component.empty();
-        if (ch == null) {
-            ChatDates.liveDate(text, now);
-        }
-        if (named) {
-            text.append(ChatDecor.nameLine(v.name())).append("\n");
-        }
-        if (v.replyTo() >= 0) {
-            text.append(ChatReplies.quoteLine(v.replyTo())).append("\n");
-        }
-        appendPoll(text, pi);
-        GuiMessageTag tag = ChatModel.rememberNumbered(new ChatModel.Msg(v.sender(), v.name(), named, null, null, 0, true, now, mid, null), v.sender(), hash);
-        pollOf.put(tag, pi);
-        ChatModel.note(tag, v.name(), pollWord(pi), v.replyTo());
-        ChatRenderer.arrived();
-        ChatDecor.spoke(v.name());
-        ChatChannels.postTo(Minecraft.getInstance().gui.hud.getChat(), text, null, tag, ch);
-    }
-
-    /** Updates the counts (and our own choice if we voted). */
-    static void onPollState(Packets.PollState s) {
-        GuiMessageTag tag = ChatModel.byMid.get(s.id());
-        PollInfo pi = tag == null ? null : pollOf.get(tag);
-        if (pi == null) {
-            return;
-        }
-        pi.counts(s.counts());
-        var me = Minecraft.getInstance().player;
-        if (me != null && me.getUUID().equals(s.voter())) {
-            pi.mine = s.bits();
-        }
     }
 
     /** Options (circle or check, text, share and bar), then the vote count. */

@@ -9,7 +9,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
-import com.sinuxoff.ingamemessenger.core.server.ChatServer;
 
 /**
  * /messenger for operators: reload, typing, voice, mute. With -Dingamemessenger.dev=true also test and bots, for trying
@@ -64,25 +63,12 @@ final class MessengerCommands {
                                     .append(InGameMessenger.hasClient(p) ? ": messenger" : ": plain chat");
                         }
                         return done(ctx.getSource(), b.length() > 0 ? b.toString() : "nobody on");
-                    }))
-                    .then(Commands.literal("test").executes(ctx -> {
-                        TestChat.start(ctx.getSource().getServer(), ctx.getSource().getTextName());
-                        return done(ctx.getSource(), "test chat started");
-                    }))
-                    .then(Commands.literal("bots")
-                            .executes(ctx -> {
-                                int n = FakeBots.add(ctx.getSource().getServer());
-                                return done(ctx.getSource(), n + " test bots added, @mention one to get an answer");
-                            })
-                            .then(Commands.literal("off").executes(ctx -> {
-                                FakeBots.remove(ctx.getSource().getServer());
-                                return done(ctx.getSource(), "test bots removed");
-                            })));
+                    }));
         }
         dispatcher.register(root);
     }
 
-    /** mute|unmute [player time scope reason...]: the words are read by the shared {@link com.sinuxoff.ingamemessenger.core.server.Mutes}. */
+    /** mute|unmute [player time scope reason...]: the words are read by the hub's moderation. */
     private static LiteralArgumentBuilder<CommandSourceStack> mute(String what) {
         return Commands.literal(what).executes(ctx -> mutes(ctx.getSource(), what, ""))
                 .then(Commands.argument("args", StringArgumentType.greedyString())

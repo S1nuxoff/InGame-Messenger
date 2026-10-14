@@ -28,9 +28,7 @@ final class Typing {
     static boolean serverOn = true;
     private static boolean sent;
     private static long sentMs;
-    /** Player -> expiry time; it lapses when no update comes. */
-    private static final Map<String, Long> others = new LinkedHashMap<>();
-    private static final long KEEP_ALIVE = 3000, LAPSE = 6500;
+    private static final long KEEP_ALIVE = 3000;
 
     private Typing() {
     }
@@ -52,30 +50,6 @@ final class Typing {
         }
     }
 
-    /** Who types in which chat (null = public). */
-    private static final Map<String, java.util.UUID> where = new java.util.HashMap<>();
-
-    static void onState(Packets.TypingState s, java.util.UUID ch) {
-        if (s.on()) {
-            others.put(s.name(), System.currentTimeMillis() + LAPSE);
-            where.put(s.name(), ch);
-        } else {
-            others.remove(s.name());
-            where.remove(s.name());
-        }
-    }
-
-    /** Typing in client-side chats. */
-    static void local(String name, java.util.UUID ch, boolean on) {
-        if (on) {
-            others.put(name, System.currentTimeMillis() + 120_000);
-            where.put(name, ch);
-        } else {
-            others.remove(name);
-            where.remove(name);
-        }
-    }
-
     /** First player typing in the visible chat, or null. */
     static String first() {
         List<String> h = here();
@@ -88,25 +62,19 @@ final class Typing {
 
     static void onFeatures(Packets.Features f) {
         serverOn = f.typing();
-        if (!serverOn) {
-            others.clear();
-        }
     }
 
     static boolean showing() {
-        long now = System.currentTimeMillis();
         return serverOn && Prefs.seeTyping() && !here().isEmpty();
     }
 
     static void reset() {
-        others.clear();
         sent = false;
     }
 
     /** "Name is typing..." with animated dots; nothing if nobody is or the player hid it. */
     static void render(GuiGraphicsExtractor g, int x, int y) {
         long now = System.currentTimeMillis();
-        others.values().removeIf(until -> until < now);
         List<String> names = here();
         if (names.isEmpty() || !serverOn || !Prefs.seeTyping()) {
             return;

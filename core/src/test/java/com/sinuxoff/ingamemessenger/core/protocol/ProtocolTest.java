@@ -57,7 +57,7 @@ class ProtocolTest {
         assertThrows(Wire.WireException.class, () -> new Wire.In(new byte[]{5, 1}).str(10), "cut short");
         assertThrows(Wire.WireException.class, () -> new Wire.In(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 1}).varInt());
         byte[] two = new Wire.Out().varInt(1).varInt(2).toByteArray();
-        assertThrows(Wire.WireException.class, () -> Protocol.decode(Packets.Deleted.TYPE, two), "left over");
+        assertThrows(Wire.WireException.class, () -> Protocol.decode(Proto.Delete.TYPE, two), "left over");
     }
 
     @Test

@@ -24,7 +24,7 @@ import java.util.UUID;
 
 /**
  * Mouse interaction with the open chat: the reaction button next to a hovered message and its picker, reaction pills
- * (click to toggle, hover for who), player cards and message menus. {@link ChatRenderer} records hit areas while
+ * (click to toggle, hover for who), player cards and message menus. {@link Feed} records hit areas while
  * drawing; this draws the overlays on top.
  */
 final class ChatUi {
@@ -67,15 +67,6 @@ final class ChatUi {
     private record PollHit(int mid, int option, Box box) {
     }
 
-    private record CheckHit(int mid, Box box) {
-    }
-
-    private static final List<CheckHit> checkHits = new ArrayList<>();
-
-    static void checks(int mid, int x, int y, int w, int h) {
-        checkHits.add(new CheckHit(mid, box(x, y, w, h)));
-    }
-
     private static final List<PollHit> pollHits = new ArrayList<>();
 
     static void pollOption(int mid, int option, int x, int y, int w, int h) {
@@ -107,7 +98,7 @@ final class ChatUi {
     /** The scroll-down button is checked first, it's drawn above everything. */
     static boolean clickDown(double mx, double my, int button) {
         if (down != null && button == 0 && down.has(mx, my)) {
-            ChatRenderer.toBottom();
+            Feed.toBottom();
             return true;
         }
         return false;
@@ -129,7 +120,7 @@ final class ChatUi {
         quotes.add(new QuoteHit(target, box(x, y, w, h)));
     }
 
-    private record PillHit(int mid, ChatModel.Reaction r, Box box) {
+    private record PillHit(int mid, Messenger.Reaction r, Box box) {
     }
 
     private record FaceHit(UUID id, String name, Box box) {
@@ -190,7 +181,7 @@ final class ChatUi {
     private ChatUi() {
     }
 
-    // Recorded by ChatRenderer while drawing (chat pixels)
+    // Recorded by Feed while drawing (chat pixels)
 
     static void clearHits() {
         bubbles.clear();
@@ -200,7 +191,6 @@ final class ChatUi {
         locs.clear();
         pics.clear();
         pollHits.clear();
-        checkHits.clear();
         down = null;
         faces.clear();
     }
@@ -230,7 +220,7 @@ final class ChatUi {
         bubbles.add(new BubbleHit(mid, box(x0, y0, x1 - x0, y1 - y0), box(x1 + 3, by, BTN, BTN), box(x1 + 3 + BTN + 3, by, BTN, BTN)));
     }
 
-    static void pill(int mid, ChatModel.Reaction r, int x, int y, int w, int h) {
+    static void pill(int mid, Messenger.Reaction r, int x, int y, int w, int h) {
         pills.add(new PillHit(mid, r, box(x, y, w, h)));
     }
 
@@ -339,22 +329,6 @@ final class ChatUi {
         Font font = mc.font;
         mouseX = mx;
         mouseY = my;
-        // hovering the read checks: who has read it
-        for (CheckHit c : checkHits) {
-            if (!blocked && c.box().has(mx, my)) {
-                List<String> who = ChatReads.readers(c.mid());
-                Component t = who.isEmpty() ? Component.translatable("ingamemessenger.read.none")
-                        : Component.translatable("ingamemessenger.read.by", String.join(", ", who.size() > 8 ? who.subList(0, 8) : who)
-                        + (who.size() > 8 ? " +" + (who.size() - 8) : ""));
-                int tw = Math.min(sw - 8, font.width(t) + 12), tx = Math.max(4, Math.min(mx - tw / 2, sw - tw - 4)), ty = my - 20;
-                Gfx.push(g);
-                Gfx.raise(g, 500);
-                ChatInput.glassBox(g, tx, ty, tw, 14);
-                Gfx.text(g, font, font.plainSubstrByWidth(t.getString(), tw - 12), tx + 6, ty + 3, 0xFFF2F3F7, false);
-                Gfx.pop(g);
-                break;
-            }
-        }
         Gfx.push(g);
         Gfx.raise(g, 200);
 
@@ -485,7 +459,7 @@ final class ChatUi {
             List<Component> items = menuItems(menu);
             int x = Math.round(menuX), y = Math.round(menuY), h = CARD_HEAD + items.size() * ITEM + (items.isEmpty() ? 0 : 6);
             Panel.glass(g, x, y, CARD_W, h);
-            ChatRenderer.drawFace(g, menu.id(), menu.name(), x + 9, y + 9, 26, 1f);
+            Faces.drawFace(g, menu.id(), menu.name(), x + 9, y + 9, 26, 1f);
             Gfx.text(g, font, Component.literal(font.plainSubstrByWidth(menu.name(), CARD_W - 50)).withStyle(st -> st
                     .withColor(ChatDecor.colorOf(menu.name())).withBold(true)), x + 42, y + 10, TEXT, false);
             boolean online = ChatDecor.online(menu.id(), menu.name());
@@ -599,7 +573,7 @@ final class ChatUi {
                 var input = ((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input();
                 if (i == 0) { // private chat
                     if (f.id() != null) {
-                        ChatChannels.openChannel(f.id(), f.name());
+                        Messenger.openDm(f.id());
                     } else {
                         input.setValue("/msg " + f.name() + " ");
                     }
@@ -650,7 +624,7 @@ final class ChatUi {
                 pickTab = Integer.parseInt(at.substring(4));
                 pickRow = 0;
             } else if (!at.isEmpty()) {
-                ChatModel.react(pickMid, at);
+                Messenger.react(pickMid, at);
                 pickMid = -1;
             }
             return true;
@@ -679,7 +653,7 @@ final class ChatUi {
         }
         for (PillHit p : pills) {
             if (p.box().has(mx, my)) {
-                ChatModel.react(p.mid(), p.r().emoji());
+                Messenger.react(p.mid(), p.r().emoji());
                 return true;
             }
         }
@@ -713,7 +687,7 @@ final class ChatUi {
         }
         for (QuoteHit q : quotes) { // jump to the quoted message
             if (q.box().has(mx, my) && button == 0) {
-                ChatReplies.scrollTo(q.target());
+                Feed.jumpTo(q.target());
                 return true;
             }
         }
@@ -744,7 +718,7 @@ final class ChatUi {
                     long now = System.currentTimeMillis();
                     if (b.mid() == tapMid && now - tapMs < 400) {
                         tapMid = -1;
-                        ChatModel.react(b.mid(), HEART);
+                        Messenger.react(b.mid(), HEART);
                         return true;
                     }
                     tapMid = b.mid();

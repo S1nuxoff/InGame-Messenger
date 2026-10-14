@@ -23,8 +23,6 @@ final class ChatLocations {
     private ChatLocations() {
     }
 
-    static final Map<GuiMessageTag, ChatText.Location> locOf = new IdentityHashMap<>();
-    static ChatText.Location pendingLoc;
     static final int LOC_W = 128;
 
     /** The player's position as text to send, or null outside a world. */
@@ -35,10 +33,6 @@ final class ChatLocations {
         }
         return new ChatText.Location(p.getGameProfile().name(), p.getBlockX(), p.getBlockY(), p.getBlockZ(),
                 p.level().dimension().identifier().toString()).wire();
-    }
-
-    static String locWord() {
-        return Component.translatable("ingamemessenger.loc.word").getString();
     }
 
     private static String dimName(String dim) {

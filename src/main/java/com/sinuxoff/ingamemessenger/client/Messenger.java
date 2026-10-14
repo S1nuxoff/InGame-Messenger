@@ -507,6 +507,34 @@ public final class Messenger {
     }
 
     /** A message being sent, shown at once (the server's copy replaces it). */
+    /** A reaction on a message: the emoji and who put it. */
+    record Reaction(String emoji, List<String> names) {
+        boolean mine() {
+            var p = Minecraft.getInstance().player;
+            return p != null && names.contains(p.getGameProfile().name());
+        }
+    }
+
+    /** "emoji:name,name;emoji:name" as the server sends it. */
+    static List<Reaction> reactions(String data) {
+        List<Reaction> list = new ArrayList<>();
+        if (data != null && !data.isEmpty()) {
+            for (String part : data.split(";")) {
+                int c = part.indexOf(':');
+                if (c > 0) {
+                    list.add(new Reaction(part.substring(0, c), java.util.Arrays.asList(part.substring(c + 1).split(","))));
+                }
+            }
+        }
+        return list;
+    }
+
+    /** Puts our reaction on a message, or takes it back. */
+    static void react(long id, String emoji) {
+        Prefs.usedReaction(emoji);
+        Net.toServer(new Proto.React(id, emoji));
+    }
+
     /** Muted where we'd send: says so instead (the server would refuse it anyway). */
     static boolean muted() {
         if (Muted.here() <= 0) {

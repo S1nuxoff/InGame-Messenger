@@ -138,7 +138,7 @@ public final class ChatInput {
             }
             String title = c.game ? Component.translatable("ingamemessenger.dm.common").getString() : c.dm() ? c.withName : "#" + c.name;
             if (c.dm()) {
-                ChatRenderer.drawFace(g, c.with, c.withName, cx + 1, y + 3, ICON - 2, 1f);
+                Faces.drawFace(g, c.with, c.withName, cx + 1, y + 3, ICON - 2, 1f);
             } else {
                 Panel.round(g, cx, y + 2, ICON, ICON, 6, on ? 0xFF7B68FF : 0xFF2A3040);
                 if (c.game) {
@@ -270,7 +270,7 @@ public final class ChatInput {
             if (over) {
                 Panel.round(g, r[0] + 3, iy, r[2] - 6, 14, 4, 0x1CFFFFFF);
             }
-            ChatRenderer.drawFace(g, com.sinuxoff.ingamemessenger.ServerCompat.id(list.get(i)), com.sinuxoff.ingamemessenger.ServerCompat.name(list.get(i)), r[0] + 7, iy + 3, 8, 1f);
+            Faces.drawFace(g, com.sinuxoff.ingamemessenger.ServerCompat.id(list.get(i)), com.sinuxoff.ingamemessenger.ServerCompat.name(list.get(i)), r[0] + 7, iy + 3, 8, 1f);
             Gfx.text(g, font, com.sinuxoff.ingamemessenger.ServerCompat.name(list.get(i)), r[0] + 19, iy + 3, over ? 0xFFFFFFFF : 0xFFC8CCD8, false);
         }
     }
@@ -791,7 +791,7 @@ public final class ChatInput {
         }
         // mini player, centered above the input (and above the sticker panel when it's open)
         int mpY = Panel.open && !Panel.command ? y - 5 - barH() - Panel.panelHeight() - MP_H - 6 : y - barH() - MP_H - 6;
-        ChatRenderer.drawTyping(g);
+        Faces.drawTyping(g);
         miniPlayer(g, x + (fw - MP_W) / 2, mpY,
                 (int) (mc.mouseHandler.xpos() * w / mc.getWindow().getScreenWidth()),
                 (int) (mc.mouseHandler.ypos() * h / mc.getWindow().getScreenHeight()), true);
@@ -1277,7 +1277,7 @@ public final class ChatInput {
                 highlight(g, b[0] + 2, ry, b[2] - 4, ROW);
             }
             var p = list.get(i);
-            ChatRenderer.drawFace(g, p.getProfile().id(), p.getProfile().name(), b[0] + 6, ry + 2, 10, 1f);
+            Faces.drawFace(g, p.getProfile().id(), p.getProfile().name(), b[0] + 6, ry + 2, 10, 1f);
             Gfx.text(g, font, p.getProfile().name(), b[0] + 21, ry + 3, i == mentionSel ? 0xFFFFFFFF : 0xFFC8CCD8, false);
         }
         Gfx.pop(g);

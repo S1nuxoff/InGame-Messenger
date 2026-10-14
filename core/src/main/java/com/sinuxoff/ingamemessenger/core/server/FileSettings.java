@@ -40,7 +40,7 @@ public final class FileSettings implements ModSettings {
     private static final Key IMGBB_KEY = new Key("images", "imgbbKey", "", "ImgBB API key (https://api.imgbb.com). Stays on the server.");
     private static final Key IMAGE_KEEP = new Key("images", "keepDays", 30, "Delete pictures after this many days (0 = keep forever).");
     private static final Key IMAGE_MAX = new Key("images", "maxKb", 800,
-            "Maximum picture size after compression, in KB (64-" + ChatServer.IMAGE_MAX_KB + ").");
+            "Maximum picture size after compression, in KB (64-" + (com.sinuxoff.ingamemessenger.core.protocol.Packets.IMAGE_DATA_MAX - 1024) / 1024 + ").");
     private static final Key PLAIN_ON = new Key("withoutMod", "plainLines", true, """
             Players without the mod can always join. These settings are about what they see.
             Show them stickers, voice messages, pictures, polls and private messages as plain chat lines.""");
@@ -258,7 +258,7 @@ public final class FileSettings implements ModSettings {
 
     @Override
     public int imageMaxKb() {
-        return num(IMAGE_MAX, 64, ChatServer.IMAGE_MAX_KB);
+        return num(IMAGE_MAX, 64, (com.sinuxoff.ingamemessenger.core.protocol.Packets.IMAGE_DATA_MAX - 1024) / 1024);
     }
 
     @Override

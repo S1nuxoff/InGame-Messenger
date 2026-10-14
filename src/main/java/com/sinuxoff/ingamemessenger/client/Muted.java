@@ -1,32 +1,18 @@
 package com.sinuxoff.ingamemessenger.client;
 
 import net.minecraft.network.chat.Component;
-import com.sinuxoff.ingamemessenger.core.protocol.Packets;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 /** Our mute on this server: the input says so where it holds, instead of sending into nothing. */
 final class Muted {
     private Muted() {
     }
 
-    private static volatile long chatUntil, dmUntil;
     private static volatile String reason = "";
-
-    static void on(Packets.MuteState m) {
-        chatUntil = m.chatUntil();
-        dmUntil = m.dmUntil();
-        reason = m.reason();
-    }
-
-    static void reset() {
-        chatUntil = dmUntil = 0;
-        reason = "";
-    }
 
     /** Until when we're muted in the open channel, 0 if we aren't (commands aren't muted). */
     static long here() {

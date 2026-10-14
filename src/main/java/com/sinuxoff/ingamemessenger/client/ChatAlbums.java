@@ -25,43 +25,6 @@ final class ChatAlbums {
     private ChatAlbums() {
     }
 
-    /** A single picture is shown like a sticker: its own shape, no bubble. */
-    static void addImage(Packets.ImageShow v) {
-        UUID ch = ChatChannels.takeRoute();
-        int hash = Protocol.print("image:" + v.data());
-        int mid = ChatModel.takeTag(v.sender(), hash);
-        Minecraft mc = Minecraft.getInstance();
-        boolean named = ch == null && ChatModel.named(v.sender(), false);
-        long now = System.currentTimeMillis();
-        MutableComponent text = Component.empty();
-        if (ch == null) {
-            ChatDates.liveDate(text, now);
-        }
-        if (named) {
-            text.append(ChatDecor.nameLine(v.name())).append("\n");
-        }
-        if (v.replyTo() >= 0) {
-            text.append(ChatReplies.quoteLine(v.replyTo())).append("\n");
-        }
-        AlbumInfo ai = album(parsePics(v.data()), v.caption());
-        appendAlbum(text, ai);
-        GuiMessageTag tag = ChatModel.rememberNumbered(new ChatModel.Msg(v.sender(), v.name(), named, null, null, 0, true, now, mid, null), v.sender(), hash);
-        albumOf.put(tag, ai);
-        ChatModel.pendingFull = ai.caption().isEmpty() ? null : ai.caption();
-        ChatModel.note(tag, v.name(), albumWord(ai), v.replyTo());
-        ChatRenderer.arrived();
-        ChatDecor.spoke(v.name());
-        boolean me = !ai.caption().isEmpty() && ChatDecor.mentionsMe(Component.literal(ai.caption()), v.name());
-        if (me) {
-            ChatModel.mentioned.add(tag);
-            ChatDecor.notifyMention(v.name());
-        } else if (v.replyTo() >= 0 && ChatReplies.isMine(v.replyTo()) && !v.name().equalsIgnoreCase(ChatDecor.myName())) {
-            ChatModel.mentioned.add(tag);
-            ChatReplies.notifyReply(v.name());
-        }
-        ChatChannels.postTo(mc.gui.hud.getChat(), text, null, tag, ch);
-    }
-
     record Pic(String ref, int w, int h) {
     }
 
@@ -69,26 +32,8 @@ final class ChatAlbums {
     record AlbumInfo(List<Pic> pics, String caption, int width, int height, int lines, List<int[]> cells) {
     }
 
-    static final Map<GuiMessageTag, AlbumInfo> albumOf = new IdentityHashMap<>();
     /** Bubble padding around the pictures. */
     static final int ALBUM_PAD = 3;
-    static AlbumInfo pendingAlbum;
-
-    /** One "ref w h" per line. */
-    static List<Pic> parsePics(String data) {
-        List<Pic> out = new ArrayList<>();
-        for (String line : data.split("\n")) {
-            String[] f = line.trim().split(" ");
-            if (f.length == 3) {
-                try {
-                    out.add(new Pic(f[0], Math.max(1, Integer.parseInt(f[1])), Math.max(1, Integer.parseInt(f[2]))));
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-        return out.size() > 4 ? out.subList(0, 4) : out;
-    }
-
     /**
      * Grid: one picture alone; two side by side; three as one on top and two below; four as 2x2. Pictures in a row
      * share a height, the block is as wide as the chat allows and not too tall.
@@ -99,7 +44,7 @@ final class ChatAlbums {
         int lineH = (int) (9.0 * (mc.options.chatLineSpacing().get() + 1.0));
         int chatW = (int) (Compat.chatWidth(chat) / Math.max(0.1, Compat.chatScale(chat)));
         // independent of the sticker size setting: at most 150 wide and 160 tall, smaller in a narrow chat
-        float w = Math.min(chatW - ChatRenderer.AV - 2 * ALBUM_PAD - 12, 150);
+        float w = Math.min(chatW - Faces.AV - 2 * ALBUM_PAD - 12, 150);
         float maxH = 160;
         int[][] rows = pics.size() <= 2 ? new int[][]{pics.size() == 1 ? new int[]{0} : new int[]{0, 1}}
                 : pics.size() == 3 ? new int[][]{{0}, {1, 2}} : new int[][]{{0, 1}, {2, 3}};
@@ -147,23 +92,6 @@ final class ChatAlbums {
         return Math.max(0.5f, Math.min(2.5f, p.w() / (float) p.h()));
     }
 
-    /** Blank lines under the pictures, then the caption, then the spacer line. */
-    static void appendAlbum(MutableComponent out, AlbumInfo ai) {
-        for (int i = 0; i < ai.lines(); i++) {
-            out.append(" \n");
-        }
-        if (!ai.caption().isEmpty()) {
-            out.append(ChatDecor.highlightMentions(Component.literal(ai.caption()))).append("\n ");
-        } else {
-            out.append(" ");
-        }
-    }
-
-    static String albumWord(AlbumInfo ai) {
-        String w = imageWord() + (ai.pics().size() > 1 ? " \u00D7" + ai.pics().size() : "");
-        return ai.caption().isEmpty() ? w : w + ": " + ChatDecor.snippet(ai.caption());
-    }
-
     /** Pictures in their cells (placeholder while loading, a note if deleted); click to open. */
     static void drawAlbum(GuiGraphicsExtractor g, AlbumInfo ai, String who, int x, int y, float a) {
         for (int i = 0; i < ai.pics().size() && i < ai.cells().size(); i++) {
@@ -188,7 +116,4 @@ final class ChatAlbums {
         }
     }
 
-    static String imageWord() {
-        return Component.translatable("ingamemessenger.image.word").getString();
-    }
 }

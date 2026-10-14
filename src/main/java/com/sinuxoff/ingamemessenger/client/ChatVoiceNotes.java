@@ -26,44 +26,8 @@ final class ChatVoiceNotes {
     record VoiceInfo(String key, int ms, byte[] wave) {
     }
 
-    static final Map<GuiMessageTag, VoiceInfo> voiceOf = new IdentityHashMap<>();
-    static VoiceInfo pendingVoice;
     /** Width of the player in a bubble. */
     static final int VOICE_BARS = 32, VOICE_W = 20 + VOICE_BARS * 3 + 6 + 26;
-
-    static String voiceWord() {
-        return Component.translatable("ingamemessenger.voice.word").getString();
-    }
-
-    static void addVoice(Packets.VoiceShow v) {
-        UUID ch = ChatChannels.takeRoute();
-        int hash = Protocol.print("voice:" + v.key());
-        int mid = ChatModel.takeTag(v.sender(), hash);
-        Minecraft mc = Minecraft.getInstance();
-        boolean named = ch == null && ChatModel.named(v.sender(), false);
-        MutableComponent text = Component.empty();
-        if (ch == null) {
-            ChatDates.liveDate(text, System.currentTimeMillis());
-        }
-        if (named) {
-            text.append(ChatDecor.nameLine(v.name())).append("\n");
-        }
-        if (v.replyTo() >= 0) {
-            text.append(ChatReplies.quoteLine(v.replyTo())).append("\n");
-        }
-        text.append(" \n \n ");
-        GuiMessageTag tag = ChatModel.rememberNumbered(new ChatModel.Msg(v.sender(), v.name(), named, null, null, 0, true, System.currentTimeMillis(), mid, null),
-                v.sender(), hash);
-        voiceOf.put(tag, new VoiceInfo(v.key(), v.durationMs(), v.wave()));
-        ChatModel.note(tag, v.name(), voiceWord(), v.replyTo());
-        ChatRenderer.arrived();
-        ChatDecor.spoke(v.name());
-        if (v.replyTo() >= 0 && ChatReplies.isMine(v.replyTo()) && !v.name().equalsIgnoreCase(ChatDecor.myName())) {
-            ChatModel.mentioned.add(tag);
-            ChatReplies.notifyReply(v.name());
-        }
-        ChatChannels.postTo(mc.gui.hud.getChat(), text, null, tag, ch);
-    }
 
     /** Round play/pause button, waveform (played part highlighted), duration. */
     static void drawVoice(GuiGraphicsExtractor g, VoiceInfo v, String who, int x, int y, float a) {

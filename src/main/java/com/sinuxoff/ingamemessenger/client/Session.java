@@ -57,10 +57,7 @@ public final class Session {
         }
         if (last != null) {
             Minecraft.getInstance().gui.hud.getChat().clearMessages(false);
-            ChatModel.reset();
             Messenger.reset();
-            ChatPages.reset();
-            ChatReads.reset();
             ClientEvents.loggedOut();
         }
         last = c;
@@ -86,8 +83,7 @@ public final class Session {
         Object c = Minecraft.getInstance().getConnection();
         if (c != null && c == matched && welcomed != c) {
             welcomed = c;
-            ModCompat.tick(); // before the early lines are rebuilt, so they come out without Chat Heads' heads
-            ChatMessages.adoptEarly(Minecraft.getInstance().gui.hud.getChat());
+            ModCompat.tick();
         }
     }
 

@@ -167,7 +167,17 @@ final class ChatDecor {
     }
 
     static Long lastSeen(String name) {
-        return ChatModel.lastSeenAt.get(name.toLowerCase());
+        long last = 0;
+        for (Messenger.Chan c : Messenger.channels.values()) {
+            for (int i = c.list.size() - 1; i >= 0; i--) {
+                Messenger.Entry e = c.list.get(i);
+                if (e.name != null && e.name.equalsIgnoreCase(name)) {
+                    last = Math.max(last, e.time);
+                    break;
+                }
+            }
+        }
+        return last > 0 ? last : null;
     }
 
     // Mentions

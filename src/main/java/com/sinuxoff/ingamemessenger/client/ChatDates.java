@@ -18,19 +18,6 @@ final class ChatDates {
         return java.time.Instant.ofEpochMilli(ms).atZone(java.time.ZoneId.systemDefault()).toLocalDate().toEpochDay();
     }
 
-    /** A date separator above a day's first message takes two lines. */
-    static final int DATE_LINES = 2;
-    static final String DATE_ROOM = " \n \n";
-
-    static void liveDate(MutableComponent out, long ms) {
-        long day = dayOf(ms);
-        if (day != ChatModel.lastLiveDay) {
-            out.append(DATE_ROOM);
-            ChatModel.pendingDay = day;
-        }
-        ChatModel.lastLiveDay = day;
-    }
-
     /** "Today", "Yesterday" or "8 October", in the game's language. */
     private static String dateLabel(long day) {
         long today = java.time.LocalDate.now().toEpochDay();
@@ -76,12 +63,6 @@ final class ChatDates {
     private static final java.time.format.DateTimeFormatter HH_MM = java.time.format.DateTimeFormatter.ofPattern("HH:mm");
 
     private static final java.time.format.DateTimeFormatter DAY_HH_MM = java.time.format.DateTimeFormatter.ofPattern("dd.MM HH:mm");
-
-    /** Local time of a message: "14:32", or "03.10 14:32" if not today. */
-    static String time(ChatModel.Msg m) {
-        var at = java.time.Instant.ofEpochMilli(m.createdMs()).atZone(java.time.ZoneId.systemDefault());
-        return at.toLocalDate().equals(java.time.LocalDate.now()) ? at.format(HH_MM) : at.format(DAY_HH_MM);
-    }
 
     static void drawTime(GuiGraphicsExtractor g, String time, float x, float y, float a) {
         smallText(g, time, x, y, (int) (a * 0xC0) << 24 | 0x8E95A6);
