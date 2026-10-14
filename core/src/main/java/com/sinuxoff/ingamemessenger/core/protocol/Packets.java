@@ -713,6 +713,28 @@ public final class Packets {
         }
     }
 
+    /**
+     * S2C: how the server shows players' names (a rank, colors), one "uuid \t name \t component JSON" per line: on
+     * join for everyone online, on every change, and before a history page for its senders.
+     */
+    public record Names(String data) implements Packet {
+        public static final PacketType<Names> TYPE = new PacketType<>("names", Direction.TO_CLIENT, Names.class, Names::read);
+
+        @Override
+        public PacketType<Names> type() {
+            return TYPE;
+        }
+
+        @Override
+        public void write(Wire.Out out) {
+            out.str(data, 262144);
+        }
+
+        static Names read(Wire.In in) {
+            return new Names(in.str(262144));
+        }
+    }
+
     /** S2C on join and on every change: until when the player is muted in the chat and in private chats (0 = not). */
     public record MuteState(long chatUntil, long dmUntil, String reason) implements Packet {
         public static final PacketType<MuteState> TYPE = new PacketType<>("mute_state", Direction.TO_CLIENT, MuteState.class, MuteState::read);
@@ -1038,5 +1060,5 @@ public final class Packets {
         }
     }
 
-    public static final List<PacketType<?>> ALL = List.of(Welcome.TYPE, Hello.TYPE, StickerIndex.TYPE, StickerGet.TYPE, StickerData.TYPE, Send.TYPE, Show.TYPE, Tag.TYPE, React.TYPE, Reactions.TYPE, HistoryRequest.TYPE, HistoryPage.TYPE, Typing.TYPE, TypingState.TYPE, Features.TYPE, EditMsg.TYPE, DeleteMsg.TYPE, Edited.TYPE, Deleted.TYPE, AlbumStart.TYPE, ImageStart.TYPE, ImageChunk.TYPE, ImageShow.TYPE, Route.TYPE, ChatTarget.TYPE, DmSend.TYPE, DmShow.TYPE, DmHistoryReq.TYPE, DmHistory.TYPE, DmRead.TYPE, DmReadState.TYPE, DmChats.TYPE, ReadUpTo.TYPE, ReadState.TYPE, ReadAll.TYPE, PollCreate.TYPE, PollVote.TYPE, PollShow.TYPE, PollState.TYPE, SearchReq.TYPE, SearchRes.TYPE, ImageLinks.TYPE, ImageGet.TYPE, ImageData.TYPE, VoiceStart.TYPE, VoiceChunk.TYPE, VoiceShow.TYPE, VoiceGet.TYPE, VoiceData.TYPE, MuteState.TYPE);
+    public static final List<PacketType<?>> ALL = List.of(Welcome.TYPE, Hello.TYPE, StickerIndex.TYPE, StickerGet.TYPE, StickerData.TYPE, Send.TYPE, Show.TYPE, Tag.TYPE, React.TYPE, Reactions.TYPE, HistoryRequest.TYPE, HistoryPage.TYPE, Typing.TYPE, TypingState.TYPE, Features.TYPE, EditMsg.TYPE, DeleteMsg.TYPE, Edited.TYPE, Deleted.TYPE, AlbumStart.TYPE, ImageStart.TYPE, ImageChunk.TYPE, ImageShow.TYPE, Route.TYPE, ChatTarget.TYPE, DmSend.TYPE, DmShow.TYPE, DmHistoryReq.TYPE, DmHistory.TYPE, DmRead.TYPE, DmReadState.TYPE, DmChats.TYPE, ReadUpTo.TYPE, ReadState.TYPE, ReadAll.TYPE, PollCreate.TYPE, PollVote.TYPE, PollShow.TYPE, PollState.TYPE, SearchReq.TYPE, SearchRes.TYPE, ImageLinks.TYPE, ImageGet.TYPE, ImageData.TYPE, VoiceStart.TYPE, VoiceChunk.TYPE, VoiceShow.TYPE, VoiceGet.TYPE, VoiceData.TYPE, MuteState.TYPE, Names.TYPE);
 }

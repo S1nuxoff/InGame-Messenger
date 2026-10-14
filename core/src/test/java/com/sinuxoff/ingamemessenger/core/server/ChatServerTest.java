@@ -41,6 +41,7 @@ class ChatServerTest {
         boolean plainLines = true;
         UUID op = null;
         final java.util.Set<UUID> mutedElsewhere = new java.util.HashSet<>();
+        final Map<UUID, String> shown = new HashMap<>();
         String provider = "server";
 
         FakePlatform(Path dir) {
@@ -74,6 +75,11 @@ class ChatServerTest {
         @Override
         public boolean isOperator(UUID id) {
             return id.equals(op);
+        }
+
+        @Override
+        public String shownName(UUID id) {
+            return shown.get(id);
         }
 
         @Override
@@ -608,5 +614,34 @@ class ChatServerTest {
         assertNull(Mutes.time("chat"));
         assertNull(Mutes.time("10x"));
         assertEquals("no player Zed online", s.mutes().command("Mod", "mute", args("Zed")));
+    }
+
+    // Shown names
+
+    static final String ADMIN = "{\"text\":\"[Admin] Bob\",\"color\":\"red\"}";
+
+    @Test
+    void namesAsTheServerShowsThem() throws Exception {
+        p.shown.put(B, ADMIN);
+        p.online.put(D, "Dan");
+        s.joined(D);
+        hello(s, D);
+        assertEquals(B + "\tBob\t" + ADMIN, p.got(D, Names.class).get(p.got(D, Names.class).size() - 1).data(), "on join: the ranks of those online");
+        p.clear();
+        s.tick(System.currentTimeMillis());
+        assertTrue(p.got(A, Names.class).isEmpty(), "nothing new");
+        p.shown.put(B, "{\"text\":\"[Mod] Bob\"}");
+        s.tick(System.currentTimeMillis());
+        assertEquals(B + "\tBob\t{\"text\":\"[Mod] Bob\"}", p.got(A, Names.class).get(0).data(), "a new rank goes to everyone");
+        // Bob writes and leaves: his rank still comes with the history
+        s.chatLine(B, "Bob", "hi", ChatServer.textJson("hi"));
+        p.online.remove(B);
+        s.left(B, "Bob");
+        p.clear();
+        s.handle(A, new HistoryRequest(0));
+        List<Packet> got = p.got(A);
+        assertEquals(Names.class, got.get(0).getClass(), "before the page");
+        assertEquals(B + "\tBob\t{\"text\":\"[Mod] Bob\"}", ((Names) got.get(0)).data());
+        assertEquals(HistoryPage.class, got.get(1).getClass());
     }
 }

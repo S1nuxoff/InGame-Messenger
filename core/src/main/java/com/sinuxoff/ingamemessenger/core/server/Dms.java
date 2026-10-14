@@ -54,7 +54,9 @@ final class Dms {
     void history(UUID who, DmHistoryReq r) {
         server.db("private history page", () -> {
             ChatStore.Page page = server.storage.chat.page(r.before(), who, ChatStore.pair(who, r.other()));
+            String names = server.storage.chat.shownNames(ChatServer.senders(page.json()));
             server.platform.execute(() -> {
+                server.platform.send(who, new Names(names));
                 server.platform.send(who, new Route(r.other()));
                 server.platform.send(who, new HistoryPage(page.more(), page.json()));
             });

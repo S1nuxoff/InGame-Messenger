@@ -88,6 +88,23 @@ final class ServerSide implements ServerPlatform {
         return ServerCompat.knownName(server, id);
     }
 
+    /** The display name: team colors and prefixes, a rank mod's look; without its click and hover. */
+    @Override
+    public String shownName(UUID id) {
+        ServerPlayer p = server.getPlayerList().getPlayer(id);
+        if (p == null) {
+            return null;
+        }
+        net.minecraft.network.chat.MutableComponent out = Component.empty();
+        boolean[] styled = {false};
+        p.getDisplayName().visit((style, part) -> {
+            styled[0] |= style.getColor() != null || style.isBold() || style.isItalic();
+            out.append(Component.literal(part).withStyle(style.withClickEvent(null).withHoverEvent(null).withInsertion(null)));
+            return java.util.Optional.empty();
+        }, net.minecraft.network.chat.Style.EMPTY);
+        return !styled[0] && out.getString().equals(p.getGameProfile().getName()) ? null : json(server, out);
+    }
+
     @Override
     public boolean isOperator(UUID id) {
         ServerPlayer p = server.getPlayerList().getPlayer(id);

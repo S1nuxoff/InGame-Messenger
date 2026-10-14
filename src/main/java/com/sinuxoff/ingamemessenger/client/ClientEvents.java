@@ -77,6 +77,7 @@ public final class ClientEvents {
         });
         InGameMessenger.onPollState = v -> Minecraft.getInstance().execute(() -> ChatPolls.onPollState(v));
         InGameMessenger.onMuteState = v -> Minecraft.getInstance().execute(() -> Muted.on(v));
+        InGameMessenger.onNames = v -> Minecraft.getInstance().execute(() -> ChatDecor.onNames(v.data()));
         InGameMessenger.onReactions = r -> Minecraft.getInstance().execute(() -> ChatModel.onReactions(r));
     }
 

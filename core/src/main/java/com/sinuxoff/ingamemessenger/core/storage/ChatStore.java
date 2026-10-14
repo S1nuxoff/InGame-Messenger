@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -44,7 +45,7 @@ public final class ChatStore {
     }
 
     private final Database db;
-    private final String messages, reactions, votes, readMarks, dmReads, files, meta, mutes;
+    private final String messages, reactions, votes, readMarks, dmReads, files, meta, mutes, names;
 
     public ChatStore(Database db) {
         this.db = db;
@@ -57,6 +58,7 @@ public final class ChatStore {
         files = p + "files";
         meta = p + "meta";
         mutes = p + "mutes";
+        names = p + "shown_names";
     }
 
     private Connection c() throws SQLException {
@@ -87,6 +89,8 @@ public final class ChatStore {
             s.execute("CREATE TABLE IF NOT EXISTS " + mutes + " (player VARCHAR(36) PRIMARY KEY, player_name VARCHAR(64) NOT NULL, "
                     + "chat_until BIGINT NOT NULL, dm_until BIGINT NOT NULL, reason VARCHAR(255) NOT NULL, by_name VARCHAR(64) NOT NULL, "
                     + "ts BIGINT NOT NULL)");
+            s.execute("CREATE TABLE IF NOT EXISTS " + names + " (player VARCHAR(36) PRIMARY KEY, player_name VARCHAR(64) NOT NULL, "
+                    + "shown " + text + ")");
         }
         index(messages + "_pair", messages, "pair_id");
         index(files + "_cat", files, "category, ts");
@@ -154,6 +158,36 @@ public final class ChatStore {
             bind(ps, params);
             return ps.executeUpdate();
         }
+    }
+
+    // How the server shows names
+
+    /** Remembers a player's shown name (component JSON, null = just the name), for history pages after they left. */
+    public void setShownName(UUID who, String name, String shown) throws SQLException {
+        update("DELETE FROM " + names + " WHERE player = ?", who.toString());
+        if (shown != null) {
+            update("INSERT INTO " + names + " (player, player_name, shown) VALUES (?, ?, ?)", who.toString(), name, shown);
+        }
+    }
+
+    /** "uuid \t name \t json" lines for those of these players whose shown name is known. */
+    public String shownNames(Collection<UUID> who) throws SQLException {
+        StringBuilder b = new StringBuilder();
+        List<UUID> ids = new ArrayList<>(who);
+        for (int from = 0; from < ids.size(); from += 200) {
+            List<UUID> part = ids.subList(from, Math.min(ids.size(), from + 200));
+            try (PreparedStatement ps = c().prepareStatement("SELECT player, player_name, shown FROM " + names + " WHERE player IN ("
+                    + marks(part.size()) + ")")) {
+                bind(ps, part.stream().map(UUID::toString).toArray());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        b.append(b.length() > 0 ? "\n" : "").append(rs.getString(1)).append('\t').append(rs.getString(2)).append('\t')
+                                .append(rs.getString(3));
+                    }
+                }
+            }
+        }
+        return b.toString();
     }
 
     // Mutes

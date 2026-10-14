@@ -28,87 +28,109 @@ final class ChatDecor {
         return NAME_COLORS[Math.floorMod(name.hashCode(), NAME_COLORS.length)];
     }
 
-    /** How the server shows a player's name in its chat lines (a rank, its colors), by lower-case name. */
-    private static final java.util.Map<String, Component> serverNames = new java.util.HashMap<>();
+    /** How the server shows players' names (a rank, colors), as it said (Names), by lower-case name. */
+    private static final java.util.Map<String, Component> shownNames = new java.util.HashMap<>();
 
-    static MutableComponent nameLine(String name) {
-        Component shown = serverNames.get(name.toLowerCase(java.util.Locale.ROOT));
-        if (shown != null) {
-            return fit(Component.empty().withStyle(s -> s.withBold(true)).append(shown), NAME_MAX_W);
+    /** Names packet: "uuid \t name \t component JSON" per line. */
+    static void onNames(String data) {
+        var conn = Minecraft.getInstance().getConnection();
+        if (conn == null || data.isEmpty()) {
+            return;
         }
-        return Component.literal(name).withStyle(s -> s.withColor(nameColor(name)).withBold(true));
+        for (String line : data.split("\n")) {
+            String[] f = line.split("\t", 3);
+            if (f.length < 3) {
+                continue;
+            }
+            String key = f[1].toLowerCase(java.util.Locale.ROOT);
+            if (f[2].isEmpty()) { // just the name now
+                shownNames.remove(key);
+                continue;
+            }
+            try {
+                shownNames.put(key, com.sinuxoff.ingamemessenger.ServerCompat.fromJson(f[2], conn.registryAccess()));
+            } catch (RuntimeException ignored) {
+                shownNames.remove(key); // not a component this version reads: our look
+            }
+        }
     }
 
-    /** A server's long ranks and names end in "…" rather than taking a line of their own. */
+    static void forgetServerNames() {
+        shownNames.clear();
+    }
+
+    /** The widest a name line gets; a longer rank is cut, the name itself never. */
     private static final int NAME_MAX_W = 200;
 
-    /** text cut to maxW pixels with "…", styles kept. */
-    static MutableComponent fit(MutableComponent text, int maxW) {
-        var font = Minecraft.getInstance().font;
-        if (font.width(text) <= maxW) {
-            return text;
+    /** The name over a bubble: the server's look of it if it has one, else in our color. */
+    static MutableComponent nameLine(String name) {
+        Component shown = shownNames.get(name.toLowerCase(java.util.Locale.ROOT));
+        MutableComponent bold = Component.empty().withStyle(s -> s.withBold(true));
+        if (shown == null) {
+            return bold.append(Component.literal(name).withStyle(s -> s.withColor(nameColor(name))));
         }
-        MutableComponent out = Component.empty().withStyle(text.getStyle());
-        int room = maxW - font.width(Component.literal("…").withStyle(text.getStyle()));
+        var font = Minecraft.getInstance().font;
+        if (font.width(bold.copy().append(shown)) <= NAME_MAX_W) {
+            return bold.append(shown);
+        }
+        // "[Rank] Name suffix": the name stays whole, then the suffix if there's room, the rank gets what's left
+        String plain = shown.getString();
+        int at = plain.toLowerCase(java.util.Locale.ROOT).lastIndexOf(name.toLowerCase(java.util.Locale.ROOT));
+        if (at < 0) {
+            return bold.append(cut(slice(shown, 0, plain.length()), NAME_MAX_W - font.width(bold.copy().append("\u2026")), true));
+        }
+        MutableComponent nick = slice(shown, at, at + name.length());
+        MutableComponent rest = slice(shown, at + name.length(), plain.length());
+        int nickW = font.width(bold.copy().append(nick));
+        if (font.width(bold.copy().append(nick).append(rest)) > NAME_MAX_W) {
+            rest = Component.empty();
+        }
+        int room = NAME_MAX_W - font.width(bold.copy().append(nick).append(rest));
+        MutableComponent rank = slice(shown, 0, at);
+        if (font.width(bold.copy().append(rank)) > room) {
+            rank = cut(rank, room - font.width(bold.copy().append("\u2026 ")), false);
+            rank = rank.getString().isBlank() ? Component.empty() : rank.append("\u2026 ");
+        }
+        return bold.append(rank).append(nick).append(rest);
+    }
+
+    /** Characters from..to of text, styles kept. */
+    private static MutableComponent slice(Component text, int from, int to) {
+        MutableComponent out = Component.empty();
+        int[] at = {0};
+        text.visit((style, part) -> {
+            int a = Math.max(from, at[0]), b = Math.min(to, at[0] + part.length());
+            if (a < b) {
+                out.append(Component.literal(part.substring(a - at[0], b - at[0])).withStyle(style));
+            }
+            at[0] += part.length();
+            return java.util.Optional.empty();
+        }, net.minecraft.network.chat.Style.EMPTY);
+        return out;
+    }
+
+    /** As much of text (bold) as fits in maxW pixels, plus "…" if ellipsis. */
+    private static MutableComponent cut(MutableComponent text, int maxW, boolean ellipsis) {
+        var font = Minecraft.getInstance().font;
+        MutableComponent out = Component.empty();
         int[] used = {0};
         boolean[] full = {false};
         text.visit((style, part) -> {
             for (int i = 0; i < part.length() && !full[0]; ) {
                 int n = Character.charCount(part.codePointAt(i));
-                String ch = part.substring(i, i + n);
-                int w = font.width(Component.literal(ch).withStyle(style));
-                if (used[0] + w > room) {
+                Component ch = Component.literal(part.substring(i, i + n)).withStyle(style.withBold(true));
+                int w = font.width(ch);
+                if (used[0] + w > maxW) {
                     full[0] = true;
                     break;
                 }
-                out.append(Component.literal(ch).withStyle(style));
+                out.append(Component.literal(part.substring(i, i + n)).withStyle(style));
                 used[0] += w;
                 i += n;
             }
             return full[0] ? java.util.Optional.of(Boolean.TRUE) : java.util.Optional.empty();
-        }, text.getStyle());
-        return out.append(Component.literal("…"));
-    }
-
-    static void forgetServerNames() {
-        serverNames.clear();
-    }
-
-    /**
-     * Learns the server's look of a name from the start of a chat line, up to end ("[Admin] Name: " or a styled name), unless
-     * it's just the plain name: then our colors stay.
-     */
-    static void learnName(String name, Component head, int end) {
-        String plain = head.getString();
-        int from = 0, to = Math.min(end, plain.length());
-        while (from < to && (Character.isWhitespace(plain.charAt(from)) || plain.charAt(from) == '<')) {
-            from++;
-        }
-        while (to > from && (Character.isWhitespace(plain.charAt(to - 1)) || ":>»|→-".indexOf(plain.charAt(to - 1)) >= 0)) {
-            to--;
-        }
-        if (to <= from || !plain.substring(from, to).toLowerCase(java.util.Locale.ROOT).contains(name.toLowerCase(java.util.Locale.ROOT))) {
-            return; // not about this player's name
-        }
-        MutableComponent out = Component.empty();
-        boolean[] styled = {false};
-        int[] at = {0};
-        int a = from, b = to;
-        head.visit((style, part) -> {
-            int s = Math.max(a, at[0]), e = Math.min(b, at[0] + part.length());
-            if (s < e) {
-                out.append(Component.literal(part.substring(s - at[0], e - at[0])).withStyle(style));
-                styled[0] |= style.getColor() != null;
-            }
-            at[0] += part.length();
-            return java.util.Optional.empty();
         }, net.minecraft.network.chat.Style.EMPTY);
-        String key = name.toLowerCase(java.util.Locale.ROOT);
-        if (styled[0] || !plain.substring(from, to).equalsIgnoreCase(name)) {
-            serverNames.put(key, out);
-        } else {
-            serverNames.remove(key);
-        }
+        return ellipsis && full[0] ? out.append("\u2026") : out;
     }
 
     /** The text without its first n characters, styles kept. */

@@ -175,6 +175,8 @@ public final class InGameMessenger {
     };
     public static volatile Consumer<MuteState> onMuteState = v -> {
     };
+    public static volatile Consumer<Names> onNames = v -> {
+    };
 
     public static void toClient(Packet packet) {
         if (packet instanceof Welcome p) {
@@ -229,6 +231,8 @@ public final class InGameMessenger {
             onPollState.accept(p);
         } else if (packet instanceof MuteState p) {
             onMuteState.accept(p);
+        } else if (packet instanceof Names p) {
+            onNames.accept(p);
         } else {
             LOG.warn("Unexpected packet for the client: {}", packet.type().id());
         }

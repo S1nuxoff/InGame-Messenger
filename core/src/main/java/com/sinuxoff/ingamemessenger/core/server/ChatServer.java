@@ -64,6 +64,8 @@ public final class ChatServer {
     final ImageInbox images;
     final StickerStore stickers;
     final Mutes mutes = new Mutes(this);
+    /** Online players' shown names as last sent ("" = just the name). */
+    private final Map<UUID, String> shown = new ConcurrentHashMap<>();
     private final AtomicInteger nextId = new AtomicInteger(1);
     /** Messages that aren't stored (test chat), with their reactions kept in memory. */
     private final Set<Integer> unstored = ConcurrentHashMap.newKeySet();
@@ -147,6 +149,7 @@ public final class ChatServer {
         voice.tick(now);
         images.tick(now);
         mutes.tick(now);
+        names(false);
         unanswered.forEach((id, t) -> {
             if (now - t > 5000 && unanswered.remove(id) != null && platform.settings().installHint()) {
                 platform.say(id, "ingamemessenger.plain.install",
@@ -192,6 +195,8 @@ public final class ChatServer {
         platform.send(id, features());
         platform.send(id, new StickerIndex(stickers.index()));
         platform.send(id, mutes.state(id));
+        names(false); // theirs to everyone, if it's new
+        platform.send(id, new Names(namesOf(shown.keySet(), false)));
         db("read marks", () -> {
             String marks = storage.chat.readMarks();
             platform.execute(() -> platform.send(id, new ReadAll(marks)));
@@ -209,7 +214,51 @@ public final class ChatServer {
         lastTyping.remove(id);
         lastSearch.remove(id);
         target.remove(id);
+        shown.remove(id);
         typing(id, name, false);
+    }
+
+    /** Sends the shown names that changed (all of them if all) to everyone, and remembers them for the history. */
+    void names(boolean all) {
+        java.util.List<UUID> changed = new java.util.ArrayList<>();
+        for (ServerPlatform.ChatPlayer p : platform.online()) {
+            String now = platform.shownName(p.id());
+            String was = shown.put(p.id(), now == null ? "" : now);
+            if (all || !(now == null ? "" : now).equals(was)) {
+                changed.add(p.id());
+                String name = p.name();
+                db("shown name", () -> storage.chat.setShownName(p.id(), name, now));
+            }
+        }
+        if (!changed.isEmpty()) {
+            sendAll(new Names(namesOf(changed, true))); // a rank taken away too, as an empty look
+        }
+    }
+
+    private String namesOf(java.util.Collection<UUID> ids, boolean plainToo) {
+        StringBuilder b = new StringBuilder();
+        for (UUID id : ids) {
+            String s = shown.get(id), name = platform.nameOf(id);
+            if (s != null && name != null && (plainToo || !s.isEmpty())) {
+                b.append(b.length() > 0 ? "\n" : "").append(id).append('\t').append(name).append('\t').append(s);
+            }
+        }
+        return b.toString();
+    }
+
+    /** The senders of a history page (its "u" fields). */
+    static java.util.Set<UUID> senders(String pageJson) {
+        java.util.Set<UUID> out = new java.util.HashSet<>();
+        for (var e : com.google.gson.JsonParser.parseString(pageJson).getAsJsonArray()) {
+            var o = e.getAsJsonObject();
+            if (o.has("u")) {
+                try {
+                    out.add(UUID.fromString(o.get("u").getAsString()));
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+        }
+        return out;
     }
 
     /** A regular chat line about to be broadcast: its id goes out first. Returns the id. */
@@ -291,7 +340,11 @@ public final class ChatServer {
             if (cooled(lastHistory, player, 250)) {
                 db("history page", () -> {
                     ChatStore.Page page = storage.chat.page(p.before(), player, null);
-                    platform.execute(() -> platform.send(player, new HistoryPage(page.more(), page.json())));
+                    String who = storage.chat.shownNames(senders(page.json()));
+                    platform.execute(() -> {
+                        platform.send(player, new Names(who));
+                        platform.send(player, new HistoryPage(page.more(), page.json()));
+                    });
                 });
             }
         } else if (packet instanceof SearchReq p) {

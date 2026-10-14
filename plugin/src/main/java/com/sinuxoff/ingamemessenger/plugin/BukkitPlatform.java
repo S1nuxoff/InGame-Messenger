@@ -50,6 +50,57 @@ final class BukkitPlatform implements ServerPlatform {
         return p != null && (p.isOp() || p.hasPermission(MessengerPlugin.ADMIN));
     }
 
+    /**
+     * The display name (Essentials puts the rank in it); if it's just the name, the rank's prefix and suffix from
+     * Vault (LuckPerms and other permission plugins give them there).
+     */
+    @Override
+    @SuppressWarnings("deprecation") // legacy text: what Spigot has too
+    public String shownName(UUID id) {
+        Player p = Bukkit.getPlayer(id);
+        if (p == null) {
+            return null;
+        }
+        String shown = p.getDisplayName();
+        if (shown == null || ChatColor.stripColor(shown).equals(p.getName())) {
+            String[] fix = vault(p);
+            shown = fix == null ? shown : fix[0] + p.getName() + fix[1];
+        }
+        if (shown == null || shown.equals(p.getName())) {
+            return null;
+        }
+        return net.md_5.bungee.chat.ComponentSerializer.toString(net.md_5.bungee.api.chat.TextComponent.fromLegacyText(shown));
+    }
+
+    private boolean noVault;
+
+    /** Prefix and suffix from Vault's chat service (color codes turned into §), or null. */
+    private String[] vault(Player p) {
+        if (noVault) {
+            return null;
+        }
+        try {
+            org.bukkit.plugin.Plugin v = Bukkit.getPluginManager().getPlugin("Vault");
+            if (v == null || !v.isEnabled()) {
+                return null;
+            }
+            Class<?> chat = v.getClass().getClassLoader().loadClass("net.milkbowl.vault.chat.Chat");
+            var reg = Bukkit.getServicesManager().getRegistration(chat);
+            if (reg == null) {
+                return null;
+            }
+            Object c = reg.getProvider();
+            String pre = (String) chat.getMethod("getPlayerPrefix", Player.class).invoke(c, p);
+            String suf = (String) chat.getMethod("getPlayerSuffix", Player.class).invoke(c, p);
+            return new String[]{ChatColor.translateAlternateColorCodes('&', pre == null ? "" : pre),
+                    ChatColor.translateAlternateColorCodes('&', suf == null ? "" : suf)};
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            noVault = true;
+            plugin.getLogger().warning("Can't read ranks from Vault (" + e + "); names show without them");
+            return null;
+        }
+    }
+
     @Override
     public UUID idOf(String name) {
         Player p = Bukkit.getPlayerExact(name);

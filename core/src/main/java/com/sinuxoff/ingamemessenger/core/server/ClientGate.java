@@ -42,6 +42,11 @@ final class ClientGate implements ServerPlatform {
     }
 
     @Override
+    public String shownName(UUID id) {
+        return platform.shownName(id);
+    }
+
+    @Override
     public UUID idOf(String name) {
         return platform.idOf(name);
     }

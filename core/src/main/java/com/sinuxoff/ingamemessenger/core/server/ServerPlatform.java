@@ -28,6 +28,14 @@ public interface ServerPlatform {
         return null;
     }
 
+    /**
+     * How the server shows an online player's name (a rank, colors) as component JSON, or null if it's just the name.
+     * Clients put it over the player's bubbles.
+     */
+    default String shownName(UUID id) {
+        return null;
+    }
+
     /** Whether another plugin or mod (Essentials, LiteBans...) has the player muted: then they're muted in the chat. */
     default boolean mutedElsewhere(UUID id) {
         return false;
