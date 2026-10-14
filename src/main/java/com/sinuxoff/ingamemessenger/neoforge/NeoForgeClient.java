@@ -80,7 +80,11 @@ public final class NeoForgeClient {
         });
         NeoForge.EVENT_BUS.addListener((RenderGuiEvent.Pre e) -> {
             clipped.clear();
+            //? if >=1.21 {
             ClientEvents.hudStart(e.getGuiGraphics(), e.getPartialTick().getGameTimeDeltaPartialTick(false));
+            //?} else {
+            /*ClientEvents.hudStart(e.getGuiGraphics(), e.getPartialTick());
+            *///?}
         });
         NeoForge.EVENT_BUS.addListener((RenderGuiEvent.Post e) -> ClientEvents.hudEnd(e.getGuiGraphics()));
 
