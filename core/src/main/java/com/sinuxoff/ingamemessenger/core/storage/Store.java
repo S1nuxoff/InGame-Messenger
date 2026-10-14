@@ -481,14 +481,18 @@ public final class Store {
         }
     }
 
-    /** Votes per option, "3,0,5". */
+    /** Votes per option and how many voted, "3,0,5;7". */
     public String pollCounts(long message, int options) throws SQLException {
         int[] n = new int[options];
+        int voters = 0;
         try (PreparedStatement ps = c().prepareStatement("SELECT bits FROM " + p + "poll_votes WHERE message_id = ?")) {
             bind(ps, message);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int bits = rs.getInt(1);
+                    if (bits != 0) {
+                        voters++;
+                    }
                     for (int i = 0; i < options; i++) {
                         if ((bits & (1 << i)) != 0) {
                             n[i]++;
@@ -501,7 +505,7 @@ public final class Store {
         for (int v : n) {
             j.add(String.valueOf(v));
         }
-        return j.toString();
+        return j + ";" + voters;
     }
 
     // Read marks

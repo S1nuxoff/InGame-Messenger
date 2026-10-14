@@ -64,7 +64,6 @@ public final class ClientEvents {
         });
         InGameMessenger.onImageData = Images::onData; // a loader thread is waiting for it
         InGameMessenger.onTag = t -> Minecraft.getInstance().execute(() -> ChatModel.onTag(t));
-        InGameMessenger.onSearch = r -> Minecraft.getInstance().execute(() -> ChatInput.onSearch(r));
         InGameMessenger.onPollShow = v -> Minecraft.getInstance().execute(() -> ChatPolls.addPoll(v));
         InGameMessenger.onReadState = v -> Minecraft.getInstance().execute(() -> ChatReads.onReadState(v));
         InGameMessenger.onDmShow = v -> Minecraft.getInstance().execute(() -> ChatChannels.onDmShow(v));

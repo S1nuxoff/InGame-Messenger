@@ -685,7 +685,7 @@ final class ChatUi {
         }
         for (PollHit h : pollHits) { // vote (again = take back)
             if (h.box().has(mx, my) && button == 0) {
-                Net.toServer(new Packets.PollVote(h.mid(), h.option()));
+                Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.Vote(h.mid(), h.option()));
                 return true;
             }
         }

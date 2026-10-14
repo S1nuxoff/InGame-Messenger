@@ -109,13 +109,13 @@ final class PollScreen extends BaseScreen {
         if (!ready()) {
             return;
         }
-        StringBuilder opts = new StringBuilder();
+        List<String> opts = new ArrayList<>();
         for (EditBox o : options) {
             if (!o.getValue().isBlank()) {
-                opts.append(opts.length() > 0 ? "\n" : "").append(o.getValue().strip());
+                opts.add(o.getValue().strip());
             }
         }
-        Net.toServer(new Packets.PollCreate(question.getValue().strip(), opts.toString(), multi, replyTo));
+        Messenger.sendPoll(question.getValue().strip(), opts, multi, Math.max(0, replyTo));
         onClose();
     }
 

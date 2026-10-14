@@ -58,6 +58,19 @@ final class ChatPolls {
     static PollInfo pendingPoll;
     static final int POLL_W = 170;
 
+    /** A poll message of the channels' model, with its counts and our choice. */
+    static PollInfo of(Messenger.Entry e) {
+        List<String> opts = new ArrayList<>();
+        if (e.body.has("o")) {
+            e.body.getAsJsonArray("o").forEach(x -> opts.add(x.getAsString()));
+        }
+        PollInfo pi = new PollInfo((int) e.id, e.body.has("q") ? e.body.get("q").getAsString() : "", opts,
+                e.body.has("m") && e.body.get("m").getAsBoolean());
+        pi.counts(e.pollCounts);
+        pi.mine = e.myVote;
+        return pi;
+    }
+
     static PollInfo parsePoll(int mid, String json) {
         com.google.gson.JsonObject o = com.google.gson.JsonParser.parseString(json).getAsJsonObject();
         List<String> opts = new ArrayList<>();

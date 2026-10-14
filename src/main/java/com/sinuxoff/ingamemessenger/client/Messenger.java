@@ -208,6 +208,12 @@ public final class Messenger {
             if (current == g.id()) {
                 select(game);
             }
+        } else if (p instanceof Proto.Found f) {
+            List<Entry> out = new ArrayList<>();
+            for (var el : JsonParser.parseString(f.json()).getAsJsonArray()) {
+                out.add(entry(el.getAsJsonObject()));
+            }
+            ChatInput.onFound(f.query(), out);
         } else if (p instanceof Proto.Mutes m) {
             mutes = JsonParser.parseString(m.json()).getAsJsonArray();
         }
@@ -531,6 +537,24 @@ public final class Messenger {
         pending(c, "text", b, n, replyTo);
         Net.toServer(new Proto.Post(c.id, n, "text", text, replyTo));
         return true;
+    }
+
+    static void sendPoll(String question, List<String> options, boolean multi, long replyTo) {
+        Chan c = open();
+        if (c == null) {
+            return;
+        }
+        String n = nonce();
+        JsonObject b = new JsonObject();
+        b.addProperty("q", question);
+        var arr = new com.google.gson.JsonArray();
+        options.forEach(arr::add);
+        b.add("o", arr);
+        if (multi) {
+            b.addProperty("m", true);
+        }
+        pending(c, "poll", b, n, replyTo);
+        Net.toServer(new Proto.Post(c.id, n, "poll", b.toString(), replyTo));
     }
 
     static void sendSticker(String pack, String id, long replyTo) {

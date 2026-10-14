@@ -348,7 +348,7 @@ class HubTest {
         h.handle(A, new Proto.Post(dm, "n", "poll", "{\"q\":\"Lunch?\",\"o\":[\"yes\",\"no\"]}", 0));
         long poll = json(p.last(B, Proto.Msg.class).json()).get("i").getAsLong();
         h.handle(B, new Proto.Vote(poll, 1));
-        assertEquals("0,1", p.last(A, Proto.PollState.class).counts());
+        assertEquals("0,1;1", p.last(A, Proto.PollState.class).counts());
         h.handle(B, new Proto.History(dm, 0));
         JsonArray page = JsonParser.parseString(p.last(B, Proto.Page.class).json()).getAsJsonArray();
         assertEquals(1, page.size(), "the deleted one isn't there");

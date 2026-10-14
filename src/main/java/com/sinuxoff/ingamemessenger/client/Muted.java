@@ -28,11 +28,26 @@ final class Muted {
         reason = "";
     }
 
-    /** Until when we're muted in the open chat, 0 if we aren't (commands and Gemini aren't muted). */
+    /** Until when we're muted in the open channel, 0 if we aren't (commands aren't muted). */
     static long here() {
-        UUID ch = ChatChannels.channel();
-        long until = ch == null ? chatUntil : ch.equals(Ai.ID) || ch.equals(ChatChannels.SERVER) ? 0 : dmUntil;
-        return until > System.currentTimeMillis() ? until : 0;
+        Messenger.Chan c = Messenger.open();
+        if (c == null) {
+            return 0;
+        }
+        long now = System.currentTimeMillis(), until = 0;
+        String why = "";
+        for (var el : Messenger.mutes) {
+            var m = el.getAsJsonObject();
+            String scope = m.get("scope").getAsString();
+            long id = m.get("id").getAsLong(), u = m.get("until").getAsLong();
+            boolean holds = c.dm() ? scope.equals("dm") : scope.equals("space") && id == c.space || scope.equals("channel") && id == c.id;
+            if (holds && u > now && u > until) {
+                until = u;
+                why = m.has("reason") ? m.get("reason").getAsString() : "";
+            }
+        }
+        reason = why;
+        return until;
     }
 
     /** "Muted until 18:30 · spam" for the empty input. */

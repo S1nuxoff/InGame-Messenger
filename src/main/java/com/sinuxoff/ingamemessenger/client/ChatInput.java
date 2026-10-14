@@ -394,7 +394,8 @@ public final class ChatInput {
 
     private static final int SEARCH_ROOM = 0, RES_H = 21, RES_SHOWN = 7, HEAD_H = 16;
 
-    record Found(int id, long t, String name, String bit) {
+    /** A search result: a message somewhere in the channels we see. */
+    record Found(long id, long channel, long t, String name, String bit) {
     }
 
     private static boolean searching;
@@ -424,22 +425,19 @@ public final class ChatInput {
         query = "";
     }
 
-    static void onSearch(Packets.SearchRes r) {
-        if (!searching || !r.query().equals(sentQuery)) {
+    static void onFound(String q, java.util.List<Messenger.Entry> list) {
+        if (!searching || !q.equals(sentQuery)) {
             return;
         }
         java.util.List<Found> out = new java.util.ArrayList<>();
-        for (String line : r.data().split("\n")) {
-            String[] f = line.split("\t", 4);
-            if (f.length == 4) {
-                try {
-                    out.add(new Found(Integer.parseInt(f[0]), Long.parseLong(f[1]), f[2], f[3]));
-                } catch (NumberFormatException ignored) {
-                }
-            }
+        for (Messenger.Entry e : list) {
+            Messenger.Chan c = Messenger.channels.get(e.channel);
+            String where = c == null ? "" : c.dm() ? "@" + c.withName : "#" + c.name;
+            String what = "text".equals(e.kind) ? Messenger.body(e) : e.kind;
+            out.add(new Found(e.id, e.channel, e.time, e.name == null ? "" : e.name, where.isEmpty() ? what : where + " · " + what));
         }
         found = out;
-        shownQuery = r.query();
+        shownQuery = q;
         foundSel = foundTop = 0;
     }
 
@@ -455,7 +453,7 @@ public final class ChatInput {
                 sentQuery = q;
                 typedMs = 0;
                 if (q.length() >= 2) {
-                    Net.toServer(new Packets.SearchReq(q));
+                    Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.Find(q, 0));
                 } else {
                     found = java.util.List.of();
                     shownQuery = q;
@@ -615,7 +613,10 @@ public final class ChatInput {
 
     private static void jump(ChatScreen screen, Found f) {
         stopSearch(screen);
-        ChatReplies.jumpTo(f.id());
+        if (Messenger.current != f.channel()) {
+            Messenger.select(f.channel());
+        }
+        Feed.jumpTo(f.id());
     }
 
     /** Typed characters go into the search. True if ours. */

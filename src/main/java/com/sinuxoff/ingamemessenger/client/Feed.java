@@ -54,6 +54,32 @@ final class Feed {
     }
 
     private static final List<Text> texts = new ArrayList<>();
+    /** Quote lines drawn: {answered id, x, y, w, h} in chat pixels. */
+    private static final List<long[]> quotes = new ArrayList<>();
+    /** Where each drawn message's bottom is, in pixels from the chat's bottom (scrolled to 0). */
+    private static final java.util.Map<Long, int[]> offsets = new java.util.HashMap<>();
+    /** The message to scroll to (0 = none), and the one lit up after the jump. */
+    private static long wanted, flashId;
+    private static long flashAt;
+
+    /** Scrolls the open channel to a message, loading older pages until it's there. */
+    static void jumpTo(long id) {
+        wanted = id;
+    }
+
+    private static boolean clickQuote(double mx, double my) {
+        float lx = (float) ((mx - frameShiftX) / frameScale) - 4, ly = (float) ((my - frameShiftY) / frameScale);
+        if (ly < frameTop || ly >= frameBottom) {
+            return false;
+        }
+        for (long[] q : quotes) {
+            if (q[0] > 0 && lx >= q[1] && lx < q[1] + q[3] && ly >= q[2] && ly < q[2] + q[4]) {
+                jumpTo(q[0]);
+                return true;
+            }
+        }
+        return false;
+    }
     private static float frameScale = 1f, frameShiftX, frameShiftY;
     private static int frameTop, frameBottom;
 
@@ -119,6 +145,9 @@ final class Feed {
 
     /** A click on a text: as in the game's chat; with shift, its insertion goes into the input. */
     static boolean click(net.minecraft.client.gui.screens.ChatScreen screen, double mx, double my) {
+        if (open && clickQuote(mx, my)) {
+            return true;
+        }
         var s = styleAt(mx, my);
         if (s == null) {
             return false;
@@ -275,6 +304,14 @@ final class Feed {
             int w = Math.max(ChatLocations.LOC_W + timeW0, named ? font.width(nameOf(e)) : 0);
             return new Box(e, (named ? LINE : 0) + 2 * LINE + 2 * PAD_V + (date ? DATE_H : 0), named, face, date, List.of(), w, false);
         }
+        if ("poll".equals(e.kind)) { // the question, two rows per option, the votes' line
+            int n = e.body.has("o") ? e.body.getAsJsonArray("o").size() : 0;
+            List<FormattedCharSequence> q = font.split(Component.literal(e.body.has("q") ? e.body.get("q").getAsString() : "")
+                    .withStyle(st -> st.withBold(true)), ChatPolls.POLL_W);
+            int w = Math.max(ChatPolls.POLL_W, named ? font.width(nameOf(e)) : 0);
+            int h = (named ? LINE : 0) + q.size() * LINE + 3 + n * 2 * LINE + LINE + 2 * PAD_V + (date ? DATE_H : 0);
+            return new Box(e, h, named, face, date, q, w, false);
+        }
         if ("images".equals(e.kind)) {
             ChatAlbums.AlbumInfo ai = albumOf(e);
             List<FormattedCharSequence> cap = ai.caption().isEmpty() ? List.of() : font.split(Component.literal(ai.caption()), ai.width());
@@ -311,6 +348,21 @@ final class Feed {
         Panel.round(g, x, y, w, h, Math.min(10, h / 2), (int) (a * alpha) << 24 | c);
     }
 
+    /** A message's reactions as pills from x, their bottom at y. */
+    private static void drawReactions(GuiGraphicsExtractor g, Messenger.Entry e, List<ChatModel.Reaction> rx, int px, int y, float a, Font font) {
+        for (ChatModel.Reaction r : rx) {
+            int w = pillW(r, font);
+            boolean mine = r.mine();
+            Panel.round(g, px, y - 12, w, 11, 5, mine ? (int) (a * 0xE0) << 24 | 0x5B4BD6 : (int) (a * 0x50) << 24 | 0x2A3040);
+            ChatUi.emoji(g, r.emoji(), px + 4, y - 11, 9, a);
+            Gfx.text(g, font, String.valueOf(r.names().size()), px + 16, y - 10, (int) (a * 255) << 24 | (mine ? 0xFFFFFF : 0xC8CCD8), false);
+            if (e.id > 0) {
+                ChatUi.pill((int) e.id, r, px, y - 12, w, 11);
+            }
+            px += w + 3;
+        }
+    }
+
     /** Draws a message with its bottom at y; returns its top. */
     private static int draw(GuiGraphicsExtractor g, Box b, int y, int chatW, float a, Font font) {
         Messenger.Entry e = b.e();
@@ -323,7 +375,13 @@ final class Feed {
         if ("sticker".equals(e.kind)) {
             Library.Sticker st = Library.get(e.body.has("p") ? e.body.get("p").getAsString() : "", e.body.has("s") ? e.body.get("s").getAsString() : "");
             int sh = stickerH(), sw = st == null ? sh : Math.round(Math.min(sh * st.aspect(), sh * 1.6f));
-            int sx = right ? chatW - 2 - sw : AV, sy = y - sh;
+            int sx = right ? chatW - 2 - sw : AV;
+            List<ChatModel.Reaction> rx = reactions(e);
+            if (!rx.isEmpty()) {
+                drawReactions(g, e, rx, sx, y, a, font);
+                y -= RX_H;
+            }
+            int sy = y - sh;
             if (b.named()) {
                 Component name = ChatDecor.nameLine(e.name);
                 int nw = font.width(name);
@@ -342,18 +400,7 @@ final class Feed {
         } else {
             List<ChatModel.Reaction> rx = reactions(e);
             if (!rx.isEmpty()) { // the reactions' row under the bubble
-                int px = right ? chatW - 2 - (b.w() + 2 * PAD) : AV - PAD;
-                for (ChatModel.Reaction r : rx) {
-                    int w = pillW(r, font);
-                    boolean mine = r.mine();
-                    Panel.round(g, px, y - 12, w, 11, 5, mine ? (int) (a * 0xE0) << 24 | 0x5B4BD6 : (int) (a * 0x50) << 24 | 0x2A3040);
-                    ChatUi.emoji(g, r.emoji(), px + 4, y - 11, 9, a);
-                    Gfx.text(g, font, String.valueOf(r.names().size()), px + 16, y - 10, (int) (a * 255) << 24 | (mine ? 0xFFFFFF : 0xC8CCD8), false);
-                    if (e.id > 0) {
-                        ChatUi.pill((int) e.id, r, px, y - 12, w, 11);
-                    }
-                    px += w + 3;
-                }
+                drawReactions(g, e, rx, right ? chatW - 2 - (b.w() + 2 * PAD) : AV - PAD, y, a, font);
                 y -= RX_H;
             }
             int bw = b.w() + 2 * PAD, bh = b.h() - (b.date() ? DATE_H : 0) - (rx.isEmpty() ? 0 : RX_H);
@@ -369,6 +416,9 @@ final class Feed {
             if (q != null) { // the answered message: a bar in its author's color, the author, the start of it
                 int qw = Math.min(font.width(q) + 6, bw - 2 * PAD);
                 Panel.round(g, tx - 3, ty - 1, qw + 4, LINE + 1, 4, (int) (a * 0x26) << 24 | 0xFFFFFF);
+                if (open) {
+                    quotes.add(new long[]{Messenger.replyOf(e), tx - 3, ty - 1, qw + 4, LINE + 1});
+                }
                 String[] qi = ChatReplies.replyInfo((int) Messenger.replyOf(e));
                 g.fill(tx - 2, ty, tx, ty + 9, (int) (a * 255) << 24 | (qi != null && qi[0] != null ? ChatDecor.nameColor(qi[0]) : 0x8E95A6));
                 Gfx.text(g, font, font.plainSubstrByWidth(q.getString(), qw - 2).length() >= q.getString().length() ? q
@@ -391,6 +441,10 @@ final class Feed {
                 ChatDecor.drawInlineEmoji(g, font, l, tx, ty, a); // emoji over their blank places in the text
                 ty += LINE;
             }
+            if ("poll".equals(e.kind)) {
+                ChatPolls.PollInfo pi = ChatPolls.of(e);
+                ChatPolls.drawPoll(g, pi, tx, ty + 3 + pi.options.size() * 2 * LINE, LINE, a);
+            }
             String t = timeOf(e);
             boolean checks = checks(e);
             float timeX = bx + bw - PAD - ChatDates.timeWidth(t + (checks ? " ✓✓" : "")) + 2, timeY = y - PAD_V - 7;
@@ -407,8 +461,14 @@ final class Feed {
             boolean right2 = e.mine() && Prefs.ownRight();
             int bx = "sticker".equals(e.kind) ? (right2 ? chatW - 2 - b.w() : AV) : right2 ? chatW - 2 - bw : AV - PAD;
             // the text bubble's branch already moved y above the reactions' row
-            int bot = "sticker".equals(e.kind) || reactions(e).isEmpty() ? y : y;
+            int bot = y;
             ChatUi.bubble((int) e.id, bx, bot - bh, bx + ("sticker".equals(e.kind) ? b.w() : bw), bot);
+        }
+        if (e.id == flashId && e.id > 0) { // just jumped to: lit up for a moment
+            float f = 1f - (System.currentTimeMillis() - flashAt) / 1500f;
+            if (f > 0) {
+                g.fill(AV - PAD - 2, top + (b.date() ? DATE_H : 0) - 1, chatW, y + 1, (int) (f * a * 0x40) << 24 | 0x9C8CFF);
+            }
         }
         if (b.face()) {
             if (isPlayer(e)) {
@@ -486,6 +546,8 @@ final class Feed {
         ChatUi.clearHits();
         ChatUi.frame(s, 0, top, bottom, ChatMotion.shiftX(chat));
         texts.clear();
+        quotes.clear();
+        offsets.clear();
         frameScale = s;
         frameShiftX = ChatMotion.shiftX(chat);
         frameShiftY = ChatMotion.shiftY();
@@ -508,10 +570,13 @@ final class Feed {
             if (y - b.h() < bottom && a > 0.02f) {
                 draw(g, b, y, chatW, a, font);
             }
+            if (focused) {
+                offsets.put(e.id, new int[]{total, b.h()});
+            }
             int step = b.h() + (i > 0 && sameRun(list.get(i - 1), e) ? GAP : RUN_GAP);
             y -= step;
             total += step;
-            if (y < top - 200 && !focused) {
+            if (y < top - 200 && !focused && wanted == 0) {
                 break;
             }
         }
@@ -526,6 +591,21 @@ final class Feed {
                 at = target;
             }
             Messenger.Chan c = Messenger.open();
+            if (wanted != 0) {
+                int[] o = offsets.get(wanted);
+                if (o != null) { // there: its middle in the middle of the chat
+                    target = Mth.clamp(o[0] + o[1] / 2f - areaH / 2f, 0, max);
+                    flashId = wanted;
+                    flashAt = now;
+                    wanted = 0;
+                } else if (c != null && (!c.loaded || c.loading)) {
+                    // its page is on the way
+                } else if (c != null && c.more && c.oldest() > wanted) {
+                    Messenger.older();
+                } else {
+                    wanted = 0; // gone (deleted, or not in this channel)
+                }
+            }
             if (c != null && at >= max - 4 && c.more) { // at the top: the page before
                 Messenger.older();
             }
