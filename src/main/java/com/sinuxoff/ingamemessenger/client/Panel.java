@@ -720,7 +720,8 @@ final class Panel {
             Minecraft.getInstance().gui.hud.setOverlayMessage(net.minecraft.network.chat.Component.translatable("ingamemessenger.ai.text_only"), false);
             return;
         }
-        Net.toServer(new Packets.Send(s.pack(), s.id(), ChatInput.takeReply()));
+        ChatInput.takeReply();
+        Messenger.sendSticker(s.pack(), s.id(), 0);
         Library.used(s);
         Minecraft mc = Minecraft.getInstance();
         if (Prefs.keepOpen() && mc.gui.screen() instanceof net.minecraft.client.gui.screens.ChatScreen) {

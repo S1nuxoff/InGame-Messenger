@@ -55,7 +55,21 @@ public final class ChatHooks {
                 || "ingamemessenger.plain.install".equals(content.getStyle().getInsertion())) {
             return true;
         }
-        return on() && ChatMessages.transform(chat, content, sig, tag);
+        if (!on()) {
+            return false;
+        }
+        Messenger.line(content); // the game's chat line, as it is, into the server's chat
+        return true;
+    }
+
+    /** Draws the messenger's feed where the game's chat is. */
+    public static void feed(ChatComponent chat, GuiGraphicsExtractor g, int ticks, boolean focused) {
+        Feed.render(chat, g, ticks, focused);
+    }
+
+    /** Whether the game's own copy of a player's chat line is left out (ours comes from the server). */
+    public static boolean ownChatLine(net.minecraft.network.chat.ChatType.Bound type) {
+        return on() && type.chatType().is(net.minecraft.network.chat.ChatType.CHAT);
     }
 
     // Layout

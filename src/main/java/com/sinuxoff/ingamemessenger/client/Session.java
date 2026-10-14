@@ -58,6 +58,7 @@ public final class Session {
         if (last != null) {
             Minecraft.getInstance().gui.hud.getChat().clearMessages(false);
             ChatModel.reset();
+            Messenger.reset();
             ChatPages.reset();
             ChatReads.reset();
             ClientEvents.loggedOut();
@@ -89,6 +90,24 @@ public final class Session {
             ChatMessages.adoptEarly(Minecraft.getInstance().gui.hud.getChat());
         }
     }
+
+    /** The channel snapshot: the messenger is on (early lines of the game's chat are taken in by Messenger). */
+    static void onSnapshot() {
+        Object c = Minecraft.getInstance().getConnection();
+        if (c != null && c == matched && welcomed != c) {
+            welcomed = c;
+            ModCompat.tick();
+            var all = ((com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor) Minecraft.getInstance().gui.hud.getChat()).ingamemessenger$allMessages();
+            java.util.List<net.minecraft.network.chat.Component> early = new java.util.ArrayList<>();
+            for (int i = all.size() - 1; i >= 0; i--) {
+                early.add(all.get(i).content());
+            }
+            pendingEarly = early;
+        }
+    }
+
+    /** The game's chat lines from before the messenger came on, for Messenger to take after the snapshot. */
+    static java.util.List<net.minecraft.network.chat.Component> pendingEarly;
 
     static void tick() {
         sync();

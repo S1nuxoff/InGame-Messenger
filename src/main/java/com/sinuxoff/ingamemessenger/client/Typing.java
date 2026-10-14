@@ -45,14 +45,11 @@ final class Typing {
         }
         long now = System.currentTimeMillis();
         if (want && (!sent || now - sentMs > KEEP_ALIVE)) {
-            Net.toServer(new Packets.Typing(true));
+            Messenger.typing();
             sent = true;
             sentMs = now;
         } else if (!want && sent) {
-            if (mc.getConnection() != null) {
-                Net.toServer(new Packets.Typing(false));
-            }
-            sent = false;
+            sent = false; // it stops showing by itself
         }
     }
 

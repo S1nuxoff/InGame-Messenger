@@ -217,11 +217,13 @@ public abstract class ChatComponentMixin {
             return;
         }
         ChatHooks.drawShade(g, chat);
-        // the whole chat is moved right when the player wants it there (undone afterwards)
+        // the whole chat is moved right when the player wants it there
         Gfx.push(g);
         ChatHooks.tickShiftY(chat);
         Gfx.move(g, ChatHooks.shiftX(chat), ChatHooks.shiftY());
-        ChatHooks.renderBubbles(chat, g, ticks, focused);
+        ChatHooks.feed(chat, g, ticks, focused); // ours, in place of the game's lines
+        Gfx.pop(g);
+        ci.cancel();
     }
 
     private void ingamemessenger$after(GuiGraphicsExtractor g, int ticks, boolean focused) {

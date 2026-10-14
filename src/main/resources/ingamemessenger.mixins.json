@@ -13,6 +13,7 @@
     "GuiGraphicsAccessor",
     "KeyMappingAccessor",
     "ChatComponentMixin",
+    "ChatListenerMixin",
     "ChatTextClipMixin",
     "TextureFilterMixin",
     "ChatScreenAccessor",

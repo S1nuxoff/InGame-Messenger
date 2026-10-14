@@ -81,7 +81,7 @@ public final class ChatInput {
     // Chat list column next to the open chat, like Discord's: the public chat, then private chats (face and unread
     // count), then "+" to start one. The selected chat has a bar on its side; hovering shows the name.
 
-    private record Item(java.util.UUID peer, String name, int y) {
+    private record Item(long channel, String name, int y) {
     }
 
     private static final java.util.List<Item> items = new java.util.ArrayList<>();
@@ -115,24 +115,20 @@ public final class ChatInput {
             Gfx.pop(g);
             return;
         }
-        java.util.List<Item> want = new java.util.ArrayList<>();
-        want.add(new Item(null, Component.translatable("ingamemessenger.dm.common").getString(), 0));
-        if (Prefs.geminiOn()) {
-            want.add(new Item(Ai.ID, Ai.NAME, 0));
-        } else if (Ai.ID.equals(ChatChannels.channel())) { // turned off while open
-            ChatChannels.openChannel(null, null);
-        }
-        int shared = want.size() + 1;
-        want.add(new Item(ChatChannels.SERVER, Component.translatable("ingamemessenger.dm.server").getString(), 0));
-        ChatChannels.dmTabs.forEach((id, name) -> want.add(new Item(id, name, 0)));
+        java.util.List<Messenger.Chan> want = Messenger.ordered();
         int y = top + 2;
         Item hover = null;
-        for (int k = 0; k < want.size(); k++) {
-            Item it = want.get(k);
+        boolean sep = false;
+        for (Messenger.Chan c : want) {
             if (y + ITEM > bottom - ITEM) {
                 break;
             }
-            boolean on = java.util.Objects.equals(it.peer(), ChatChannels.channel());
+            if (c.dm() && !sep) { // between the server's channels and the private chats
+                sep = true;
+                g.fill(cx + 3, y + 1, cx + ICON - 3, y + 2, 0x30FFFFFF);
+                y += 4;
+            }
+            boolean on = c.id == Messenger.current;
             boolean over = mx >= sideX && mx < sideX + ChatMotion.SIDEBAR && my >= y && my < y + ITEM;
             if (on) {
                 Panel.round(g, cx - 2, y, ICON + 4, ICON + 4, 7, 0x605B4BD6);
@@ -140,29 +136,29 @@ public final class ChatInput {
             } else if (over) {
                 Panel.round(g, cx - 2, y, ICON + 4, ICON + 4, 7, 0x30FFFFFF);
             }
-            if (it.peer() == null || it.peer().equals(ChatChannels.SERVER)) {
-                Panel.round(g, cx, y + 2, ICON, ICON, 6, on ? 0xFF7B68FF : 0xFF2A3040);
-                Panel.drawIcon(g, it.peer() == null ? "chats" : "server", cx + 3, y + 5, ICON - 6, 0xFFFFFFFF);
+            String title = c.game ? Component.translatable("ingamemessenger.dm.common").getString() : c.dm() ? c.withName : "#" + c.name;
+            if (c.dm()) {
+                ChatRenderer.drawFace(g, c.with, c.withName, cx + 1, y + 3, ICON - 2, 1f);
             } else {
-                ChatRenderer.drawFace(g, it.peer(), it.name(), cx + 1, y + 3, ICON - 2, 1f);
+                Panel.round(g, cx, y + 2, ICON, ICON, 6, on ? 0xFF7B68FF : 0xFF2A3040);
+                if (c.game) {
+                    Panel.drawIcon(g, "chats", cx + 3, y + 5, ICON - 6, 0xFFFFFFFF);
+                } else {
+                    Gfx.text(g, font, "#", cx + (ICON - font.width("#")) / 2 + 1, y + 7, 0xFFFFFFFF, false);
+                }
             }
-            int unread = it.peer() == null ? ChatChannels.commonUnread : ChatChannels.dmUnread.getOrDefault(it.peer(), 0);
-            if (unread > 0) {
-                String badge = unread > 99 ? "99+" : String.valueOf(unread);
+            if (c.unread > 0) {
+                String badge = c.unread > 99 ? "99+" : String.valueOf(c.unread);
                 float bwf = Math.max(9, (float) Math.ceil(font.width(badge) * Panel.smallScale()) + 4);
                 int bw = Math.round(bwf), bx = cx + ICON - bw + 4, by = y;
                 Panel.round(g, bx, by, bw, 9, 4, 0xFFE0475A);
                 ChatDates.small(g, badge, bx + (bw - (float) Math.ceil(font.width(badge) * Panel.smallScale())) / 2f, by + 2, 0xFFFFFFFF);
             }
             if (over) {
-                hover = new Item(it.peer(), it.name(), y);
+                hover = new Item(c.id, title, y);
             }
-            items.add(new Item(it.peer(), it.name(), y));
+            items.add(new Item(c.id, title, y));
             y += ITEM;
-            if (k == shared - 1) { // separator between the shared chats (public, Gemini, server) and the private ones
-                g.fill(cx + 3, y + 1, cx + ICON - 3, y + 2, 0x30FFFFFF);
-                y += 4;
-            }
         }
         plusY = y + ITEM <= bottom ? y : -1;
         if (plusY >= 0) {
@@ -172,7 +168,7 @@ public final class ChatInput {
             g.fill(cx + 5, py + 8, cx + 13, py + 10, 0xFF9BE7A6);
             g.fill(cx + 8, py + 5, cx + 10, py + 13, 0xFF9BE7A6);
             if (over && !picking) {
-                hover = new Item(null, Component.translatable("ingamemessenger.dm.new_chat").getString(), plusY);
+                hover = new Item(0, Component.translatable("ingamemessenger.dm.new_chat").getString(), plusY);
             }
         }
         Item footHover = footHover(sh, mx, my);
@@ -219,14 +215,14 @@ public final class ChatInput {
         }
         int gy = gearY(sh), sy = gy - ITEM, by = sy - ITEM;
         if (my >= gy && my < gy + ITEM) {
-            return new Item(null, Component.translatable("ingamemessenger.screen.title").getString(), gy);
+            return new Item(0, Component.translatable("ingamemessenger.screen.title").getString(), gy);
         }
         if (my >= sy && my < sy + ITEM) {
-            return new Item(null, Component.translatable("ingamemessenger.search.hint").getString(), sy);
+            return new Item(0, Component.translatable("ingamemessenger.search.hint").getString(), sy);
         }
         if (Ai.ID.equals(ChatChannels.channel()) && my >= by && my < by + ITEM) {
             boolean armed = System.currentTimeMillis() - binArmed < 3000;
-            return new Item(null, Component.translatable(armed ? "ingamemessenger.ai.clear_sure" : "ingamemessenger.ai.clear_chat").getString(), by);
+            return new Item(0, Component.translatable(armed ? "ingamemessenger.ai.clear_sure" : "ingamemessenger.ai.clear_chat").getString(), by);
         }
         return null;
     }
@@ -305,7 +301,7 @@ public final class ChatInput {
                 var list = candidates();
                 int i = (int) Math.floor((my - r[1] - 3) / 14);
                 if (i >= 0 && i < list.size()) {
-                    ChatChannels.openChannel(com.sinuxoff.ingamemessenger.ServerCompat.id(list.get(i)), com.sinuxoff.ingamemessenger.ServerCompat.name(list.get(i)));
+                    Messenger.openDm(com.sinuxoff.ingamemessenger.ServerCompat.id(list.get(i)));
                 }
                 return true;
             }
@@ -324,10 +320,8 @@ public final class ChatInput {
         }
         for (Item it : items) {
             if (my >= it.y() && my < it.y() + ITEM) {
-                if (button == 1 && it.peer() != null && !it.peer().equals(Ai.ID) && !it.peer().equals(ChatChannels.SERVER)) {
-                    ChatChannels.closeTab(it.peer());
-                } else if (button == 0) {
-                    ChatChannels.openChannel(it.peer(), it.name());
+                if (button == 0) {
+                    Messenger.select(it.channel());
                 }
                 return true;
             }
@@ -746,60 +740,21 @@ public final class ChatInput {
         return out.toString();
     }
 
-    /** The input as sent: emoji as codes, reply prefix in front. */
+    /**
+     * The input as sent. A command goes to the game from any channel; text for the game's chat too (so plugins and
+     * bridges see it, and it comes back as our message); in any other channel it's sent as our message.
+     */
     public static String send(String text) {
-        if (editId >= 0) { // editing: sent as an edit, not a new message
-            int id = editId;
-            editId = -1;
-            if (!text.isBlank() && !text.startsWith("/")) {
-                int rt = ChatReplies.replyOfMid(id);
-                String body = expand(text.strip());
-                Net.toServer(
-                        new Packets.EditMsg(id, rt >= 0 ? "\u21A9" + rt + " " + body : body));
-            }
+        editId = -1;
+        replyTo = -1;
+        if (text.isBlank()) {
             return "";
         }
-        if (ChatChannels.SERVER.equals(ChatChannels.channel())) { // the server chat only takes commands
-            replyTo = -1;
-            return text.isBlank() ? "" : text.startsWith("/") ? text : "/" + text;
+        if (text.startsWith("/")) {
+            return text;
         }
-        if (Muted.here() > 0 && !text.startsWith("/")) { // the server wouldn't take it
-            Minecraft.getInstance().gui.hud.setOverlayMessage(Muted.hint(), false);
-            return "";
-        }
-        if (Ai.ID.equals(ChatChannels.channel()) && !text.startsWith("/")) { // Gemini chat: sent from the client to Gemini
-            if (!Images.atts.isEmpty()) {
-                Minecraft.getInstance().gui.hud.setOverlayMessage(Component.translatable("ingamemessenger.ai.text_only"), false);
-            }
-            Ai.say(expand(text).strip());
-            replyTo = -1;
-            return "";
-        }
-        if (ChatChannels.channel() != null && !text.startsWith("/") && Images.atts.isEmpty()) { // private chat text
-            if (!text.isBlank()) {
-                String out = expand(text).strip();
-                if (replyTo >= 0) {
-                    out = "\u21A9" + replyTo + " " + out;
-                }
-                Net.toServer(
-                        new Packets.DmSend(ChatChannels.channel(), out));
-                replyTo = -1;
-            }
-            return "";
-        }
-        if (!Images.atts.isEmpty() && !text.startsWith("/")) { // pictures attached: the text is their caption
-            Images.sendAlbum(expand(text).strip(), replyTo);
-            replyTo = -1;
-            return "";
-        }
-        String out = expand(text);
-        if (replyTo >= 0 && !text.startsWith("/") && !text.isBlank()) {
-            out = "\u21A9" + replyTo + " " + out;
-        }
-        if (!text.isBlank()) {
-            replyTo = -1;
-        }
-        return out;
+        String out = expand(text).strip();
+        return Messenger.sendText(out, 0) ? "" : out;
     }
 
     private static int[] barRect(int sw, int sh) {

@@ -174,6 +174,9 @@ public final class InGameMessenger {
     };
     public static volatile Consumer<Names> onNames = v -> {
     };
+    /** The channel protocol's packets (see Proto). */
+    public static volatile Consumer<Packet> onProto = v -> {
+    };
 
     public static void toClient(Packet packet) {
         if (packet instanceof Welcome p) {
@@ -230,6 +233,8 @@ public final class InGameMessenger {
             onMuteState.accept(p);
         } else if (packet instanceof Names p) {
             onNames.accept(p);
+        } else if (packet.type().id().startsWith("c_")) {
+            onProto.accept(packet);
         } else {
             LOG.warn("Unexpected packet for the client: {}", packet.type().id());
         }

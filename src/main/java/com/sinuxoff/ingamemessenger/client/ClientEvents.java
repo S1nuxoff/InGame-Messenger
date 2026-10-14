@@ -78,6 +78,12 @@ public final class ClientEvents {
         InGameMessenger.onPollState = v -> Minecraft.getInstance().execute(() -> ChatPolls.onPollState(v));
         InGameMessenger.onMuteState = v -> Minecraft.getInstance().execute(() -> Muted.on(v));
         InGameMessenger.onNames = v -> Minecraft.getInstance().execute(() -> ChatDecor.onNames(v.data()));
+        InGameMessenger.onProto = v -> Minecraft.getInstance().execute(() -> {
+            if (v instanceof com.sinuxoff.ingamemessenger.core.protocol.Proto.Snapshot) {
+                Session.onSnapshot();
+            }
+            Messenger.handle(v);
+        });
         InGameMessenger.onReactions = r -> Minecraft.getInstance().execute(() -> ChatModel.onReactions(r));
     }
 
@@ -321,7 +327,7 @@ public final class ClientEvents {
             return true;
         } else if (screen0 instanceof ChatScreen screen
                 && !((com.sinuxoff.ingamemessenger.mixin.ChatScreenAccessor) screen).ingamemessenger$input().getValue().startsWith("/")) {
-            ChatMotion.scrollBy(dy * (Compat.shiftDown() ? 1 : 3));
+            Feed.scroll(dy * (Compat.shiftDown() ? 1 : 3));
             return true;
         }
         return false;
