@@ -34,6 +34,7 @@ final class ChatMessages {
             Object a0 = tc.getArgs()[0], a1 = tc.getArgs()[1];
             Component nameC = a0 instanceof Component c ? c : Component.literal(String.valueOf(a0));
             Component text = a1 instanceof Component c ? c : Component.literal(String.valueOf(a1));
+            ChatDecor.learnName(nameC.getString(), nameC, Integer.MAX_VALUE);
             showText(chat, ChatModel.uuidOf(nameC), nameC.getString(), text, now, sig, null, Protocol.print(text.getString()));
         } else if (muteNotice(content)) { // "you're muted" belongs where you tried to write, not in the server chat
             Minecraft.getInstance().gui.setOverlayMessage(content, false);
@@ -72,6 +73,7 @@ final class ChatMessages {
             if (line != null) {
                 it.remove();
                 Component text = ChatDecor.dropStart(h.content(), line.start());
+                ChatDecor.learnName(ChatChannels.nameOf(line.sender()), h.content(), line.start());
                 showText(chat, line.sender(), ChatChannels.nameOf(line.sender()), text, h.ms(), h.sig(), null, Protocol.print(text.getString()));
             }
         }

@@ -126,6 +126,23 @@ final class ServerSide implements ServerPlatform {
         }
     }
 
+    /** "<name> body" the way the game shows chat, with the sender's display name (team colors, a rank mod's prefix). */
+    @Override
+    public void sayAs(UUID player, UUID sender, String senderName, String bodyKey, String bodyFallback, String... args) {
+        ServerPlayer p = server.getPlayerList().getPlayer(player);
+        if (p == null) {
+            return;
+        }
+        ServerPlayer s = server.getPlayerList().getPlayer(sender);
+        Component name = s != null ? s.getDisplayName() : Component.literal(senderName);
+        //? if >=1.19.4 {
+        Component body = Component.translatableWithFallback(bodyKey, bodyFallback, (Object[]) args);
+        //?} else {
+        /*Component body = Component.literal(String.format(bodyFallback, (Object[]) args));
+        *///?}
+        p.sendSystemMessage(Component.translatable("chat.type.text", name, body));
+    }
+
     @Override
     public String modVersion() {
         return Platform.get().modVersion();

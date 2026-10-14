@@ -37,6 +37,11 @@ final class ClientGate implements ServerPlatform {
     }
 
     @Override
+    public void sayAs(UUID player, UUID sender, String senderName, String bodyKey, String bodyFallback, String... args) {
+        platform.sayAs(player, sender, senderName, bodyKey, bodyFallback, args);
+    }
+
+    @Override
     public UUID idOf(String name) {
         return platform.idOf(name);
     }
@@ -56,23 +61,38 @@ final class ClientGate implements ServerPlatform {
             return;
         }
         if (packet instanceof Show p) {
-            say(player, "ingamemessenger.plain.sticker", "<%s> [sticker]", p.name());
+            line(player, p.sender(), p.name(), "sticker", "[sticker]");
         } else if (packet instanceof VoiceShow p) {
-            say(player, "ingamemessenger.plain.voice", "<%s> [voice message, %s s]",
-                    p.name(), String.valueOf(Math.max(1, Math.round(p.durationMs() / 1000f))));
+            line(player, p.sender(), p.name(), "voice", "[voice message, %s s]", String.valueOf(Math.max(1, Math.round(p.durationMs() / 1000f))));
         } else if (packet instanceof ImageShow p) {
             int n = p.data().split("\n").length;
             if (n == 1) {
-                say(player, "ingamemessenger.plain.picture", "<%s> [picture] %s", p.name(), p.caption());
+                line(player, p.sender(), p.name(), "picture", "[picture] %s", p.caption());
             } else {
-                say(player, "ingamemessenger.plain.pictures", "<%s> [%s pictures] %s", p.name(), String.valueOf(n), p.caption());
+                line(player, p.sender(), p.name(), "pictures", "[%s pictures] %s", String.valueOf(n), p.caption());
             }
         } else if (packet instanceof PollShow p) {
-            say(player, "ingamemessenger.plain.poll", "<%s> [poll] %s", p.name(), question(p.json()));
+            line(player, p.sender(), p.name(), "poll", "[poll] %s", question(p.json()));
         } else if (packet instanceof DmShow p) {
             if (player.equals(p.to())) {
                 say(player, "ingamemessenger.plain.dm", "[%s -> you] %s", p.fromName(), p.text());
             }
+        }
+    }
+
+    /**
+     * A sticker, voice message... as a chat line: in the server's own wording if the config has one ("{name} sent a
+     * sticker"), else like the sender's chat lines with the body in place of the text.
+     */
+    private void line(UUID player, UUID sender, String name, String what, String body, String... args) {
+        String own = platform.settings().plainText(what);
+        if (!own.isEmpty()) {
+            String[] all = new String[args.length + 1];
+            all[0] = name;
+            System.arraycopy(args, 0, all, 1, args.length);
+            platform.say(player, "ingamemessenger.plain." + what, own, all);
+        } else {
+            platform.sayAs(player, sender, name, "ingamemessenger.plain." + what + "_body", body, args);
         }
     }
 

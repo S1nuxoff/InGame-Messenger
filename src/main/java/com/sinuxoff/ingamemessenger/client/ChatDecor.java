@@ -28,8 +28,87 @@ final class ChatDecor {
         return NAME_COLORS[Math.floorMod(name.hashCode(), NAME_COLORS.length)];
     }
 
+    /** How the server shows a player's name in its chat lines (a rank, its colors), by lower-case name. */
+    private static final java.util.Map<String, Component> serverNames = new java.util.HashMap<>();
+
     static MutableComponent nameLine(String name) {
+        Component shown = serverNames.get(name.toLowerCase(java.util.Locale.ROOT));
+        if (shown != null) {
+            return fit(Component.empty().withStyle(s -> s.withBold(true)).append(shown), NAME_MAX_W);
+        }
         return Component.literal(name).withStyle(s -> s.withColor(nameColor(name)).withBold(true));
+    }
+
+    /** A server's long ranks and names end in "…" rather than taking a line of their own. */
+    private static final int NAME_MAX_W = 200;
+
+    /** text cut to maxW pixels with "…", styles kept. */
+    static MutableComponent fit(MutableComponent text, int maxW) {
+        var font = Minecraft.getInstance().font;
+        if (font.width(text) <= maxW) {
+            return text;
+        }
+        MutableComponent out = Component.empty().withStyle(text.getStyle());
+        int room = maxW - font.width(Component.literal("…").withStyle(text.getStyle()));
+        int[] used = {0};
+        boolean[] full = {false};
+        text.visit((style, part) -> {
+            for (int i = 0; i < part.length() && !full[0]; ) {
+                int n = Character.charCount(part.codePointAt(i));
+                String ch = part.substring(i, i + n);
+                int w = font.width(Component.literal(ch).withStyle(style));
+                if (used[0] + w > room) {
+                    full[0] = true;
+                    break;
+                }
+                out.append(Component.literal(ch).withStyle(style));
+                used[0] += w;
+                i += n;
+            }
+            return full[0] ? java.util.Optional.of(Boolean.TRUE) : java.util.Optional.empty();
+        }, text.getStyle());
+        return out.append(Component.literal("…"));
+    }
+
+    static void forgetServerNames() {
+        serverNames.clear();
+    }
+
+    /**
+     * Learns the server's look of a name from the start of a chat line, up to end ("[Admin] Name: " or a styled name), unless
+     * it's just the plain name: then our colors stay.
+     */
+    static void learnName(String name, Component head, int end) {
+        String plain = head.getString();
+        int from = 0, to = Math.min(end, plain.length());
+        while (from < to && (Character.isWhitespace(plain.charAt(from)) || plain.charAt(from) == '<')) {
+            from++;
+        }
+        while (to > from && (Character.isWhitespace(plain.charAt(to - 1)) || ":>»|→-".indexOf(plain.charAt(to - 1)) >= 0)) {
+            to--;
+        }
+        if (to <= from || !plain.substring(from, to).toLowerCase(java.util.Locale.ROOT).contains(name.toLowerCase(java.util.Locale.ROOT))) {
+            return; // not about this player's name
+        }
+        MutableComponent out = Component.empty();
+        boolean[] styled = {false};
+        int[] at = {0};
+        int a = from, b = to;
+        head.visit((style, part) -> {
+            int s = Math.max(a, at[0]), e = Math.min(b, at[0] + part.length());
+            if (s < e) {
+                out.append(Component.literal(part.substring(s - at[0], e - at[0])).withStyle(style));
+                styled[0] |= style.getColor() != null;
+            }
+            at[0] += part.length();
+            return java.util.Optional.empty();
+        }, net.minecraft.network.chat.Style.EMPTY);
+        String key = name.toLowerCase(java.util.Locale.ROOT);
+        if (styled[0] || !plain.substring(from, to).equalsIgnoreCase(name)) {
+            serverNames.put(key, out);
+        } else {
+            serverNames.remove(key);
+        }
     }
 
     /** The text without its first n characters, styles kept. */

@@ -59,6 +59,8 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
 
     final Tasks tasks = new Tasks(this);
     final OtherMutes others = new OtherMutes(getLogger());
+    /** The format of the last chat line (a chat plugin's, e.g. Essentials'): our plain lines take it too. */
+    volatile String chatFormat;
     ModSettings settings;
     /** Null while the database couldn't be opened. */
     volatile ChatServer chat;
@@ -186,6 +188,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     /** A chat line about to be broadcast: its id goes out first. */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
+        chatFormat = e.getFormat();
         ChatServer c = chat;
         if (c != null) {
             JsonObject text = new JsonObject();

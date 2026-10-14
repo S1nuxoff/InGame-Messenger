@@ -273,11 +273,11 @@ class ChatServerTest {
         s.handle(A, new ChatTarget(D));
         s.handle(A, new DmSend(D, "psst"));
         assertEquals(List.of(Welcome.class), p.got(D).stream().map(Object::getClass).toList());
-        assertEquals(List.of(D + " ingamemessenger.plain.sticker Alice", D + " ingamemessenger.plain.poll Alice Lunch?",
+        assertEquals(List.of(D + " ingamemessenger.plain.sticker Alice", D + " ingamemessenger.plain.poll_body Alice Lunch?",
                 D + " ingamemessenger.plain.dm Alice psst"), p.said);
         assertFalse(s.hasClient(D));
         assertEquals("{%s sent a sticker}", p.fallbacks.get(0), "the server's own wording");
-        assertEquals("<%s> [poll] %s", p.fallbacks.get(1));
+        assertEquals("<%s> [poll] %s", p.fallbacks.get(1), "else like a chat line of the sender's");
         p.said.clear();
         p.plainLines = false;
         s.handle(A, new Send("pack", "x", -1));

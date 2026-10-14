@@ -42,6 +42,17 @@ public interface ServerPlatform {
     /** Sends a translated line with arguments; clients without the mod see the English fallback. */
     void say(UUID player, String translationKey, String fallback, String... args);
 
+    /**
+     * A line for a player without the mod, as if sender had written body in the chat: in the server's own look of
+     * chat lines (rank, name colors). body is translated where possible, else its English fallback.
+     */
+    default void sayAs(UUID player, UUID sender, String senderName, String bodyKey, String bodyFallback, String... args) {
+        String[] all = new String[args.length + 1];
+        all[0] = senderName;
+        System.arraycopy(args, 0, all, 1, args.length);
+        say(player, bodyKey, "<%s> " + bodyFallback, all);
+    }
+
     /** The mod's version, e.g. "1.0.0". */
     String modVersion();
 

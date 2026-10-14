@@ -348,6 +348,7 @@ final class ChatModel {
         waiting.clear();
         ChatMessages.resetHeld();
         Muted.reset();
+        ChatDecor.forgetServerNames();
         lastSender = null;
         lastMs = 0;
         runNamed = false;

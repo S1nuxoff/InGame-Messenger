@@ -89,6 +89,40 @@ final class BukkitPlatform implements ServerPlatform {
         }
     }
 
+    /** In the format the chat's last line had (a chat plugin's), with the sender's display name (its rank). */
+    @Override
+    @SuppressWarnings("deprecation") // the Spigot chat API: what Spigot has too
+    public void sayAs(UUID player, UUID sender, String senderName, String bodyKey, String bodyFallback, String... args) {
+        Player p = Bukkit.getPlayer(player);
+        if (p == null) {
+            return;
+        }
+        Player s = Bukkit.getPlayer(sender);
+        String name = s != null ? s.getDisplayName() : senderName;
+        TranslatableComponent body = new TranslatableComponent(bodyKey, (Object[]) args);
+        body.setFallback(bodyFallback);
+        body.setColor(ChatColor.WHITE);
+        String format = plugin.chatFormat;
+        if (format != null) {
+            try {
+                String[] around = String.format(format, name, "\uE000").split("\uE000", -1);
+                if (around.length == 2) {
+                    java.util.List<net.md_5.bungee.api.chat.BaseComponent> line = new java.util.ArrayList<>();
+                    java.util.Collections.addAll(line, net.md_5.bungee.api.chat.TextComponent.fromLegacyText(around[0]));
+                    line.add(body);
+                    java.util.Collections.addAll(line, net.md_5.bungee.api.chat.TextComponent.fromLegacyText(around[1]));
+                    p.spigot().sendMessage(line.toArray(new net.md_5.bungee.api.chat.BaseComponent[0]));
+                    return;
+                }
+            } catch (java.util.IllegalFormatException ignored) {
+                // a format we can't fill: the game's own look below
+            }
+        }
+        net.md_5.bungee.api.chat.TextComponent shown = new net.md_5.bungee.api.chat.TextComponent(
+                net.md_5.bungee.api.chat.TextComponent.fromLegacyText(name));
+        p.spigot().sendMessage(new TranslatableComponent("chat.type.text", shown, body));
+    }
+
     @Override
     @SuppressWarnings("deprecation") // getPluginMeta() is Paper-only
     public String modVersion() {
