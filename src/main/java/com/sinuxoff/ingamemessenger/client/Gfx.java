@@ -451,10 +451,11 @@ public final class Gfx {
         *///?} else if >=1.21.4 {
         /*Minecraft.getInstance().gameRenderer.processBlurEffect();
         Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
-        *///?} else if >=1.20.5 {
+        *///?} else if >=1.21 {
         /*Minecraft.getInstance().gameRenderer.processBlurEffect(partialTick);
         Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
         *///?}
+        // 1.20.5 - 1.20.6 blur with blending on, made for the menus' background only: outside it the screen goes black
     }
 
     static void item(GuiGraphicsExtractor g, net.minecraft.world.item.ItemStack stack, int x, int y) {
