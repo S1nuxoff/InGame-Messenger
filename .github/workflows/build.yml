@@ -57,11 +57,16 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      # a version tag becomes a release with every jar (not -slim, -mojmap); the text is .github/release-notes/<tag>.md
+      # a version tag becomes a release with every jar (not -slim, -mojmap); the text is .github/release-notes/<tag>.md,
+      # where __TAG__ and __VERSION__ (the download links) are filled in
+      - if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag=${{ github.ref_name }}
+          sed -e "s/__TAG__/$tag/g" -e "s/__VERSION__/${tag#v}/g" .github/release-notes/$tag.md > release-notes.md
       - if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          body_path: .github/release-notes/${{ github.ref_name }}.md
+          body_path: release-notes.md
           fail_on_unmatched_files: true
           files: |
             versions/*/build/libs/ingamemessenger-*[0-9].jar
