@@ -183,6 +183,23 @@ public final class Proto {
         }
     }
 
+    /** Test servers only: asks the test peer to do something ("dm hello", "react 12 1"...). */
+    public record TestPeer(String action) implements Packet {
+        public static final PacketType<TestPeer> TYPE = new PacketType<>("c_test_peer", Direction.TO_SERVER, TestPeer.class, TestPeer::read);
+
+        public PacketType<TestPeer> type() {
+            return TYPE;
+        }
+
+        public void write(Wire.Out out) {
+            out.str(action, 500);
+        }
+
+        static TestPeer read(Wire.In in) {
+            return new TestPeer(in.str(500));
+        }
+    }
+
     /** A voice message's upload starts (its bytes follow as VoiceChunk). wave: one byte per bar. */
     public record VoiceUp(int upload, long channel, String nonce, int bytes, int durationMs, byte[] wave, long replyTo) implements Packet {
         public static final PacketType<VoiceUp> TYPE = new PacketType<>("c_voice_up", Direction.TO_SERVER, VoiceUp.class, VoiceUp::read);
@@ -456,6 +473,6 @@ public final class Proto {
     }
 
     public static final List<PacketType<?>> ALL = List.of(History.TYPE, Post.TYPE, Edit.TYPE, Delete.TYPE, React.TYPE, Read.TYPE, Typing.TYPE, Vote.TYPE,
-            Find.TYPE, OpenDm.TYPE, VoiceUp.TYPE, AlbumUp.TYPE, LinksUp.TYPE, Snapshot.TYPE, Msg.TYPE, Page.TYPE, Edited.TYPE, Deleted.TYPE,
+            Find.TYPE, OpenDm.TYPE, TestPeer.TYPE, VoiceUp.TYPE, AlbumUp.TYPE, LinksUp.TYPE, Snapshot.TYPE, Msg.TYPE, Page.TYPE, Edited.TYPE, Deleted.TYPE,
             Reactions.TYPE, ReadMark.TYPE, TypingAt.TYPE, PollState.TYPE, Found.TYPE, ChannelUp.TYPE, ChannelGone.TYPE, Mutes.TYPE);
 }

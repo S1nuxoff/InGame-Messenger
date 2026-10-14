@@ -38,6 +38,36 @@ final class AutoTest {
     /** What the steps act on: our text message and poll. */
     private static long textId, pollId, sentAt;
     private static Messenger.Entry voice;
+    /** The test peer's private chat, our answer there, our reply in the game's chat. */
+    private static long dmMsgId, replyId;
+    private static final String PEER = "TestBot";
+
+    private static void peer(String action) {
+        Net.toServer(new Proto.TestPeer(action));
+    }
+
+    private static Messenger.Chan dm() {
+        for (Messenger.Chan c : Messenger.channels.values()) {
+            if (c.dm() && PEER.equals(c.withName)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    /** The peer's message in this channel whose text has this. */
+    private static Messenger.Entry fromPeer(Messenger.Chan c, String has) {
+        if (c == null) {
+            return null;
+        }
+        for (int i = c.list.size() - 1; i >= 0; i--) {
+            Messenger.Entry e = c.list.get(i);
+            if (PEER.equals(e.name) && !e.mine() && e.text().contains(has)) {
+                return e;
+            }
+        }
+        return null;
+    }
     private static String typing;
     private static int typed;
 
@@ -284,6 +314,40 @@ final class AutoTest {
         s.add(new Step("voice: stopped", VoiceClient::stopPlaying, () -> !VoiceClient.playing(voice.body.get("k").getAsString()), 60, false));
         s.add(new Step("new poll window", () -> Minecraft.getInstance().gui.setScreen(new PollScreen(chat(), -1)),
                 () -> Minecraft.getInstance().gui.screen() instanceof PollScreen, 60, true));
+        s.add(new Step("bot: private message", () -> peer("dm hi " + token), () -> fromPeer(dm(), token) != null, 200, true));
+        s.add(new Step("private chat open", () -> {
+            openChat();
+            Messenger.select(dm().id);
+        }, () -> Messenger.current == dm().id && dm().loaded, 200, true));
+        s.add(new Step("private answer", () -> type("hey bot " + token), () -> {
+            for (Messenger.Entry e : dm().list) {
+                if (e.mine() && e.id > 0 && e.text().contains("hey bot " + token)) {
+                    dmMsgId = e.id;
+                    return true;
+                }
+            }
+            return false;
+        }, 200, false));
+        s.add(new Step("bot read it", () -> peer("read " + dm().id + " " + dmMsgId), () -> dm().peerRead >= dmMsgId, 200, true));
+        s.add(new Step("bot is typing", () -> peer("typing " + dm().id), () -> Messenger.typingHere().contains(PEER), 100, true));
+        s.add(new Step("back to the game's chat", () -> Messenger.select(Messenger.game), () -> Messenger.current == Messenger.game, 60, false));
+        s.add(new Step("bot reacts", () -> {
+            Messenger.Entry r = mine("text", "reply " + token);
+            replyId = r == null ? textId : r.id;
+            peer("react " + replyId + " 1");
+        }, () -> Messenger.byId(replyId) != null && Messenger.byId(replyId).reactions.contains(PEER), 200, true));
+        s.add(new Step("bot answers you", () -> peer("reply " + replyId + " got it " + token), () -> {
+            Messenger.Entry e = fromPeer(game(), "got it " + token);
+            return e != null && Messenger.replyOf(e) == replyId;
+        }, 200, true));
+        s.add(new Step("bot mentions you", () -> peer("say @" + ChatDecor.myName() + " look " + token),
+                () -> fromPeer(game(), "look " + token) != null, 200, true));
+        s.add(new Step("muted", () -> peer("mute"), () -> Muted.here() > 0, 200, true));
+        s.add(new Step("muted: nothing goes out", () -> {
+            sentAt = System.currentTimeMillis();
+            type("blocked " + token);
+        }, () -> System.currentTimeMillis() - sentAt > 4000 && mine("text", "blocked " + token) == null, 200, true));
+        s.add(new Step("unmuted", () -> peer("unmute"), () -> Muted.here() == 0, 200, false));
         s.add(new Step("delete", () -> {
             openChat();
             ChatReplies.deleteMine(textId);

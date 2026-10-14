@@ -276,7 +276,7 @@ public final class Hub {
             for (UUID u : dmPlayers.getOrDefault(c.id(), List.of())) {
                 if (!u.equals(viewer)) {
                     o.addProperty("with", u.toString());
-                    String n = platform.nameOf(u);
+                    String n = nameOf(u);
                     o.addProperty("withName", n == null ? "?" : n);
                 }
             }
@@ -510,6 +510,8 @@ public final class Hub {
             find(player, p);
         } else if (packet instanceof Proto.OpenDm p) {
             openDm(player, p.player());
+        } else if (packet instanceof Proto.TestPeer p) {
+            testPeer(player, name, p.action());
         } else if (packet instanceof Proto.VoiceUp p) {
             voices.start(player, p);
         } else if (packet instanceof Packets.VoiceChunk p) {
@@ -880,7 +882,7 @@ public final class Hub {
 
     /** The private chat of two players: found, or made and announced to both. */
     public long openDm(UUID who, UUID other) {
-        if (other.equals(who) || platform.nameOf(other) == null) {
+        if (other.equals(who) || nameOf(other) == null) {
             return 0;
         }
         String key = pair(who, other);
@@ -903,6 +905,68 @@ public final class Hub {
             send(u, new Proto.ChannelUp(channelJson(ch, u).toString()));
         }
         return id;
+    }
+
+    // The test peer
+
+    /** Test servers run with -Dingamemessenger.dev=true: only there the test peer exists. */
+    static final boolean DEV = Boolean.getBoolean("ingamemessenger.dev");
+    static final UUID PEER = UUID.nameUUIDFromBytes("ingamemessenger:test-peer".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    static final String PEER_NAME = "TestBot";
+
+    private String nameOf(UUID id) {
+        return DEV && PEER.equals(id) ? PEER_NAME : platform.nameOf(id);
+    }
+
+    /**
+     * A second player for the test run, who isn't online: writes to the player privately, answers, reacts, mentions
+     * them, reads, types, mutes and unmutes them. Actions: "dm text", "say text", "reply id text", "react id emoji",
+     * "read channel id", "typing channel", "mute", "unmute".
+     */
+    private void testPeer(UUID who, String name, String action) {
+        if (!DEV) {
+            return;
+        }
+        String[] a = action.split(" ", 3);
+        Channel game = channels.get(gameChat());
+        try {
+            switch (a[0]) {
+                case "dm" -> {
+                    long ch = openDm(who, PEER);
+                    String text = action.substring(3);
+                    JsonObject b = new JsonObject();
+                    b.addProperty("t", text);
+                    deliver(PEER, PEER_NAME, channels.get(ch), "text", b.toString(), text, 0, null);
+                }
+                case "say" -> {
+                    String text = action.substring(4);
+                    JsonObject b = new JsonObject();
+                    b.addProperty("t", text);
+                    deliver(PEER, PEER_NAME, game, "text", b.toString(), text, 0, null);
+                }
+                case "reply" -> {
+                    JsonObject b = new JsonObject();
+                    b.addProperty("t", a[2]);
+                    deliver(PEER, PEER_NAME, game, "text", b.toString(), a[2], Long.parseLong(a[1]), null);
+                }
+                case "react" -> react(PEER, PEER_NAME, new Proto.React(Long.parseLong(a[1]), a[2]));
+                case "read" -> read(PEER, new Proto.Read(Long.parseLong(a[1]), Long.parseLong(a[2])));
+                case "typing" -> {
+                    long ch = Long.parseLong(a[1]);
+                    for (UUID v : viewers(ch)) {
+                        if (!v.equals(PEER)) {
+                            platform.send(v, new Proto.TypingAt(ch, PEER, PEER_NAME));
+                        }
+                    }
+                }
+                case "mute" -> platform.info(moderation.command(PEER_NAME, "mute", List.of(name, "1m", "all", "test")));
+                case "unmute" -> platform.info(moderation.command(PEER_NAME, "unmute", List.of(name)));
+                default -> {
+                }
+            }
+        } catch (RuntimeException e) {
+            platform.warn("test peer: " + action + ": " + e);
+        }
     }
 
     // For the test bots and the platforms
