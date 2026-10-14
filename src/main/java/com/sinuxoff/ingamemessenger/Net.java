@@ -28,7 +28,7 @@ public final class Net {
     private static final Map<PacketType<?>, ResourceLocation> IDS = new HashMap<>();
 
     static {
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             IDS.put(t, InGameMessenger.id(t.id()));
         }
     }
@@ -52,7 +52,7 @@ public final class Net {
     private static final Map<PacketType<?>, CustomPacketPayload.Type<Payload>> TYPES = new HashMap<>();
 
     static {
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             TYPES.put(t, new CustomPacketPayload.Type<>(IDS.get(t)));
         }
     }

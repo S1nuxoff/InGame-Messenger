@@ -26,7 +26,7 @@ public final class FabricClient implements ClientModInitializer {
                 *///?}
             }
         };
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             if (t.direction() == PacketType.Direction.TO_CLIENT) {
                 //? if >=1.20.5 {
                 ClientPlayNetworking.registerGlobalReceiver(Net.type(t), (p, ctx) -> InGameMessenger.toClient(p.packet()));

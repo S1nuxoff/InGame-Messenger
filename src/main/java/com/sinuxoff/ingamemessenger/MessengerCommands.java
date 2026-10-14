@@ -25,10 +25,10 @@ final class MessengerCommands {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("messenger").requires(ServerCompat::isOperator)
                 .then(Commands.literal("reload").executes(ctx -> {
                     Platform.get().settings().reload();
-                    ChatServer chat = ServerSide.chat;
-                    if (chat != null) {
-                        chat.featuresChanged();
-                        chat.reloadStickers();
+                    var hub = ServerSide.hub;
+                    if (hub != null) {
+                        hub.featuresChanged();
+                        hub.reloadStickers();
                     }
                     return done(ctx.getSource(), "config and stickers reloaded");
                 }))
@@ -91,18 +91,18 @@ final class MessengerCommands {
     }
 
     private static int mutes(CommandSourceStack src, String what, String args) {
-        ChatServer chat = ServerSide.chat;
-        if (chat == null) {
+        var hub = ServerSide.hub;
+        if (hub == null) {
             return done(src, "off (no database)");
         }
         java.util.List<String> words = args.isBlank() ? java.util.List.of() : java.util.List.of(args.strip().split("\\s+"));
-        return done(src, chat.mutes().command(src.getTextName(), what, words));
+        return done(src, hub.moderation().command(src.getTextName(), what, words));
     }
 
     private static int changed(CommandSourceStack src, String what) {
-        ChatServer chat = ServerSide.chat;
-        if (chat != null) {
-            chat.featuresChanged();
+        var hub = ServerSide.hub;
+        if (hub != null) {
+            hub.featuresChanged();
         }
         return done(src, what);
     }

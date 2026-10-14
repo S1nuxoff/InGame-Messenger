@@ -44,55 +44,52 @@ public final class InGameMessenger {
     }
 
     public static void serverTick(MinecraftServer server) {
-        ChatServer chat = ServerSide.chat;
-        if (chat != null && server.getTickCount() % 200 == 0) {
-            chat.tick();
+        var hub = ServerSide.hub;
+        if (hub != null && server.getTickCount() % 100 == 0) {
+            hub.tick();
         }
     }
 
     /** A chat line about to be broadcast: its id goes out first, on the same connections. */
     public static void chatLine(ServerPlayer player, Component message) {
-        ChatServer chat = ServerSide.chat;
-        if (chat != null) {
-            String name = player.getGameProfile().getName();
-            int id = chat.chatLine(player.getUUID(), name, message.getString(), ServerSide.json(Platform.get().server(), message));
-            FakeBots.heard(Platform.get().server(), player, message.getString(), id);
+        var hub = ServerSide.hub;
+        if (hub != null) {
+            hub.chatLine(player.getUUID(), player.getGameProfile().getName(), message.getString());
         }
     }
 
     /** False (and the player is told) while they're muted in the chat: the line must not go out. */
     public static boolean mayChat(ServerPlayer player) {
-        ChatServer chat = ServerSide.chat;
-        return chat == null || chat.mutes().mayChat(player.getUUID());
+        var hub = ServerSide.hub;
+        return hub == null || hub.mayChat(player.getUUID());
     }
 
     /** False (and the player is told) if the command writes where they're muted (/msg, /me...). */
     public static boolean mayCommand(ServerPlayer player, String command) {
-        ChatServer chat = ServerSide.chat;
-        return chat == null || chat.mutes().mayCommand(player.getUUID(), command);
+        var hub = ServerSide.hub;
+        return hub == null || hub.mayCommand(player.getUUID(), command);
     }
 
     public static void playerJoined(ServerPlayer player) {
-        ChatServer chat = ServerSide.chat;
-        if (chat != null) {
-            chat.joined(player.getUUID());
-            FakeBots.joined(player);
+        var hub = ServerSide.hub;
+        if (hub != null) {
+            hub.joined(player.getUUID());
         }
     }
 
     public static void playerLeft(ServerPlayer player) {
-        ChatServer chat = ServerSide.chat;
-        if (chat != null) {
-            chat.left(player.getUUID(), player.getGameProfile().getName());
+        var hub = ServerSide.hub;
+        if (hub != null) {
+            hub.left(player.getUUID());
         }
     }
 
-    /** A system message about to be broadcast: gets an id and goes into the history. */
+    /** A system message about to be broadcast to everyone: kept in the server chat's history. */
     public static void systemMessage(Component message) {
-        ChatServer chat = ServerSide.chat;
+        var hub = ServerSide.hub;
         MinecraftServer server = Platform.get().server();
-        if (chat != null && server != null) {
-            chat.systemMessage(ServerSide.json(server, message));
+        if (hub != null && server != null) {
+            hub.systemLine(ServerSide.json(server, message));
         }
     }
 
@@ -102,22 +99,22 @@ public final class InGameMessenger {
 
     /** The client listed our channels after joining: Welcome again, it couldn't get the first one. */
     public static void channelsArrived(ServerPlayer player) {
-        ChatServer chat = ServerSide.chat;
-        if (chat != null && !chat.hasClient(player.getUUID())) {
-            chat.joined(player.getUUID());
+        var hub = ServerSide.hub;
+        if (hub != null && !hub.hasClient(player.getUUID())) {
+            hub.joined(player.getUUID());
         }
     }
 
     /** Whether the player's client said Hello with our protocol, so it has our channels whatever its loader reported. */
     public static boolean hasClient(ServerPlayer player) {
-        ChatServer chat = ServerSide.chat;
-        return chat != null && chat.hasClient(player.getUUID());
+        var hub = ServerSide.hub;
+        return hub != null && hub.hasClient(player.getUUID());
     }
 
     public static void toServer(ServerPlayer player, Packet packet) {
-        ChatServer chat = ServerSide.chat;
-        if (chat != null) {
-            chat.handle(player.getUUID(), packet);
+        var hub = ServerSide.hub;
+        if (hub != null) {
+            hub.handle(player.getUUID(), packet);
         }
     }
 

@@ -51,7 +51,7 @@ public final class NeoForgeMod {
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         // optional, with a fixed version: players join whatever the other side has, Welcome sorts out the rest
         PayloadRegistrar r = event.registrar("1").optional();
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             if (t.direction() == PacketType.Direction.TO_CLIENT) {
                 r.playToClient(Net.type(t), Net.codec(t), (p, ctx) -> InGameMessenger.toClient(p.packet()));
             } else {

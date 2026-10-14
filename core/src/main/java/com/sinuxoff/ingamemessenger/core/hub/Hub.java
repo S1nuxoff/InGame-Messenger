@@ -135,6 +135,16 @@ public final class Hub {
         void run() throws Exception;
     }
 
+    /** Rescans the sticker folders in the background, then sends the new index to everyone. */
+    public void reloadStickers() {
+        Thread t = new Thread(() -> {
+            stickers.load();
+            platform.execute(() -> clients.forEach(c -> platform.send(c, new Packets.StickerIndex(stickers.index()))));
+        }, "InGameMessenger stickers");
+        t.setDaemon(true);
+        t.start();
+    }
+
     public StickerStore stickers() {
         return stickers;
     }
@@ -487,9 +497,8 @@ public final class Hub {
         } else if (packet instanceof Packets.StickerGet p) {
             byte[] data = stickers.image(p.pack(), p.id(), p.thumb());
             send(player, new Packets.StickerData(p.pack(), p.id(), p.thumb(), data == null ? new byte[0] : data));
-        } else {
-            platform.warn("Unexpected packet from " + name + ": " + packet.type().id());
         }
+        // anything else is an old client's packet: ignored
     }
 
     /** True at most once per ms for this player and action. */

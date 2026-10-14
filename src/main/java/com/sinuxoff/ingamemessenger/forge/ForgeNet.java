@@ -32,7 +32,7 @@ final class ForgeNet {
 
     static void register() {
         // optional, with a fixed version: players join whatever the other side has, Welcome sorts out the rest
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             //? if >=1.20.2 {
             EventNetworkChannel ch = ChannelBuilder.named(InGameMessenger.id(t.id()))
                     .networkProtocolVersion(1)

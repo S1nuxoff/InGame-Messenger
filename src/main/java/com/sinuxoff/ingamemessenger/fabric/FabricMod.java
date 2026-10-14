@@ -42,7 +42,7 @@ public final class FabricMod implements ModInitializer {
     @Override
     public void onInitialize() {
         Platform.set(PLATFORM);
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             //? if <1.20.5 {
             /*if (t.direction() == PacketType.Direction.TO_SERVER) {
                 ServerPlayNetworking.registerGlobalReceiver(Net.id(t), (server, player, handler, buf, sender) -> {

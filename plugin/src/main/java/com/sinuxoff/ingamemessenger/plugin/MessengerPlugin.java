@@ -20,11 +20,11 @@ import com.sinuxoff.ingamemessenger.core.protocol.Packet;
 import com.sinuxoff.ingamemessenger.core.protocol.PacketType;
 import com.sinuxoff.ingamemessenger.core.protocol.Packets;
 import com.sinuxoff.ingamemessenger.core.protocol.Protocol;
-import com.sinuxoff.ingamemessenger.core.server.ChatServer;
+import com.sinuxoff.ingamemessenger.core.hub.Hub;
 import com.sinuxoff.ingamemessenger.core.server.FileSettings;
 import com.sinuxoff.ingamemessenger.core.server.ModSettings;
 import com.sinuxoff.ingamemessenger.core.storage.BlobStore;
-import com.sinuxoff.ingamemessenger.core.storage.ChatStore;
+import com.sinuxoff.ingamemessenger.core.storage.Store;
 import com.sinuxoff.ingamemessenger.core.storage.Database;
 import com.sinuxoff.ingamemessenger.core.storage.LocalBlobStore;
 import com.sinuxoff.ingamemessenger.core.storage.S3BlobStore;
@@ -50,7 +50,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     private static final Map<String, PacketType<?>> INCOMING = new HashMap<>();
 
     static {
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             if (t.direction() == PacketType.Direction.TO_SERVER) {
                 INCOMING.put(channel(t), t);
             }
@@ -63,7 +63,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     volatile String chatFormat;
     ModSettings settings;
     /** Null while the database couldn't be opened. */
-    volatile ChatServer chat;
+    volatile Hub hub;
     /** Players past PlayerJoinEvent. */
     private final Set<UUID> joined = ConcurrentHashMap.newKeySet();
     private Method addChannel;
@@ -82,17 +82,17 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
         try {
             Database db = Database.open(settings.database(), data, platform.configDir().resolve("libs"), getLogger()::info);
             BlobStore files = settings.storage().s3() ? new S3BlobStore(settings.storage()) : new LocalBlobStore(data);
-            storage = Storage.threaded(new ChatStore(db), files);
+            storage = Storage.threaded(new Store(db), files);
         } catch (Exception e) {
             getLogger().severe("InGame Messenger is OFF: can't open the " + settings.database().type() + " database (" + e
                     + "). Check [database] in " + platform.configDir().resolve("server.toml"));
             return;
         }
-        ChatServer c = new ChatServer(platform, storage);
-        chat = c;
+        Hub c = new Hub(platform, storage);
+        hub = c;
         c.reloadStickers();
 
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             if (t.direction() == PacketType.Direction.TO_CLIENT) {
                 getServer().getMessenger().registerOutgoingPluginChannel(this, channel(t));
             } else {
@@ -106,7 +106,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
             command.setExecutor(handler);
             command.setTabCompleter(handler);
         }
-        tasks.every(200, c::tick);
+        tasks.every(100, c::tick);
         tasks.everyAsync(40, others::refresh);
         // after /reload: the players already on get Welcome again
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -120,8 +120,8 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
         tasks.cancelAll();
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
-        ChatServer c = chat;
-        chat = null;
+        Hub c = hub;
+        hub = null;
         if (c != null) {
             c.close();
         }
@@ -131,7 +131,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent e) {
-        ChatServer c = chat;
+        Hub c = hub;
         if (c == null) {
             return;
         }
@@ -144,7 +144,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     /** Some clients list their channels only after joining, too late for the first Welcome. */
     @EventHandler
     public void onChannel(PlayerRegisterChannelEvent e) {
-        ChatServer c = chat;
+        Hub c = hub;
         UUID id = e.getPlayer().getUniqueId();
         if (c != null && e.getChannel().equals(WELCOME) && joined.contains(id) && !c.hasClient(id)) {
             tasks.runHere(() -> c.joined(id));
@@ -155,10 +155,10 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     public void onQuit(PlayerQuitEvent e) {
         UUID id = e.getPlayer().getUniqueId();
         joined.remove(id);
-        ChatServer c = chat;
+        Hub c = hub;
         if (c != null) {
             system(PaperText.ON ? PaperText.quit(e) : legacy(e.getQuitMessage()));
-            c.left(id, e.getPlayer().getName());
+            c.left(id);
         }
     }
 
@@ -170,8 +170,8 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     /** A muted player's chat line doesn't go out (other plugins' mutes are theirs to stop). */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChatMuted(AsyncPlayerChatEvent e) {
-        ChatServer c = chat;
-        if (c != null && !c.mutes().mayChat(e.getPlayer().getUniqueId())) {
+        Hub c = hub;
+        if (c != null && !c.mayChat(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
         }
     }
@@ -179,29 +179,29 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
     /** Nor /msg, /me and the like where the mute holds. */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCommandMuted(PlayerCommandPreprocessEvent e) {
-        ChatServer c = chat;
-        if (c != null && !c.mutes().mayCommand(e.getPlayer().getUniqueId(), e.getMessage())) {
+        Hub c = hub;
+        if (c != null && !c.mayCommand(e.getPlayer().getUniqueId(), e.getMessage())) {
             e.setCancelled(true);
         }
     }
 
-    /** A chat line about to be broadcast: its id goes out first. */
+    /** A chat line going out: stored in the server's chat channel and sent to the players with the mod as our message. */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
         chatFormat = e.getFormat();
-        ChatServer c = chat;
+        Hub c = hub;
         if (c != null) {
-            JsonObject text = new JsonObject();
-            text.addProperty("text", e.getMessage());
-            c.chatLine(e.getPlayer().getUniqueId(), e.getPlayer().getName(), e.getMessage(), text.toString());
+            UUID id = e.getPlayer().getUniqueId();
+            String name = e.getPlayer().getName(), text = e.getMessage();
+            tasks.run(() -> c.chatLine(id, name, text));
         }
     }
 
-    /** A join, leave or death line (as JSON): into the history, with an id. */
+    /** A join, leave or death line (as JSON): into the server chat's history. */
     private void system(String json) {
-        ChatServer c = chat;
+        Hub c = hub;
         if (c != null && json != null) {
-            c.systemMessage(json);
+            c.systemLine(json);
         }
     }
 
@@ -214,7 +214,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        ChatServer c = chat;
+        Hub c = hub;
         PacketType<?> type = INCOMING.get(channel);
         if (c == null || type == null) {
             return;
@@ -242,7 +242,7 @@ public final class MessengerPlugin extends JavaPlugin implements Listener, Plugi
      */
     private void listen(Player player) {
         Set<String> has = player.getListeningPluginChannels();
-        for (PacketType<?> t : Packets.ALL) {
+        for (PacketType<?> t : com.sinuxoff.ingamemessenger.core.protocol.Protocol.ALL) {
             String ch = channel(t);
             if (t.direction() == PacketType.Direction.TO_CLIENT && !has.contains(ch)) {
                 try {

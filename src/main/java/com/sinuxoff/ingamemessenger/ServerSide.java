@@ -23,8 +23,10 @@ import java.util.UUID;
 
 /** {@link ServerPlatform} for a running Minecraft server. */
 final class ServerSide implements ServerPlatform {
-    /** Null while no server runs. */
+    /** The old chat server: no longer started (the test bots and test chat still refer to it). */
     static volatile ChatServer chat;
+    /** Null while no server runs. */
+    static volatile com.sinuxoff.ingamemessenger.core.hub.Hub hub;
 
     private final MinecraftServer server;
 
@@ -40,23 +42,22 @@ final class ServerSide implements ServerPlatform {
         try {
             Database db = Database.open(s.database(), data, Platform.get().configDir().resolve("libs"), InGameMessenger.LOG::info);
             BlobStore files = s.storage().s3() ? new S3BlobStore(s.storage()) : new LocalBlobStore(data);
-            storage = Storage.threaded(new ChatStore(db), files);
+            storage = Storage.threaded(new com.sinuxoff.ingamemessenger.core.storage.Store(db), files);
         } catch (Exception e) {
             InGameMessenger.LOG.error("InGame Messenger is OFF: can't open the {} database ({}). Check [database] in {}",
                     s.database().type(), e.toString(), Platform.get().configDir().resolve("server.toml"));
             return;
         }
-        ChatServer c = new ChatServer(side, storage);
-        c.setListener(FakeBots.LISTENER);
-        chat = c;
-        c.reloadStickers();
+        com.sinuxoff.ingamemessenger.core.hub.Hub h = new com.sinuxoff.ingamemessenger.core.hub.Hub(side, storage);
+        hub = h;
+        h.reloadStickers();
     }
 
     static void stop() {
-        ChatServer c = chat;
-        chat = null;
-        if (c != null) {
-            c.close();
+        com.sinuxoff.ingamemessenger.core.hub.Hub h = hub;
+        hub = null;
+        if (h != null) {
+            h.close();
         }
     }
 

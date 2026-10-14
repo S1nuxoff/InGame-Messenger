@@ -3,7 +3,7 @@ package com.sinuxoff.ingamemessenger.plugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import com.sinuxoff.ingamemessenger.core.server.ChatServer;
+import com.sinuxoff.ingamemessenger.core.hub.Hub;
 
 import java.util.List;
 
@@ -22,9 +22,9 @@ final class MessengerCommand implements TabExecutor {
                 sender.sendMessage("InGame Messenger: no permission (" + MessengerPlugin.MUTE + ")");
                 return true;
             }
-            ChatServer chat = plugin.chat;
+            Hub chat = plugin.hub;
             sender.sendMessage("InGame Messenger: " + (chat == null ? "off (no database)"
-                    : chat.mutes().command(sender.getName(), args[0], List.of(args).subList(1, args.length))));
+                    : chat.moderation().command(sender.getName(), args[0], List.of(args).subList(1, args.length))));
             return true;
         }
         if (!sender.hasPermission(MessengerPlugin.ADMIN)) {
@@ -42,7 +42,7 @@ final class MessengerCommand implements TabExecutor {
     private static final List<String> MUTES = List.of("mute", "unmute", "mutes");
 
     private String run(String[] a) {
-        ChatServer chat = plugin.chat;
+        Hub chat = plugin.hub;
         // test servers: who has the messenger
         if (a.length == 1 && a[0].equals("clients") && Boolean.getBoolean("ingamemessenger.dev") && chat != null) {
             StringBuilder b = new StringBuilder();
@@ -88,7 +88,7 @@ final class MessengerCommand implements TabExecutor {
     }
 
     private String changed(String what) {
-        ChatServer chat = plugin.chat;
+        Hub chat = plugin.hub;
         if (chat != null) {
             chat.featuresChanged();
         }
