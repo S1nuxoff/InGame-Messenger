@@ -1,8 +1,10 @@
 name: Build
 
-# builds a version tag (git tag v0.1.0 && git push origin v0.1.0), pull requests, or on demand from the Actions tab
+# builds every push to dev (all versions compile?), a version tag (git tag v0.1.0 && git push origin v0.1.0: also the release),
+# pull requests, or on demand from the Actions tab
 on:
   push:
+    branches: [dev]
     tags: ['v*']
   pull_request:
   workflow_dispatch:
