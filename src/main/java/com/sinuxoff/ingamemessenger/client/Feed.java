@@ -45,9 +45,18 @@ final class Feed {
                        boolean timeRow) {
     }
 
+    /** One sender (a player, or the server for its lines), at most 2 minutes apart, the same day. */
     private static boolean sameRun(Messenger.Entry a, Messenger.Entry b) {
-        return a != null && b != null && a.sender != null && a.sender.equals(b.sender) && isPlayer(a) && isPlayer(b)
-                && Math.abs(a.time - b.time) < 120_000 && ChatDates.dayOf(a.time) == ChatDates.dayOf(b.time);
+        if (a == null || b == null || Math.abs(a.time - b.time) >= 120_000 || ChatDates.dayOf(a.time) != ChatDates.dayOf(b.time)) {
+            return false;
+        }
+        return !isPlayer(a) && !isPlayer(b) || isPlayer(a) && isPlayer(b) && a.sender.equals(b.sender);
+    }
+
+    /** The name over a run: the player's (with the server's look of it), or the server's own. */
+    private static Component nameOf(Messenger.Entry e) {
+        return isPlayer(e) ? ChatDecor.nameLine(e.name)
+                : Component.literal(ServerIcon.name()).withStyle(st -> st.withBold(true).withColor(0xC8CCD8));
     }
 
     private static boolean isPlayer(Messenger.Entry e) {
@@ -85,20 +94,12 @@ final class Feed {
     /** Lays out a message; prev is the one above it (for the name, the face's run and the date). */
     private static Box box(Messenger.Entry e, Messenger.Entry prev, Messenger.Entry next, int chatW, Font font) {
         boolean date = prev == null || ChatDates.dayOf(prev.time) != ChatDates.dayOf(e.time);
-        if (!isPlayer(e)) { // a line of the server or the game: centered, as it came
-            // the server lays its lines out for the game's chat width: they get the whole width
-            List<FormattedCharSequence> lines = font.split(textOf(e), chatW);
-            int w = 0;
-            for (FormattedCharSequence l : lines) {
-                w = Math.max(w, font.width(l));
-            }
-            return new Box(e, lines.size() * LINE + 2 * PAD_V + (date ? DATE_H : 0), false, false, date, lines, w, false);
-        }
         Messenger.Chan ch = Messenger.channels.get(e.channel);
         boolean right = e.mine() && Prefs.ownRight(); // ours on the right: no name, no face (like a phone's messenger)
         boolean named = !right && (date || !sameRun(prev, e)) && (ch == null || !ch.dm());
         boolean face = !right && !sameRun(e, next);
-        int maxW = chatW - AV - 2 * PAD - 4;
+        // the server lays its lines out for the game's chat width: they get all of it
+        int maxW = isPlayer(e) ? chatW - AV - 2 * PAD - 4 : chatW;
         if ("sticker".equals(e.kind)) {
             return new Box(e, (named ? LINE + 4 : 0) + stickerH() + (date ? DATE_H : 0), named, face, date, List.of(), stickerH(), false);
         }
@@ -111,7 +112,7 @@ final class Feed {
             w = Math.max(w, font.width(l));
         }
         if (named) {
-            w = Math.max(w, font.width(ChatDecor.nameLine(e.name)));
+            w = Math.max(w, font.width(nameOf(e)));
         }
         int timeW = ChatDates.timeWidth(timeOf(e) + (checks(e) ? " ✓✓" : "")) + ChatDates.TIME_GAP;
         int last = font.width(lines.get(lines.size() - 1));
@@ -138,18 +139,6 @@ final class Feed {
             ChatDates.drawDate(g, ChatDates.dayOf(e.time), top + 2, chatW, a);
         }
         int textCol = (int) (a * 255) << 24 | 0xFFFFFF;
-        if (!isPlayer(e)) {
-            // one short line (a join, a death) centered; a longer answer (a command's) as a block on the left
-            boolean block = b.lines().size() > 1;
-            int bw = b.w() + (block ? 8 : 2 * PAD), bx = block ? -4 : (chatW - bw) / 2, by = y - b.lines().size() * LINE - 2 * PAD_V;
-            Panel.round(g, bx, by, bw, b.lines().size() * LINE + 2 * PAD_V, block ? 8 : 6, (int) (a * 0x90) << 24 | BUBBLE_SYSTEM);
-            int ly = by + PAD_V + 1;
-            for (FormattedCharSequence l : b.lines()) {
-                Gfx.text(g, font, l, block ? 0 : (chatW - font.width(l)) / 2, ly, (int) (a * 255) << 24 | 0xC8CCD8, false);
-                ly += LINE;
-            }
-            return top;
-        }
         boolean right = e.mine() && Prefs.ownRight();
         if ("sticker".equals(e.kind)) {
             Library.Sticker st = Library.get(e.body.has("p") ? e.body.get("p").getAsString() : "", e.body.has("s") ? e.body.get("s").getAsString() : "");
@@ -174,10 +163,10 @@ final class Feed {
             int bw = b.w() + 2 * PAD, bh = b.h() - (b.date() ? DATE_H : 0);
             int bx = right ? chatW - 2 - bw : AV - PAD, by = y - bh;
             boolean me = !e.mine() && "text".equals(e.kind) && ChatDecor.mentionsMe(Component.literal(e.text()), e.name);
-            bubble(g, bx, by, bw, bh, me ? 0x332A5C : e.mine() ? BUBBLE_MINE : BUBBLE, e.nonce.isEmpty() ? a : a * 0.6f);
+            bubble(g, bx, by, bw, bh, !isPlayer(e) ? BUBBLE_SYSTEM : me ? 0x332A5C : e.mine() ? BUBBLE_MINE : BUBBLE, e.nonce.isEmpty() ? a : a * 0.6f);
             int tx = bx + PAD, ty = by + PAD_V + 1;
             if (b.named()) {
-                Gfx.text(g, font, ChatDecor.nameLine(e.name), tx, ty, textCol, false);
+                Gfx.text(g, font, nameOf(e), tx, ty, textCol, false);
                 ty += LINE;
             }
             for (FormattedCharSequence l : b.lines()) {
@@ -196,7 +185,11 @@ final class Feed {
             }
         }
         if (b.face()) {
-            ChatRenderer.drawFace(g, e.sender, e.name, 0, y - FACE, a);
+            if (isPlayer(e)) {
+                ChatRenderer.drawFace(g, e.sender, e.name, 0, y - FACE, a);
+            } else {
+                ServerIcon.draw(g, 0, y - FACE, FACE, a);
+            }
         }
         return top;
     }
