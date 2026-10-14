@@ -5,9 +5,6 @@
 - Built-in reaction emoji (`assets/ingamemessenger/textures/gui/emoji/`): [Twemoji](https://github.com/jdecked/twemoji),
   © Twitter, Inc and other contributors, licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
   Resized.
-- Smooth font (`assets/ingamemessenger/font/inter/`): [Inter](https://github.com/rsms/inter), © The Inter Project
-  Authors, licensed under the [SIL Open Font License 1.1](src/main/resources/assets/ingamemessenger/font/inter/OFL.txt).
-  Split into Latin, Cyrillic and Greek subsets.
 
 ## Libraries bundled in the mod
 

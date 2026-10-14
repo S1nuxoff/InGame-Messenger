@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "Írta: %s",
   "ingamemessenger.card.mention": "Említés",
-  "ingamemessenger.screen.own_right": "Saját üzeneteim a jobb oldalon",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "Saját üzeneteim a jobb oldalon"
 }

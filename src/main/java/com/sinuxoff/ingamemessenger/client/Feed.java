@@ -107,7 +107,7 @@ final class Feed {
             float[] x = {t.x()};
             net.minecraft.network.chat.Style[] hit = {null};
             t.line().accept((i, style, cp) -> {
-                float w = Smooth.width(font, FormattedCharSequence.forward(new String(Character.toChars(cp)), style));
+                float w = font.width(FormattedCharSequence.forward(new String(Character.toChars(cp)), style));
                 if (lx >= x[0] && lx < x[0] + w) {
                     hit[0] = style;
                     return false;
@@ -177,11 +177,6 @@ final class Feed {
 
     /** The quote line over a reply: the author and the start of the answered message. */
     private static Component quote(Messenger.Entry e) {
-        Component q = quoteText(e);
-        return q == null ? null : ChatDecor.smooth(q);
-    }
-
-    private static Component quoteText(Messenger.Entry e) {
         long r = Messenger.replyOf(e);
         if (r <= 0) {
             return null;
@@ -202,7 +197,7 @@ final class Feed {
     }
 
     private static int pillW(ChatModel.Reaction r, Font font) {
-        return 4 + 9 + 3 + Smooth.width(font, String.valueOf(r.names().size())) + 5;
+        return 4 + 9 + 3 + font.width(String.valueOf(r.names().size())) + 5;
     }
 
     /** One sender (a player, or the server for its lines), at most 2 minutes apart, the same day. */
@@ -220,8 +215,8 @@ final class Feed {
 
     /** The name over a run: the player's (with the server's look of it), or the server's own. */
     private static Component nameOf(Messenger.Entry e) {
-        return ChatDecor.smooth(isPlayer(e) ? ChatDecor.nameLine(e.name)
-                : Component.literal(ServerIcon.name()).withStyle(st -> st.withBold(true).withColor(0xC8CCD8)));
+        return isPlayer(e) ? ChatDecor.nameLine(e.name)
+                : Component.literal(ServerIcon.name()).withStyle(st -> st.withBold(true).withColor(0xC8CCD8));
     }
 
     private static boolean isPlayer(Messenger.Entry e) {
@@ -288,7 +283,7 @@ final class Feed {
         int w = b.w();
         Component q = quote(e);
         if (q != null && !"sticker".equals(e.kind)) {
-            w = Math.max(w, Math.min(Smooth.width(font, q) + 6, chatW - AV - 2 * PAD - 4));
+            w = Math.max(w, Math.min(font.width(q) + 6, chatW - AV - 2 * PAD - 4));
         }
         return extra == 0 && w == b.w() ? b : new Box(e, b.h() + extra, b.named(), b.face(), b.date(), b.lines(), w, b.timeRow());
     }
@@ -307,42 +302,42 @@ final class Feed {
         }
         int timeW0 = ChatDates.timeWidth(timeOf(e) + (checks(e) ? " \u2713\u2713" : "")) + ChatDates.TIME_GAP;
         if ("voice".equals(e.kind)) {
-            int w = Math.max(ChatVoiceNotes.VOICE_W + timeW0, named ? Smooth.width(font, nameOf(e)) : 0);
+            int w = Math.max(ChatVoiceNotes.VOICE_W + timeW0, named ? font.width(nameOf(e)) : 0);
             return new Box(e, (named ? LINE : 0) + 19 + 2 * PAD_V + (date ? DATE_H : 0), named, face, date, List.of(), w, false);
         }
         if ("text".equals(e.kind) && com.sinuxoff.ingamemessenger.core.text.ChatText.parseLocation(e.text()) != null) { // a location card
-            int w = Math.max(ChatLocations.LOC_W + timeW0, named ? Smooth.width(font, nameOf(e)) : 0);
+            int w = Math.max(ChatLocations.LOC_W + timeW0, named ? font.width(nameOf(e)) : 0);
             return new Box(e, (named ? LINE : 0) + 2 * LINE + 2 * PAD_V + (date ? DATE_H : 0), named, face, date, List.of(), w, false);
         }
         if ("poll".equals(e.kind)) { // the question, two rows per option, the votes' line
             int n = e.body.has("o") ? e.body.getAsJsonArray("o").size() : 0;
-            List<FormattedCharSequence> q = font.split(ChatDecor.smooth(Component.literal(e.body.has("q") ? e.body.get("q").getAsString() : "")
-                    .withStyle(st -> st.withBold(true))), ChatPolls.POLL_W);
-            int w = Math.max(ChatPolls.POLL_W, named ? Smooth.width(font, nameOf(e)) : 0);
+            List<FormattedCharSequence> q = font.split(Component.literal(e.body.has("q") ? e.body.get("q").getAsString() : "")
+                    .withStyle(st -> st.withBold(true)), ChatPolls.POLL_W);
+            int w = Math.max(ChatPolls.POLL_W, named ? font.width(nameOf(e)) : 0);
             int h = (named ? LINE : 0) + q.size() * LINE + 3 + n * 2 * LINE + LINE + 2 * PAD_V + (date ? DATE_H : 0);
             return new Box(e, h, named, face, date, q, w, false);
         }
         if ("images".equals(e.kind)) {
             ChatAlbums.AlbumInfo ai = albumOf(e);
-            List<FormattedCharSequence> cap = ai.caption().isEmpty() ? List.of() : font.split(ChatDecor.smooth(Component.literal(ai.caption())), ai.width());
-            int w = Math.max(ai.width(), named ? Smooth.width(font, nameOf(e)) : 0);
+            List<FormattedCharSequence> cap = ai.caption().isEmpty() ? List.of() : font.split(Component.literal(ai.caption()), ai.width());
+            int w = Math.max(ai.width(), named ? font.width(nameOf(e)) : 0);
             int h = (named ? LINE : 0) + ai.height() + 2 * ChatAlbums.ALBUM_PAD + cap.size() * LINE + (cap.isEmpty() ? 0 : PAD_V)
                     + (date ? DATE_H : 0);
             return new Box(e, h, named, face, date, cap, w, false);
         }
-        List<FormattedCharSequence> lines = new ArrayList<>(font.split(ChatDecor.smooth(textOf(e)), maxW));
+        List<FormattedCharSequence> lines = new ArrayList<>(font.split(textOf(e), maxW));
         if (lines.isEmpty()) {
             lines.add(FormattedCharSequence.EMPTY);
         }
         int w = 0;
         for (FormattedCharSequence l : lines) {
-            w = Math.max(w, Smooth.width(font, l));
+            w = Math.max(w, font.width(l));
         }
         if (named) {
-            w = Math.max(w, Smooth.width(font, nameOf(e)));
+            w = Math.max(w, font.width(nameOf(e)));
         }
         int timeW = ChatDates.timeWidth(timeOf(e) + (checks(e) ? " ✓✓" : "")) + ChatDates.TIME_GAP;
-        int last = Smooth.width(font, lines.get(lines.size() - 1));
+        int last = font.width(lines.get(lines.size() - 1));
         boolean timeRow = last + timeW > maxW;
         w = Math.max(w, timeRow ? timeW : last + timeW);
         int h = (named ? LINE : 0) + lines.size() * LINE + (timeRow ? LINE - 2 : 0) + 2 * PAD_V + (date ? DATE_H : 0);
@@ -397,8 +392,8 @@ final class Feed {
             }
             int sy = y - sh;
             if (b.named()) {
-                Component name = ChatDecor.smooth(ChatDecor.nameLine(e.name));
-                int nw = Smooth.width(font, name);
+                Component name = ChatDecor.nameLine(e.name);
+                int nw = font.width(name);
                 bubble(g, sx - PAD, sy - LINE - 4 - PAD_V, nw + 2 * PAD, LINE + 2 * PAD_V - 2, BUBBLE, a);
                 Gfx.text(g, font, name, sx, sy - LINE - 4, textCol, false);
             }
@@ -428,16 +423,15 @@ final class Feed {
             }
             Component q = quote(e);
             if (q != null) { // the answered message: a bar in its author's color, the author, the start of it
-                int qw = Math.min(Smooth.width(font, q) + 6, bw - 2 * PAD);
+                int qw = Math.min(font.width(q) + 6, bw - 2 * PAD);
                 Panel.round(g, tx - 3, ty - 1, qw + 4, LINE + 1, 4, (int) (a * 0x26) << 24 | 0xFFFFFF);
                 if (open) {
                     quotes.add(new long[]{Messenger.replyOf(e), tx - 3, ty - 1, qw + 4, LINE + 1});
                 }
                 String[] qi = ChatReplies.replyInfo((int) Messenger.replyOf(e));
                 g.fill(tx - 2, ty, tx, ty + 9, (int) (a * 255) << 24 | (qi != null && qi[0] != null ? ChatDecor.nameColor(qi[0]) : 0x8E95A6));
-                Gfx.text(g, font, Smooth.cut(font, q.getString(), qw - 2).length() >= q.getString().length() ? q
-                        : ChatDecor.smooth(Component.literal(Smooth.cut(font, q.getString(), qw - 8) + "\u2026").withStyle(st -> st.withColor(0xB8BECC))),
-                        tx + 3, ty, textCol, false);
+                Gfx.text(g, font, font.plainSubstrByWidth(q.getString(), qw - 2).length() >= q.getString().length() ? q
+                        : Component.literal(font.plainSubstrByWidth(q.getString(), qw - 8) + "\u2026").withStyle(st -> st.withColor(0xB8BECC)), tx + 3, ty, textCol, false);
                 ty += QUOTE_H;
             }
             var loc = "text".equals(e.kind) ? com.sinuxoff.ingamemessenger.core.text.ChatText.parseLocation(e.text()) : null;
@@ -533,15 +527,6 @@ final class Feed {
         }
         Font font = mc.font;
         float s = (float) Compat.chatScale(chat);
-        Smooth.scale = (float) (mc.getWindow().getGuiScale() * s);
-        try {
-            renderAt(chat, g, focused, mc, font, s);
-        } finally {
-            Smooth.scale = 0;
-        }
-    }
-
-    private static void renderAt(ChatComponent chat, GuiGraphicsExtractor g, boolean focused, Minecraft mc, Font font, float s) {
         int bottom = Mth.floor((g.guiHeight() - 40) / s);
         int areaH = ChatMotion.chatHeightPx(chat);
         int top = bottom - areaH;

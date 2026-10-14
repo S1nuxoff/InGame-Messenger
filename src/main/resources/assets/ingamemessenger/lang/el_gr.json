@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "Εκτός σύνδεσης",
   "ingamemessenger.card.wrote": "Έγραψε: %s",
   "ingamemessenger.card.mention": "Αναφορά",
-  "ingamemessenger.screen.own_right": "Τα μηνύματά μου στα δεξιά",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "Τα μηνύματά μου στα δεξιά"
 }

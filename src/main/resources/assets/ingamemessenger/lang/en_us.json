@@ -127,7 +127,6 @@
   "ingamemessenger.card.wrote": "Wrote: %s",
   "ingamemessenger.card.mention": "Mention",
   "ingamemessenger.screen.own_right": "My messages on the right",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages",
   "ingamemessenger.server.missing": "This server doesn't use InGame Messenger, so the chat works as usual.",
   "ingamemessenger.server.other_version": "This server has InGame Messenger %s and you have %s. The chat works as usual until the versions match.",
   "ingamemessenger.plain.sticker": "<%s> [sticker]",

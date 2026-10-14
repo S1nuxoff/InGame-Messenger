@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "Извън линия",
   "ingamemessenger.card.wrote": "Написа: %s",
   "ingamemessenger.card.mention": "Споменаване",
-  "ingamemessenger.screen.own_right": "Моите съобщения вдясно",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "Моите съобщения вдясно"
 }

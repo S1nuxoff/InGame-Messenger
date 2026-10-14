@@ -200,11 +200,11 @@ final class ChatReplies {
                 : i[0] == null ? Component.translatable("ingamemessenger.reply.server").getString() : i[0];
         int room = (int) (Compat.chatWidth(mc.gui.hud.getChat()) / Math.max(0.1, Compat.chatScale(mc.gui.hud.getChat()))) - ChatRenderer.AV - 40;
         MutableComponent name = Component.literal(who).withStyle(s -> s.withColor(i != null && i[0] != null ? ChatDecor.nameColor(who) : 0xC8CCD8));
-        int left = room - Smooth.width(mc.font, name) - 14;
+        int left = room - mc.font.width(name) - 14;
         String text = i == null ? "" : i[1];
-        String cut = Smooth.cut(mc.font, text, Math.max(0, left));
+        String cut = mc.font.plainSubstrByWidth(text, Math.max(0, left));
         if (cut.length() < text.length()) {
-            cut = Smooth.cut(mc.font, text, Math.max(0, left - Smooth.width(mc.font, "…"))) + "…";
+            cut = mc.font.plainSubstrByWidth(text, Math.max(0, left - mc.font.width("…"))) + "…";
         }
         return Component.literal("  ").append(name).append(Component.literal("  " + cut).withStyle(s -> s.withColor(0x9AA1B2)));
     }

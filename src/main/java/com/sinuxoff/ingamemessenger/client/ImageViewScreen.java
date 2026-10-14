@@ -40,7 +40,7 @@ final class ImageViewScreen extends BaseScreen {
     /** {x, y, w, h} of the "open in browser" link. */
     private int[] linkBox() {
         Component c = Component.translatable("ingamemessenger.image.open");
-        int w = Smooth.width(font, c) + 16;
+        int w = font.width(c) + 16;
         return new int[]{(width - w) / 2, height - 22, w, 14};
     }
 
@@ -93,7 +93,7 @@ final class ImageViewScreen extends BaseScreen {
                 Gfx.text(g, font, who, 12, 9, textA << 24 | ChatDecor.colorOf(who), false);
             }
             Component close = Component.translatable("ingamemessenger.image.close");
-            Gfx.text(g, font, close, width - 12 - Smooth.width(font, close), 9, textA << 24 | 0x8E95A6, false);
+            Gfx.text(g, font, close, width - 12 - font.width(close), 9, textA << 24 | 0x8E95A6, false);
             if (web()) {
                 int[] b = linkBox();
                 boolean over = mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + b[3];

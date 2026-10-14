@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "غير متصل",
   "ingamemessenger.card.wrote": "كتب: %s",
   "ingamemessenger.card.mention": "إشارة",
-  "ingamemessenger.screen.own_right": "رسائلي على اليمين",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "رسائلي على اليمين"
 }

@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "מנותק",
   "ingamemessenger.card.wrote": "כתב: %s",
   "ingamemessenger.card.mention": "אזכור",
-  "ingamemessenger.screen.own_right": "ההודעות שלי בימין",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "ההודעות שלי בימין"
 }

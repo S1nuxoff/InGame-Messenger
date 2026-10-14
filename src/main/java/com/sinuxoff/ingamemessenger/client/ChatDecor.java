@@ -70,25 +70,25 @@ final class ChatDecor {
             return bold.append(Component.literal(name).withStyle(s -> s.withColor(nameColor(name))));
         }
         var font = Minecraft.getInstance().font;
-        if (Smooth.width(font, bold.copy().append(shown)) <= NAME_MAX_W) {
+        if (font.width(bold.copy().append(shown)) <= NAME_MAX_W) {
             return bold.append(shown);
         }
         // "[Rank] Name suffix": the name stays whole, then the suffix if there's room, the rank gets what's left
         String plain = shown.getString();
         int at = plain.toLowerCase(java.util.Locale.ROOT).lastIndexOf(name.toLowerCase(java.util.Locale.ROOT));
         if (at < 0) {
-            return bold.append(cut(slice(shown, 0, plain.length()), NAME_MAX_W - Smooth.width(font, bold.copy().append("\u2026")), true));
+            return bold.append(cut(slice(shown, 0, plain.length()), NAME_MAX_W - font.width(bold.copy().append("\u2026")), true));
         }
         MutableComponent nick = slice(shown, at, at + name.length());
         MutableComponent rest = slice(shown, at + name.length(), plain.length());
-        int nickW = Smooth.width(font, bold.copy().append(nick));
-        if (Smooth.width(font, bold.copy().append(nick).append(rest)) > NAME_MAX_W) {
+        int nickW = font.width(bold.copy().append(nick));
+        if (font.width(bold.copy().append(nick).append(rest)) > NAME_MAX_W) {
             rest = Component.empty();
         }
-        int room = NAME_MAX_W - Smooth.width(font, bold.copy().append(nick).append(rest));
+        int room = NAME_MAX_W - font.width(bold.copy().append(nick).append(rest));
         MutableComponent rank = slice(shown, 0, at);
-        if (Smooth.width(font, bold.copy().append(rank)) > room) {
-            rank = cut(rank, room - Smooth.width(font, bold.copy().append("\u2026 ")), false);
+        if (font.width(bold.copy().append(rank)) > room) {
+            rank = cut(rank, room - font.width(bold.copy().append("\u2026 ")), false);
             rank = rank.getString().isBlank() ? Component.empty() : rank.append("\u2026 ");
         }
         return bold.append(rank).append(nick).append(rest);
@@ -119,7 +119,7 @@ final class ChatDecor {
             for (int i = 0; i < part.length() && !full[0]; ) {
                 int n = Character.charCount(part.codePointAt(i));
                 Component ch = Component.literal(part.substring(i, i + n)).withStyle(style.withBold(true));
-                int w = Smooth.width(font, ch);
+                int w = font.width(ch);
                 if (used[0] + w > maxW) {
                     full[0] = true;
                     break;
@@ -230,11 +230,6 @@ final class ChatDecor {
     /** An emoji's blank place (its insertion is ours, not something to put in the input). */
     static boolean isEmojiMark(String insertion) {
         return insertion != null && insertion.startsWith(EMOJI_MARK);
-    }
-
-    /** Message text in the smooth font when the player chose it (emoji keep theirs). */
-    static Component smooth(Component text) {
-        return Smooth.text(text);
     }
 
     static Component highlightMentions(Component text) {

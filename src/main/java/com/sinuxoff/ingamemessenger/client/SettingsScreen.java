@@ -82,9 +82,6 @@ final class SettingsScreen extends BaseScreen {
             addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.own_right"),
                     Prefs::ownRight, () -> true, Prefs::toggleOwnRight));
             y += ROW + GAP;
-            addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.smooth_font"),
-                    Prefs::smoothFont, () -> true, Prefs::toggleSmoothFont));
-            y += ROW + GAP;
             addRenderableWidget(new Glass.Switch(x, y, COL, ROW, () -> Component.translatable("ingamemessenger.screen.hide_hotbar"),
                     Prefs::hideHotbar, () -> true, Prefs::toggleHideHotbar));
             y += ROW + GAP;
@@ -298,7 +295,7 @@ final class SettingsScreen extends BaseScreen {
                 Panel.round(g, r[0] + 3, iy, r[2] - 6, 16, 5, on ? 0x605B4BD6 : 0x1CFFFFFF);
             }
             Component name = shortName(l.get(i), picking == 1 ? "ingamemessenger.sound.default" : "ingamemessenger.sound.as_mc");
-            Gfx.text(g, font, Smooth.cut(font, name.getString(), r[2] - 16), r[0] + 8, iy + 4, over ? 0xFFFFFFFF : 0xFFC8CCD8, false);
+            Gfx.text(g, font, font.plainSubstrByWidth(name.getString(), r[2] - 16), r[0] + 8, iy + 4, over ? 0xFFFFFFFF : 0xFFC8CCD8, false);
         }
         Gfx.pop(g);
     }
@@ -438,7 +435,7 @@ final class SettingsScreen extends BaseScreen {
             if (!pack.stickers().isEmpty()) {
                 Library.draw(g, pack.stickers().get(0), left + 2, top + 1, 22, 22, 1f);
             }
-            Gfx.text(g, font, Smooth.cut(font, pack.title(), width - 80), left + 30, top + 3, TEXT);
+            Gfx.text(g, font, font.plainSubstrByWidth(pack.title(), width - 80), left + 30, top + 3, TEXT);
             Gfx.text(g, font, Component.translatable(pack.emoji() ? "ingamemessenger.screen.count_emoji" : "ingamemessenger.screen.count",
                     pack.stickers().size()), left + 30, top + 13, MUTED);
         }

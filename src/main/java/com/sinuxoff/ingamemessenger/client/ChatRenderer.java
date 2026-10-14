@@ -219,7 +219,7 @@ final class ChatRenderer {
             int start = j, maxW = 0;
             GuiMessage.Line first = lines.get(j + scroll);
             do {
-                maxW = Math.max(maxW, Smooth.width(mc.font, lines.get(j + scroll).content()));
+                maxW = Math.max(maxW, mc.font.width(lines.get(j + scroll).content()));
                 j++;
             } while (j + scroll < lines.size() && j < shown && !lines.get(j + scroll).endOfEntry());
             ChatModel.Msg m = first.tag() == null ? null : ChatModel.msgs.get(first.tag());
@@ -270,7 +270,7 @@ final class ChatRenderer {
                 time = time + " \u2713\u2713";
             }
             boolean mineRight = Prefs.ownRight() && ChatReplies.mine(m);
-            int lastW = inside ? reactionsWidth(rs) : Smooth.width(mc.font, lines.get(bottomLine + scroll).content());
+            int lastW = inside ? reactionsWidth(rs) : mc.font.width(lines.get(bottomLine + scroll).content());
             ChatVoiceNotes.VoiceInfo vi = ChatVoiceNotes.voiceOf.get(first.tag());
             if (vi != null) { // room for the voice player
                 maxW = Math.max(maxW, ChatVoiceNotes.VOICE_W);
@@ -325,7 +325,7 @@ final class ChatRenderer {
                 bubbleRight = tx + size[0];
                 if (m.named()) { // just the name, on a small bubble
                     int ny = L.textY(topLine) - 1;
-                    int nw = Smooth.width(mc.font, lines.get(topLine + scroll).content());
+                    int nw = mc.font.width(lines.get(topLine + scroll).content());
                     bubble(g, bx, ny - PAD_V, nw + 2 * BUBBLE_PAD, 9 + 2 * PAD_V, BUBBLE, a);
                     ChatUi.face(m.sender(), m.name(), tx, ny, nw, 9);
                 }
@@ -340,7 +340,7 @@ final class ChatRenderer {
                 }
                 bubbleRight = bx + bw;
                 if (m.named()) {
-                    ChatUi.face(m.sender(), m.name(), tx, L.textY(topLine) - 1, Smooth.width(mc.font, lines.get(topLine + scroll).content()), 9);
+                    ChatUi.face(m.sender(), m.name(), tx, L.textY(topLine) - 1, mc.font.width(lines.get(topLine + scroll).content()), 9);
                 }
             }
             ChatModel.textXOf.put(first.tag(), tx);
@@ -381,7 +381,7 @@ final class ChatRenderer {
             Integer quoted = ChatReplies.replyOf.get(first.tag());
             if (quoted != null && topLine - (m.named() ? 1 : 0) >= bottomLine) {
                 int ql = topLine - (m.named() ? 1 : 0), qy = L.textY(ql) - 1;
-                int qw = Smooth.width(mc.font, lines.get(ql + scroll).content());
+                int qw = mc.font.width(lines.get(ql + scroll).content());
                 if (m.sticker()) { // stickers have no bubble, so the quote gets a small one
                     bubble(g, bx, qy - PAD_V, qw + 2 * BUBBLE_PAD, 9 + 2 * PAD_V, BUBBLE, a);
                 }
@@ -450,10 +450,10 @@ final class ChatRenderer {
         if (unseen > 0) {
             String n = unseen > 99 ? "99+" : String.valueOf(unseen);
             var font = Minecraft.getInstance().font;
-            int w = Math.max(11, Smooth.width(font, n) + 6);
+            int w = Math.max(11, font.width(n) + 6);
             int px = x + DOWN / 2 - w / 2, py = y - 8;
             Panel.round(g, px, py, w, 11, 5, (int) (a * 255) << 24 | 0x7B68FF);
-            Gfx.text(g, font, n, px + (w - Smooth.width(font, n)) / 2 + 1, py + 2, (int) (a * 255) << 24 | 0xFFFFFF, false);
+            Gfx.text(g, font, n, px + (w - font.width(n)) / 2 + 1, py + 2, (int) (a * 255) << 24 | 0xFFFFFF, false);
         }
         ChatUi.down(x, y + dy - (unseen > 0 ? 8 : 0), DOWN, DOWN + (unseen > 0 ? 8 : 0));
     }
@@ -465,7 +465,7 @@ final class ChatRenderer {
     }
 
     private static int pillW(ChatModel.Reaction r) {
-        return 4 + 9 + 3 + Smooth.width(Minecraft.getInstance().font, String.valueOf(r.names().size())) + 5;
+        return 4 + 9 + 3 + Minecraft.getInstance().font.width(String.valueOf(r.names().size())) + 5;
     }
 
     private static int reactionsWidth(List<ChatModel.Reaction> rs) {

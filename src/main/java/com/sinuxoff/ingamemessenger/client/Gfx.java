@@ -100,9 +100,9 @@ public final class Gfx {
 
     public static void text(GuiGraphicsExtractor g, Font font, String text, int x, int y, int color, boolean shadow) {
         //? if >=26.1 {
-        g.text(font, Smooth.seq(text), x, y, opaque(color), shadow);
+        g.text(font, text, x, y, opaque(color), shadow);
         //?} else {
-        /*g.drawString(font, Smooth.seq(text), x, y, opaque(color), shadow);
+        /*g.drawString(font, text, x, y, opaque(color), shadow);
         *///?}
     }
 
@@ -112,9 +112,9 @@ public final class Gfx {
 
     public static void text(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int color, boolean shadow) {
         //? if >=26.1 {
-        g.text(font, Smooth.seq(text), x, y, opaque(color), shadow);
+        g.text(font, text, x, y, opaque(color), shadow);
         //?} else {
-        /*g.drawString(font, Smooth.seq(text), x, y, opaque(color), shadow);
+        /*g.drawString(font, text, x, y, opaque(color), shadow);
         *///?}
     }
 
@@ -124,28 +124,28 @@ public final class Gfx {
 
     public static void text(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color, boolean shadow) {
         //? if >=26.1 {
-        g.text(font, Smooth.seq(text), x, y, opaque(color), shadow);
+        g.text(font, text, x, y, opaque(color), shadow);
         //?} else {
-        /*g.drawString(font, Smooth.seq(text), x, y, opaque(color), shadow);
+        /*g.drawString(font, text, x, y, opaque(color), shadow);
         *///?}
     }
 
     public static void centeredText(GuiGraphicsExtractor g, Font font, String text, int x, int y, int color) {
-        text(g, font, text, x - Smooth.width(font, text) / 2, y, color);
+        text(g, font, text, x - font.width(text) / 2, y, color);
     }
 
     public static void centeredText(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int color) {
-        text(g, font, text, x - Smooth.width(font, text) / 2, y, color);
+        text(g, font, text, x - font.width(text) / 2, y, color);
     }
 
     public static void centeredText(GuiGraphicsExtractor g, Font font, FormattedCharSequence text, int x, int y, int color) {
-        text(g, font, text, x - Smooth.width(font, text) / 2, y, color);
+        text(g, font, text, x - font.width(text) / 2, y, color);
     }
 
     /** Text scaled down to fit maxWidth if needed (long translations on small buttons), vertically centered on its line. */
     public static void fittedText(GuiGraphicsExtractor g, Font font, Component text, int x, int y, int maxWidth, int color, boolean centered,
                                   boolean shadow) {
-        int w = Smooth.width(font, text);
+        int w = font.width(text);
         if (w <= maxWidth) {
             text(g, font, text, centered ? x - w / 2 : x, y, color, shadow);
             return;

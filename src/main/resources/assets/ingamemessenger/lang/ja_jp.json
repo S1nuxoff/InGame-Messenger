@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "オフライン",
   "ingamemessenger.card.wrote": "発言: %s",
   "ingamemessenger.card.mention": "メンション",
-  "ingamemessenger.screen.own_right": "自分のメッセージを右側に",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "自分のメッセージを右側に"
 }

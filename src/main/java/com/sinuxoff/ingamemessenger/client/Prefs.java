@@ -43,7 +43,7 @@ final class Prefs {
     private static int chatScale = 100;
     private static boolean pinned;
     private static boolean showTyping = true, seeTyping = true;
-    private static boolean chatRight, ownRight, keepOpen, smoothFont;
+    private static boolean chatRight, ownRight, keepOpen;
     private static boolean serverNotices = true;
     private static boolean hideHotbar = true, blurBehind = true;
     /** Line spacing was raised once for the bubbles; not again if the player lowers it. */
@@ -82,7 +82,6 @@ final class Prefs {
             seeTyping = getBool(o, "seeTyping", seeTyping);
             chatRight = getBool(o, "chatRight", chatRight);
             ownRight = getBool(o, "ownRight", ownRight);
-            smoothFont = getBool(o, "smoothFont", smoothFont);
             keepOpen = getBool(o, "keepOpen", keepOpen);
             serverNotices = getBool(o, "serverNotices", serverNotices);
             hideHotbar = getBool(o, "hideHotbar", hideHotbar);
@@ -114,7 +113,6 @@ final class Prefs {
         o.addProperty("seeTyping", seeTyping);
         o.addProperty("chatRight", chatRight);
         o.addProperty("ownRight", ownRight);
-        o.addProperty("smoothFont", smoothFont);
         o.addProperty("keepOpen", keepOpen);
         o.addProperty("serverNotices", serverNotices);
         o.addProperty("hideHotbar", hideHotbar);
@@ -288,18 +286,6 @@ final class Prefs {
     static void toggleOwnRight() {
         load();
         ownRight = !ownRight;
-        save();
-    }
-
-    /** Messages in a smooth font (Inter) instead of the game's pixel one. */
-    static boolean smoothFont() {
-        load();
-        return smoothFont;
-    }
-
-    static void toggleSmoothFont() {
-        load();
-        smoothFont = !smoothFont;
         save();
     }
 

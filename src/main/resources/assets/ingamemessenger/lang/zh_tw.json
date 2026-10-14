@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "離線",
   "ingamemessenger.card.wrote": "寫道：%s",
   "ingamemessenger.card.mention": "標註",
-  "ingamemessenger.screen.own_right": "我的訊息在右側",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "我的訊息在右側"
 }

@@ -70,7 +70,7 @@ final class ChatDates {
 
     static final int TIME_GAP = 6;
     static int timeWidth(String t) {
-        return (int) Math.ceil(Smooth.width(Minecraft.getInstance().font, t) * Panel.smallScale());
+        return (int) Math.ceil(Minecraft.getInstance().font.width(t) * Panel.smallScale());
     }
 
     private static final java.time.format.DateTimeFormatter HH_MM = java.time.format.DateTimeFormatter.ofPattern("HH:mm");

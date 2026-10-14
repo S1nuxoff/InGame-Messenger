@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "Neprisijungęs",
   "ingamemessenger.card.wrote": "Parašė: %s",
   "ingamemessenger.card.mention": "Paminėjimas",
-  "ingamemessenger.screen.own_right": "Mano žinutės dešinėje",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "Mano žinutės dešinėje"
 }

@@ -119,7 +119,7 @@ final class Typing {
         Gfx.push(g);
         Gfx.move(g, x, y, 400);
         Gfx.scale(g, k, k);
-        int w = Smooth.width(font, label);
+        int w = font.width(label);
         Gfx.text(g, font, label, 0, 0, 0xFFB8BECC, true);
         int phase = (int) (now / 300 % 4);
         for (int i = 0; i < 3; i++) {

@@ -124,6 +124,5 @@
   "ingamemessenger.card.offline": "Offline",
   "ingamemessenger.card.wrote": "Kirjoitti: %s",
   "ingamemessenger.card.mention": "Maininta",
-  "ingamemessenger.screen.own_right": "Omat viestini oikealla",
-  "ingamemessenger.screen.smooth_font": "Smooth font in messages"
+  "ingamemessenger.screen.own_right": "Omat viestini oikealla"
 }
