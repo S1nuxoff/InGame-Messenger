@@ -88,7 +88,7 @@ public abstract class ChatComponentMixin {
     private void ingamemessenger$draw(GuiGraphicsExtractor g, Font font, int ticks, int mx, int my, boolean focused, boolean cursor, CallbackInfo ci) {
         ingamemessenger$feed(g, ticks, focused, ci);
     }
-    *///?} else if >=1.20.2 {
+    *///?} else if >=1.20.5 {
     /*@Inject(method = "render", at = @At("HEAD"), cancellable = true)
     private void ingamemessenger$draw(GuiGraphicsExtractor g, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         ingamemessenger$feed(g, tickCount, focused, ci);
