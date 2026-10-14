@@ -23,9 +23,9 @@ storage, sticker packs and commands.
 1. On a modded server, download the jar for your Minecraft version and loader (NeoForge, Fabric or Forge) and put it in
    `mods/`. On Fabric, Fabric API is required. Quilt runs the Fabric jar, also with Fabric API.
 
-   On Paper, Spigot, Purpur or Folia, put the plugin's jar in `plugins/`. One jar covers 1.20.1, 1.21.1, 1.21.4,
-   1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3 (on Folia, the
-   versions marked in the README's table); it needs Java 17 or newer. On first start the server downloads the plugin's libraries (the H2 database and the Opus
+   On Paper, Spigot, Purpur or Folia, put the plugin's jar in `plugins/`. One jar covers 1.20.1, 1.20.4, 1.21.1,
+   1.21.4, 1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3 (on Folia,
+   the versions marked in the README's table); it needs Java 17 or newer. On first start the server downloads the plugin's libraries (the H2 database and the Opus
    codec) from Maven Central.
 2. Start the server. It creates `config/ingamemessenger/` with `server.toml` and the `stickers/` and `emoji/`
    folders. With the plugin this folder is `plugins/InGameMessenger/`; everything in it works the same.
