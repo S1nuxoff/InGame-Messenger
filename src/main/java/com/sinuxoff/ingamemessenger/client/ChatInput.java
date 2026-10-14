@@ -67,7 +67,7 @@ public final class ChatInput {
     }
 
     private static boolean pinShown() {
-        return !VoiceClient.recording() && editId < 0 && !Ai.ID.equals(ChatChannels.channel()) && !ChatChannels.SERVER.equals(ChatChannels.channel());
+        return !VoiceClient.recording() && editId < 0;
     }
 
     static boolean overPin(double mx, double my, int sw, int sh) {
@@ -187,25 +187,21 @@ public final class ChatInput {
         Gfx.pop(g);
     }
 
-    // column footer: settings (level with the input), search above it, and in the Gemini chat a clear button above that
+    // column footer: settings (level with the input), search above it
 
     private static int gearY(int sh) {
         return fieldY(sh) + (H - ITEM) / 2;
     }
 
     private static int footTop(int sh) {
-        return gearY(sh) - ITEM * (Ai.ID.equals(ChatChannels.channel()) ? 2 : 1);
+        return gearY(sh) - ITEM;
     }
 
     private static void drawFoot(GuiGraphicsExtractor g, int sh, int mx, int my, int cx) {
-        int gy = gearY(sh), sy = gy - ITEM, by = sy - ITEM;
+        int gy = gearY(sh), sy = gy - ITEM;
         boolean inSide = mx >= sideX && mx < sideX + ChatMotion.SIDEBAR;
         Panel.drawIcon(g, "gear", cx + 3, gy + 5, ICON - 6, inSide && my >= gy && my < gy + ITEM ? 0xFFFFFFFF : 0xB3C8CCD8);
         Panel.drawIcon(g, "search", cx + 3, sy + 5, ICON - 6, searching ? 0xFF9C8CFF : inSide && my >= sy && my < sy + ITEM ? 0xFFFFFFFF : 0xB3C8CCD8);
-        if (Ai.ID.equals(ChatChannels.channel())) {
-            boolean armed = System.currentTimeMillis() - binArmed < 3000;
-            Panel.drawIcon(g, "bin", cx + 3, by + 5, ICON - 6, armed ? 0xFFFF6E6E : inSide && my >= by && my < by + ITEM ? 0xFFFFFFFF : 0xB3C8CCD8);
-        }
     }
 
     /** Footer button under the mouse, as an item (for its tooltip). */
@@ -213,38 +209,25 @@ public final class ChatInput {
         if (mx < sideX || mx >= sideX + ChatMotion.SIDEBAR) {
             return null;
         }
-        int gy = gearY(sh), sy = gy - ITEM, by = sy - ITEM;
+        int gy = gearY(sh), sy = gy - ITEM;
         if (my >= gy && my < gy + ITEM) {
             return new Item(0, Component.translatable("ingamemessenger.screen.title").getString(), gy);
         }
         if (my >= sy && my < sy + ITEM) {
             return new Item(0, Component.translatable("ingamemessenger.search.hint").getString(), sy);
         }
-        if (Ai.ID.equals(ChatChannels.channel()) && my >= by && my < by + ITEM) {
-            boolean armed = System.currentTimeMillis() - binArmed < 3000;
-            return new Item(0, Component.translatable(armed ? "ingamemessenger.ai.clear_sure" : "ingamemessenger.ai.clear_chat").getString(), by);
-        }
         return null;
     }
 
     private static boolean clickFoot(ChatScreen screen, double mx, double my) {
         int sh = screen.height;
-        int gy = gearY(sh), sy = gy - ITEM, by = sy - ITEM;
+        int gy = gearY(sh), sy = gy - ITEM;
         if (my >= gy && my < gy + ITEM) {
             Minecraft.getInstance().gui.setScreen(new SettingsScreen(screen));
             return true;
         }
         if (my >= sy && my < sy + ITEM) {
             toggleSearch(screen);
-            return true;
-        }
-        if (Ai.ID.equals(ChatChannels.channel()) && my >= by && my < by + ITEM) {
-            if (System.currentTimeMillis() - binArmed < 3000) {
-                binArmed = 0;
-                ChatMessages.clearAiChat();
-            } else {
-                binArmed = System.currentTimeMillis();
-            }
             return true;
         }
         return false;
@@ -482,13 +465,6 @@ public final class ChatInput {
         return new int[]{r[0] + r[2] - 30, r[1] + 3, 10, 10};
     }
 
-    /** Gemini chat: clear button (a second click within 3 s confirms). */
-    private static int[] binBtn(int[] r) {
-        return new int[]{r[0] + r[2] - 45, r[1] + 3, 10, 10};
-    }
-
-    private static long binArmed;
-
     private static boolean on(int[] b, double mx, double my) {
         return mx >= b[0] - 2 && mx < b[0] + b[2] + 2 && my >= b[1] - 2 && my < b[1] + b[3] + 2;
     }
@@ -534,33 +510,6 @@ public final class ChatInput {
             }
             boolean overX = on(gear, mx, my);
             Gfx.text(g, font, "\u2715", gear[0] + 1, gear[1] + 1, overX ? 0xFFFFFFFF : 0xFF8E95A6, false);
-        } else {
-            java.util.UUID ch = ChatChannels.channel();
-            String title = ch == null ? Component.translatable("ingamemessenger.dm.common").getString()
-                    : Ai.ID.equals(ch) ? Ai.NAME : ChatChannels.SERVER.equals(ch) ? Component.translatable("ingamemessenger.dm.server").getString()
-                    : ChatChannels.nameOf(ch);
-            int tx = r[0] + 6;
-            if (ChatChannels.SERVER.equals(ch)) {
-                Panel.drawIcon(g, "server", tx, r[1] + 3, 10, 0xFFC8CCD8);
-                tx += 14;
-            } else if (ch != null) {
-                ChatRenderer.drawFace(g, ch, title, tx, r[1] + 3, 10, 1f);
-                tx += 14;
-            }
-            Gfx.text(g, font, font.plainSubstrByWidth(title, r[2] - (tx - r[0]) - 40), tx, r[1] + 4, 0xFFF2F3F7, false);
-            Panel.drawIcon(g, "search", lens[0], lens[1], 10, on(lens, mx, my) ? 0xFFFFFFFF : 0xB3C8CCD8);
-            Panel.drawIcon(g, "gear", gear[0], gear[1], 10, on(gear, mx, my) ? 0xFFFFFFFF : 0xB3C8CCD8);
-            if (Ai.ID.equals(ch)) {
-                int[] bin = binBtn(r);
-                boolean armed = System.currentTimeMillis() - binArmed < 3000;
-                Panel.drawIcon(g, "bin", bin[0], bin[1], 10, armed ? 0xFFFF6E6E : on(bin, mx, my) ? 0xFFFFFFFF : 0xB3C8CCD8);
-                if (on(bin, mx, my) || armed) {
-                    Component tip = Component.translatable(armed ? "ingamemessenger.ai.clear_sure" : "ingamemessenger.ai.clear_chat");
-                    int tw = font.width(tip) + 12, tipX = Math.max(2, bin[0] + 5 - tw / 2);
-                    glassBox(g, tipX, r[1] + r[3] + 3, tw, 14);
-                    Gfx.text(g, font, tip, tipX + 6, r[1] + r[3] + 6, armed ? 0xFFFF9C9C : 0xFFF2F3F7, false);
-                }
-            }
         }
         if (searching) {
             int[] rr = resultsRect();

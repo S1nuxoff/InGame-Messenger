@@ -49,17 +49,6 @@ final class NeoForgePlatform implements Platform {
     }
 
     @Override
-    public List<String> mods() {
-        List<String> out = new ArrayList<>();
-        for (var m : ModList.get().getMods()) {
-            if (!m.getModId().equals("minecraft") && !m.getModId().equals("neoforge")) {
-                out.add(m.getDisplayName());
-            }
-        }
-        return out;
-    }
-
-    @Override
     public ModSettings settings() {
         return settings;
     }

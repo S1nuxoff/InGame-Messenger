@@ -65,7 +65,7 @@ final class Typing {
         }
     }
 
-    /** Typing in client-side chats (Gemini thinking). */
+    /** Typing in client-side chats. */
     static void local(String name, java.util.UUID ch, boolean on) {
         if (on) {
             others.put(name, System.currentTimeMillis() + 120_000);

@@ -11,14 +11,12 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-/** Settings window with four tabs: Chat, Sound, Packs (the server's packs) and AI (Gemini key). */
+/** Settings window with three tabs: Chat, Packs (the server's packs) and Sound. */
 final class SettingsScreen extends BaseScreen {
     private static final int WIN_W = 326, COL = 310, MAX_H = 392, ROW = 22, GAP = 5;
-    /** The AI tab's text and key go below its on/off switch. */
-    private static final int AI_TOP = ROW + GAP + 4;
     private static final int TITLE_COLOR = 0xF2F3F7, DARK = 0x8E95A6;
     private static final int TEXT = 0xFFFFFF, MUTED = 0xA0A0A0;
-    private static final int CHAT = 0, PACKS = 1, AI = 2, SOUND = 3, TABS = 4;
+    private static final int CHAT = 0, PACKS = 1, SOUND = 2, TABS = 3;
 
     /** Remembered while the window is closed. */
     private static int tab = CHAT;
@@ -128,34 +126,6 @@ final class SettingsScreen extends BaseScreen {
             y += ROW + GAP;
             addRenderableWidget(new Glass.Slider(x, y, COL, 28, 0, Prefs.MAX_VOICE_VOLUME, Prefs.voiceVolume(),
                     v -> Component.translatable("ingamemessenger.screen.voice_volume", v), Prefs::setVoiceVolume));
-        } else if (tab == AI) {
-            addRenderableWidget(new Glass.Switch(x, contentY(), COL, ROW, () -> Component.translatable("ingamemessenger.ai.enabled"),
-                    Prefs::geminiOn, () -> true, Prefs::toggleGeminiOn));
-            int y = contentY() + AI_TOP + 104;
-            EditBox key = new EditBox(font, x + 8, y + 6, COL - 16, 10, Component.translatable("ingamemessenger.ai.key"));
-            key.setBordered(false);
-            key.setMaxLength(120);
-            key.setValue(Prefs.geminiKey());
-            //? if >=1.19.4 {
-            key.setHint(Component.translatable("ingamemessenger.ai.key_hint").withStyle(s -> s.withColor(0x707070)));
-            //?} else {
-            /*key.setSuggestion(Component.translatable("ingamemessenger.ai.key_hint").getString());
-            *///?}
-            Compat.showAs(key, (str, pos) -> net.minecraft.util.FormattedCharSequence.forward(
-                    key.isFocused() ? str : str.replaceAll(".", "\u2022"), net.minecraft.network.chat.Style.EMPTY));
-            key.setResponder(Prefs::setGeminiKey);
-            addRenderableWidget(key);
-            addRenderableWidget(new Glass.Button(x, y + 28, 150, 20, () -> Component.translatable("ingamemessenger.ai.open_page"), true,
-                    () -> Compat.openUri(Ai.KEY_PAGE)));
-            addRenderableWidget(new Glass.Button(x + COL - 100, y + 28, 100, 20, () -> Component.translatable("ingamemessenger.ai.clear"), false,
-                    () -> {
-                        Prefs.setGeminiKey("");
-                        rebuildWidgets();
-                    }));
-            addRenderableWidget(new Glass.Switch(x, y + 84, COL - 110, ROW, () -> Component.translatable("ingamemessenger.ai.memory"),
-                    Prefs::geminiMemory, () -> true, Prefs::toggleGeminiMemory));
-            addRenderableWidget(new Glass.Button(x + COL - 104, y + 86, 104, 20, () -> Component.translatable("ingamemessenger.ai.forget"), false,
-                    Ai::forget));
         } else {
             list = new PackList(minecraft, COL, Math.max(30, t + winH() - 34 - listY()), listY());
             //? if >=1.20.2 {
@@ -214,7 +184,7 @@ final class SettingsScreen extends BaseScreen {
             } else if (over) {
                 Panel.round(g, tx, ty, TAB_W, TAB_H, TAB_H / 2, Glass.FILL_HOVER);
             }
-            Component name = Component.translatable(i == CHAT ? "ingamemessenger.tab.chat" : i == AI ? "ingamemessenger.tab.ai"
+            Component name = Component.translatable(i == CHAT ? "ingamemessenger.tab.chat"
                     : i == SOUND ? "ingamemessenger.tab.sound" : "ingamemessenger.tab.packs");
             Gfx.fittedText(g, font, name, tx + TAB_W / 2, ty + 5, TAB_W - 6, i == tab ? 0xFFFFFF : 0xC8CCD8, true, true);
         }
@@ -230,18 +200,6 @@ final class SettingsScreen extends BaseScreen {
             if (picking != 0) {
                 drawPicker(g, mx, my);
             }
-            return;
-        }
-        if (tab == AI) {
-            int y = contentY() + AI_TOP;
-            Gfx.text(g, font, Component.translatable("ingamemessenger.ai.title"), x, y, TITLE_COLOR, false);
-            for (int i = 1; i <= 5; i++) {
-                Gfx.text(g, font, Component.translatable("ingamemessenger.ai.step" + i), x, y + 4 + i * 14, i == 5 ? DARK : 0xC8CCD8, false);
-            }
-            Panel.round(g, x, y + 104, COL, ROW - 2, 7, 0x40000000);
-            boolean set = !Prefs.geminiKey().isBlank();
-            Gfx.text(g, font, Component.translatable(set ? "ingamemessenger.ai.key_set" : "ingamemessenger.ai.key_unset"), x, y + 160, set ? 0x9BE7A6 : 0xE0A060, false);
-            Gfx.text(g, font, Component.translatable("ingamemessenger.ai.privacy"), x, y + 174, DARK, false);
             return;
         }
         if (tab == CHAT) {

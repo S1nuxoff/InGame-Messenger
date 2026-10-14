@@ -51,21 +51,6 @@ final class FabricPlatform implements Platform {
     }
 
     @Override
-    public List<String> mods() {
-        List<String> out = new ArrayList<>();
-        for (var m : FabricLoader.getInstance().getAllMods()) {
-            var meta = m.getMetadata();
-            String id = meta.getId();
-            // skip Fabric API modules, the loader, Java and Minecraft
-            if (m.getContainingMod().isEmpty() && !id.startsWith("fabric") && !id.equals("java") && !id.equals("minecraft")
-                    && !id.equals("mixinextras")) {
-                out.add(meta.getName());
-            }
-        }
-        return out;
-    }
-
-    @Override
     public ModSettings settings() {
         return settings;
     }

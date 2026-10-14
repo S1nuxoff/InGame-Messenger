@@ -72,9 +72,7 @@ final class ChatChannels {
         Minecraft mc = Minecraft.getInstance();
         if (ch != null && !ch.equals(SERVER)) {
             chanOf.put(tag, ch);
-            if (!ch.equals(Ai.ID)) {
-                dmTabs.putIfAbsent(ch, nameOf(ch));
-            }
+            dmTabs.putIfAbsent(ch, nameOf(ch));
         }
         ChatModel.Msg m = ChatModel.msgs.get(tag);
         boolean mineMsg = m != null && ChatReplies.mine(m);
@@ -144,7 +142,7 @@ final class ChatChannels {
             commonStash = new ArrayList<>();
             commonUnread = 0;
         } else {
-            if (!peer.equals(Ai.ID) && !peer.equals(SERVER)) {
+            if (!peer.equals(SERVER)) {
                 dmTabs.putIfAbsent(peer, name);
             }
             List<GuiMessage> waiting = stash.remove(peer);
@@ -155,13 +153,11 @@ final class ChatChannels {
         }
         channel = peer;
         Net.toServer(
-                new Packets.ChatTarget(peer == null || peer.equals(Ai.ID) || peer.equals(SERVER) ? new UUID(0, 0) : peer));
+                new Packets.ChatTarget(peer == null || peer.equals(SERVER) ? new UUID(0, 0) : peer));
         chat.rescaleChat();
         acc.ingamemessenger$setScroll(0);
         ChatMotion.scrollPos = ChatMotion.scrollTarget = ChatMotion.scrollFrac = 0;
-        if (Ai.ID.equals(peer)) {
-            Ai.opened();
-        } else if (peer != null && !peer.equals(SERVER) && dmLoaded.add(peer)) {
+        if (peer != null && !peer.equals(SERVER) && dmLoaded.add(peer)) {
             dmLoading.add(peer);
             Net.toServer(new Packets.DmHistoryReq(peer, 0));
         }
@@ -173,10 +169,10 @@ final class ChatChannels {
     /** Back from the server chat to the chat open before it (if its tab is still there), else the public chat. */
     static void leaveServer() {
         UUID back = beforeServer;
-        if (back != null && !back.equals(Ai.ID) && !dmTabs.containsKey(back) || Ai.ID.equals(back) && !Prefs.geminiOn()) {
+        if (back != null && !dmTabs.containsKey(back)) {
             back = null;
         }
-        openChannel(back, back == null || back.equals(Ai.ID) ? null : nameOf(back));
+        openChannel(back, back == null ? null : nameOf(back));
     }
 
     /** Closes a private chat tab (its messages stay on the server). */
@@ -194,7 +190,6 @@ final class ChatChannels {
         channel = null;
         beforeServer = null;
         routeNext = null;
-        Ai.reset();
         commonStash = new ArrayList<>();
         stash.clear();
         dmTabs.clear();

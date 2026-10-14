@@ -135,27 +135,6 @@ public final class VoiceDsp {
         return out;
     }
 
-    /** Downsampled to 16 kHz mono 16-bit WAV (enough for speech). */
-    public static byte[] wav16k(List<short[]> frames) {
-        ByteArrayOutputStream pcm = new ByteArrayOutputStream();
-        for (short[] s : frames) {
-            for (int i = 0; i + 2 < s.length; i += 3) {
-                int v = (s[i] + s[i + 1] + s[i + 2]) / 3;
-                pcm.write(v & 0xFF);
-                pcm.write(v >> 8 & 0xFF);
-            }
-        }
-        byte[] body = pcm.toByteArray();
-        ByteBuffer h = ByteBuffer.allocate(44).order(ByteOrder.LITTLE_ENDIAN);
-        h.put("RIFF".getBytes(StandardCharsets.US_ASCII)).putInt(36 + body.length).put("WAVE".getBytes(StandardCharsets.US_ASCII))
-                .put("fmt ".getBytes(StandardCharsets.US_ASCII)).putInt(16).putShort((short) 1).putShort((short) 1).putInt(16_000)
-                .putInt(32_000).putShort((short) 2).putShort((short) 16).put("data".getBytes(StandardCharsets.US_ASCII)).putInt(body.length);
-        byte[] out = new byte[44 + body.length];
-        System.arraycopy(h.array(), 0, out, 0, 44);
-        System.arraycopy(body, 0, out, 44, body.length);
-        return out;
-    }
-
     private static short clip(long v) {
         return (short) Math.max(-32768, Math.min(32767, v));
     }

@@ -85,7 +85,7 @@ public final class ChatText {
         }
     }
 
-    // Markdown subset used in Gemini answers
+    // Markdown subset
 
     public record Span(String text, boolean bold, boolean italic, boolean code) {
     }

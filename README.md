@@ -61,8 +61,6 @@ together.
 **More**
 - Polls with single or multiple choice.
 - Full-text search through the whole chat history (Ctrl+F).
-- Optional private chat with Google Gemini, using the player's own free API key. Requests go directly from the
-  player's game to Google, never through the server.
 - Settings for chat size and scale, sticker size, microphone and output device, gain, noise gate and more.
 - Translated into 40 languages: English, Arabic, Belarusian, Bulgarian, Chinese (Simplified and Traditional), Croatian,
   Czech, Danish, Dutch, Estonian, Finnish, French, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Japanese,
@@ -160,9 +158,6 @@ packs and commands.
 Messages, including private chats, are stored on the server in plain form. Server operators can read them, the same
 way as with any other chat platform. Voice messages and pictures are kept for a configurable number of days and then
 deleted.
-
-The optional Gemini chat runs entirely on the player's computer: the API key and the conversation never reach the
-server.
 
 ## Building from source
 

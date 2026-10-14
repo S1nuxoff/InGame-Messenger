@@ -23,9 +23,6 @@ public interface Platform {
 
     boolean isModLoaded(String modId);
 
-    /** Installed mods as "Name version", given to Gemini as context. */
-    List<String> mods();
-
     ModSettings settings();
 
     /** The server in this process (dedicated or integrated), or null. */

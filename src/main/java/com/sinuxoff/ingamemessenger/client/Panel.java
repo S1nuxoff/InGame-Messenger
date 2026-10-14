@@ -716,10 +716,6 @@ final class Panel {
 
     /** Sends a sticker and adds it to Recent. */
     static void send(Library.Sticker s) {
-        if (Ai.ID.equals(ChatChannels.channel())) { // Gemini only reads text
-            Minecraft.getInstance().gui.hud.setOverlayMessage(net.minecraft.network.chat.Component.translatable("ingamemessenger.ai.text_only"), false);
-            return;
-        }
         ChatInput.takeReply();
         Messenger.sendSticker(s.pack(), s.id(), 0);
         Library.used(s);

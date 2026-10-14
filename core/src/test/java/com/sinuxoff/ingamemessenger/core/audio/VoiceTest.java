@@ -76,17 +76,6 @@ class VoiceTest {
     }
 
     @Test
-    void wavHeader() {
-        byte[] wav = VoiceDsp.wav16k(tone(50, 1000)); // 1 s
-        ByteBuffer b = ByteBuffer.wrap(wav).order(ByteOrder.LITTLE_ENDIAN);
-        assertEquals("RIFF", new String(wav, 0, 4));
-        assertEquals("WAVE", new String(wav, 8, 4));
-        assertEquals(16_000, b.getInt(24));
-        assertEquals(wav.length - 44, b.getInt(40));
-        assertEquals(16_000 * 2, wav.length - 44);
-    }
-
-    @Test
     void levelsAndWaveform() {
         float[] levels = new float[100];
         for (int i = 30; i < 100; i++) {

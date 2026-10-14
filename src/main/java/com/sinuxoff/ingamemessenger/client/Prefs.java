@@ -51,10 +51,6 @@ final class Prefs {
     private static int voiceVolume = 100, voiceSpeed = 100;
     private static String micDevice = "", speakerDevice = "";
     private static int micGainDb = 0, noiseGate = 24;
-    private static String geminiKey = "";
-    private static boolean geminiMemory = true;
-    /** Gemini in the chat list; off until turned on in the settings (on for those who already set a key). */
-    private static boolean geminiOn;
 
     private Prefs() {
     }
@@ -98,9 +94,6 @@ final class Prefs {
             speakerDevice = getString(o, "speakerDevice", speakerDevice);
             micGainDb = clamp(getInt(o, "micGainDb", micGainDb), -10, 20);
             noiseGate = clamp(getInt(o, "noiseGate", noiseGate), 0, 100);
-            geminiKey = getString(o, "geminiKey", geminiKey);
-            geminiMemory = getBool(o, "geminiMemory", geminiMemory);
-            geminiOn = getBool(o, "geminiOn", !geminiKey.isBlank());
         } catch (Exception e) {
             InGameMessenger.LOG.warn("Can't read {}: {}", f, e.toString());
         }
@@ -131,9 +124,6 @@ final class Prefs {
         o.addProperty("speakerDevice", speakerDevice);
         o.addProperty("micGainDb", micGainDb);
         o.addProperty("noiseGate", noiseGate);
-        o.addProperty("geminiKey", geminiKey);
-        o.addProperty("geminiMemory", geminiMemory);
-        o.addProperty("geminiOn", geminiOn);
         try {
             Files.writeString(file(), GSON.toJson(o));
         } catch (Exception e) {
@@ -469,38 +459,4 @@ final class Prefs {
         save();
     }
 
-    // Gemini
-
-    static String geminiKey() {
-        load();
-        return geminiKey;
-    }
-
-    static void setGeminiKey(String key) {
-        load();
-        geminiKey = key == null ? "" : key.strip();
-        save();
-    }
-
-    static boolean geminiMemory() {
-        load();
-        return geminiMemory;
-    }
-
-    static void toggleGeminiMemory() {
-        load();
-        geminiMemory = !geminiMemory;
-        save();
-    }
-
-    static boolean geminiOn() {
-        load();
-        return geminiOn;
-    }
-
-    static void toggleGeminiOn() {
-        load();
-        geminiOn = !geminiOn;
-        save();
-    }
 }

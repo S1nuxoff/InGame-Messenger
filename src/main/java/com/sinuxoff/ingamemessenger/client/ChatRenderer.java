@@ -53,8 +53,7 @@ final class ChatRenderer {
         String who = Typing.first();
         if (who != null && Prefs.seeTyping()) { // face in the face column, like a message
             var conn = Minecraft.getInstance().getConnection();
-            UUID id = Ai.NAME.equals(who) && Ai.ID.equals(ChatChannels.channel) ? Ai.ID
-                    : conn != null && conn.getPlayerInfo(who) != null ? conn.getPlayerInfo(who).getProfile().id() : null;
+            UUID id = conn != null && conn.getPlayerInfo(who) != null ? conn.getPlayerInfo(who).getProfile().id() : null;
             int fs = Math.round(11 * cs);
             drawFace(g, id, who, Math.round(ChatMotion.shiftX(chat) + 4 * cs + (FACE * cs - fs) / 2f), y - 2, fs, 1f);
         }
@@ -525,11 +524,6 @@ final class ChatRenderer {
     }
 
     static void drawFace(GuiGraphicsExtractor g, UUID id, String name, int x, int y, int size, float alpha) {
-        if (Ai.ID.equals(id)) {
-            Panel.round(g, x, y, size, size, Math.max(2, size / 3), (int) (alpha * 255) << 24 | 0xF4F6FB);
-            Panel.drawIcon(g, "ai_logo", x + size * 0.08f, y + size * 0.08f, size * 0.84f, (int) (alpha * 255) << 24 | 0xFFFFFF);
-            return;
-        }
         var conn = Minecraft.getInstance().getConnection();
         PlayerInfo info = conn == null ? null : id != null ? conn.getPlayerInfo(id) : name != null ? conn.getPlayerInfo(name) : null;
         UUID skinId = id != null ? id : UUID.nameUUIDFromBytes(String.valueOf(name).getBytes());

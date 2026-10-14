@@ -40,7 +40,7 @@ final class VoiceClient {
 
     /** Whether to show the microphone button. */
     static boolean available() {
-        return (serverOn || Ai.ID.equals(ChatChannels.channel())) && !ChatChannels.SERVER.equals(ChatChannels.channel());
+        return serverOn;
     }
 
     // Recording
@@ -171,13 +171,6 @@ final class VoiceClient {
         }
         byte[] data = VoiceFile.write(enc.subList(from, enc.size()));
         byte[] wave = VoiceDsp.waveform(java.util.Arrays.copyOfRange(all, from, all.length));
-        if (Ai.ID.equals(ChatChannels.channel())) { // to Gemini: kept locally, never sent to the server
-            String key = "ai" + Long.toHexString(System.nanoTime());
-            cache.put(key, data);
-            ChatMessages.aiVoice(key, frames * 20, wave);
-            Ai.sayVoice(data);
-            return;
-        }
         int id = ++uploadId;
         ChatInput.takeReply();
         Net.toServer(new com.sinuxoff.ingamemessenger.core.protocol.Proto.VoiceUp(id, Messenger.current, "", data.length, frames * 20, wave, 0));
@@ -449,11 +442,6 @@ final class VoiceClient {
         }
         buf.flip();
         return took;
-    }
-
-    /** WAV for Gemini: decoded and downsampled to 16 kHz. */
-    static byte[] toWav(byte[] data) throws Exception {
-        return VoiceDsp.wav16k(OpusCodec.decodeAll(VoiceFile.read(data)));
     }
 
     static void reset() {

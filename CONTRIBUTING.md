@@ -29,7 +29,7 @@ core/                     Plain Java, no Minecraft. Shared by every platform and
   server/                 The chat server: validation, delivery, private chats, uploads, sticker packs.
   storage/                Database (JDBC) and file storage (local, S3).
   audio/ image/ text/     Opus codec, picture processing, text rules.
-  ai/ web/                Gemini client, HTTP helpers.
+  web/                    HTTP helpers.
 
 src/main/java/com/sinuxoff/ingamemessenger/
   *.java                  The Minecraft server side: platform glue, commands, config.

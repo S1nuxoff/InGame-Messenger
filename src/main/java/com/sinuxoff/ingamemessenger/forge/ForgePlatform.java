@@ -71,17 +71,6 @@ final class ForgePlatform implements Platform {
     }
 
     @Override
-    public List<String> mods() {
-        List<String> out = new ArrayList<>();
-        for (var m : allMods()) {
-            if (!m.getModId().equals("minecraft") && !m.getModId().equals("forge")) {
-                out.add(m.getDisplayName());
-            }
-        }
-        return out;
-    }
-
-    @Override
     public ModSettings settings() {
         return settings;
     }

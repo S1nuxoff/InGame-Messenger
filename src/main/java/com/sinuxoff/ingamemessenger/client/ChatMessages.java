@@ -16,7 +16,7 @@ import com.sinuxoff.ingamemessenger.mixin.ChatComponentAccessor;
 
 import java.util.UUID;
 
-/** Incoming live messages: player text and server lines rebuilt in the messenger look, stickers, the Gemini chat. */
+/** Incoming live messages: player text and server lines rebuilt in the messenger look, stickers. */
 final class ChatMessages {
     private ChatMessages() {
     }
@@ -194,56 +194,6 @@ final class ChatMessages {
     /** Skipped if the sender is muted. */
     static void add(Packets.Show s) {
         addPicture(s, Protocol.print(s.pack() + "/" + s.id()), stickerWord());
-    }
-    /** Our own voice message to Gemini, played from the local copy. */
-    static void aiVoice(String key, int ms, byte[] wave) {
-        var p = Minecraft.getInstance().player;
-        if (p == null) {
-            return;
-        }
-        MutableComponent text = Component.empty();
-        text.append(" \n \n ");
-        GuiMessageTag tag = ChatModel.remember(new ChatModel.Msg(p.getUUID(), p.getGameProfile().name(), false, null, null, 0, true, System.currentTimeMillis(),
-                -1, null));
-        ChatVoiceNotes.voiceOf.put(tag, new ChatVoiceNotes.VoiceInfo(key, ms, wave));
-        ChatModel.note(tag, p.getGameProfile().name(), ChatVoiceNotes.voiceWord(), -1);
-        ChatChannels.postTo(Minecraft.getInstance().gui.hud.getChat(), text, null, tag, Ai.ID);
-    }
-
-    /** Clears the Gemini chat and its memory, then greets again. */
-    static void clearAiChat() {
-        Ai.forget();
-        ChatChannels.stash.remove(Ai.ID);
-        ChatChannels.dmUnread.remove(Ai.ID);
-        if (Ai.ID.equals(ChatChannels.channel)) {
-            ChatComponent chat = Minecraft.getInstance().gui.hud.getChat();
-            ((ChatComponentAccessor) chat).ingamemessenger$allMessages().clear();
-            chat.rescaleChat();
-        }
-        Ai.reset();
-        Ai.opened();
-    }
-
-    /** Gemini chat message (stays on this computer). */
-    static void aiMessage(UUID who, String name, String text) {
-        MutableComponent out = Component.empty();
-        out.append(Ai.ID.equals(who) ? markdown(text) : Component.literal(text)).append("\n ");
-        GuiMessageTag tag = ChatModel.remember(new ChatModel.Msg(who, name, false, null, null, 0, true, System.currentTimeMillis(), -1, null));
-        ChatModel.pendingFull = text;
-        ChatModel.note(tag, name, ChatDecor.snippet(text), -1);
-        ChatChannels.postTo(Minecraft.getInstance().gui.hud.getChat(), out, null, tag, Ai.ID);
-    }
-
-    /** Markdown subset to Minecraft styles: **bold**, *italic*, _italic_, `code` (grey), "- " and "* " as "• ". */
-    static MutableComponent markdown(String text) {
-        MutableComponent out = Component.empty();
-        for (ChatText.Span sp : ChatText.markdown(text)) {
-            out.append(Component.literal(sp.text()).withStyle(s -> {
-                s = s.withBold(sp.bold() ? Boolean.TRUE : null).withItalic(sp.italic() ? Boolean.TRUE : null);
-                return sp.code() ? s.withColor(0xB8C4D8) : s;
-            }));
-        }
-        return out;
     }
 
     private static void addPicture(Packets.Show s, int hash, String word) {
