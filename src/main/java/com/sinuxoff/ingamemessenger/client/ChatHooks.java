@@ -43,13 +43,16 @@ public final class ChatHooks {
         Feed.render(chat, g, ticks, focused);
     }
 
-    /** Whether the game's own copy of a player's chat line is left out (ours comes from the server). */
+    /**
+     * Whether the game's own copy of a player's chat line is left out (ours comes from the server): the "chat" type,
+     * and Paper's "raw" one, which it uses for chat lines a chat plugin formatted. /msg, /me and /say have their own.
+     */
     public static boolean ownChatLine(net.minecraft.network.chat.ChatType.Bound type) {
         if (!on()) {
             return false;
         }
         //? if >=1.20.5 {
-        return type.chatType().is(net.minecraft.network.chat.ChatType.CHAT);
+        var key = type.chatType().unwrapKey().orElse(null);
         //?} else {
         /*var level = net.minecraft.client.Minecraft.getInstance().level;
         if (level == null) {
@@ -60,8 +63,17 @@ public final class ChatHooks {
         //?} else {
         /^var types = level.registryAccess().registryOrThrow(net.minecraft.core.Registry.CHAT_TYPE_REGISTRY);
         ^///?}
-        return types.getResourceKey(type.chatType()).filter(net.minecraft.network.chat.ChatType.CHAT::equals).isPresent();
+        var key = types.getResourceKey(type.chatType()).orElse(null);
         *///?}
+        if (key == null) {
+            return false;
+        }
+        //? if >=1.21.11 {
+        String path = key.identifier().getPath();
+        //?} else {
+        /*String path = key.location().getPath();
+        *///?}
+        return key.equals(net.minecraft.network.chat.ChatType.CHAT) || path.equals("raw");
     }
 
     // Size and position
