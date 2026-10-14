@@ -160,8 +160,8 @@ final class ChatPolls {
             }
             int pct = total == 0 ? 0 : Math.round(pi.counts[i] * 100f / total);
             String ps = pct + "%";
-            int pw = font.width(ps);
-            Gfx.text(g, font, font.plainSubstrByWidth(pi.options.get(i), POLL_W - 18 - pw), x + 12, y + 1, c | 0xF2F3F7, false);
+            int pw = Smooth.width(font, ps);
+            Gfx.text(g, font, Smooth.cut(font, pi.options.get(i), POLL_W - 18 - pw), x + 12, y + 1, c | 0xF2F3F7, false);
             Gfx.text(g, font, ps, x + POLL_W - pw, y + 1, c | (chosen ? 0xC9C0FF : 0xC8CCD8), false);
             int by = y + 11, bw = POLL_W - 12;
             Panel.round(g, x + 12, by, bw, 3, 1, (int) (a * 0x30) << 24 | 0xFFFFFF);

@@ -346,11 +346,11 @@ final class ChatUi {
                 Component t = who.isEmpty() ? Component.translatable("ingamemessenger.read.none")
                         : Component.translatable("ingamemessenger.read.by", String.join(", ", who.size() > 8 ? who.subList(0, 8) : who)
                         + (who.size() > 8 ? " +" + (who.size() - 8) : ""));
-                int tw = Math.min(sw - 8, font.width(t) + 12), tx = Math.max(4, Math.min(mx - tw / 2, sw - tw - 4)), ty = my - 20;
+                int tw = Math.min(sw - 8, Smooth.width(font, t) + 12), tx = Math.max(4, Math.min(mx - tw / 2, sw - tw - 4)), ty = my - 20;
                 Gfx.push(g);
                 Gfx.raise(g, 500);
                 ChatInput.glassBox(g, tx, ty, tw, 14);
-                Gfx.text(g, font, font.plainSubstrByWidth(t.getString(), tw - 12), tx + 6, ty + 3, 0xFFF2F3F7, false);
+                Gfx.text(g, font, Smooth.cut(font, t.getString(), tw - 12), tx + 6, ty + 3, 0xFFF2F3F7, false);
                 Gfx.pop(g);
                 break;
             }
@@ -486,7 +486,7 @@ final class ChatUi {
             int x = Math.round(menuX), y = Math.round(menuY), h = CARD_HEAD + items.size() * ITEM + (items.isEmpty() ? 0 : 6);
             Panel.glass(g, x, y, CARD_W, h);
             ChatRenderer.drawFace(g, menu.id(), menu.name(), x + 9, y + 9, 26, 1f);
-            Gfx.text(g, font, Component.literal(font.plainSubstrByWidth(menu.name(), CARD_W - 50)).withStyle(st -> st
+            Gfx.text(g, font, Component.literal(Smooth.cut(font, menu.name(), CARD_W - 50)).withStyle(st -> st
                     .withColor(ChatDecor.colorOf(menu.name())).withBold(true)), x + 42, y + 10, TEXT, false);
             boolean online = ChatDecor.online(menu.id(), menu.name());
             Panel.round(g, x + 42, y + 23, 5, 5, 2, online ? 0xFF4CD964 : 0xFF6C7386);
@@ -582,7 +582,7 @@ final class ChatUi {
         Font font = Minecraft.getInstance().font;
         int w = 60;
         for (Component c : items) {
-            w = Math.max(w, font.width(c));
+            w = Math.max(w, Smooth.width(font, c));
         }
         return w + 18;
     }

@@ -469,8 +469,8 @@ final class Panel {
         int ty = titleY(sh) + 3;
         Component name = title();
         String n = String.valueOf(count());
-        int nw = Math.round(font.width(n) * smallScale());
-        String shown = font.plainSubstrByWidth(name.getString(), Math.round((w - 2 * PAD - nw - 10) / smallScale()));
+        int nw = Math.round(Smooth.width(font, n) * smallScale());
+        String shown = Smooth.cut(font, name.getString(), Math.round((w - 2 * PAD - nw - 10) / smallScale()));
         small(g, font, Component.literal(shown), x + PAD + 2, ty, MUTED);
         small(g, font, Component.literal(n), x + w - PAD - 2 - nw, ty, 0xFF6C7386);
 
@@ -484,7 +484,7 @@ final class Panel {
             String key = tab == RECENT ? "ingamemessenger.panel.empty_recent" : tab == FAVORITES ? "ingamemessenger.panel.empty_favorites"
                     : tab == EMOJI ? "ingamemessenger.panel.no_emoji" : "ingamemessenger.panel.empty";
             int my0 = gy + GRID_H / 2 - 8;
-            for (var line : font.split(Component.translatable(key), w - 4 * PAD)) {
+            for (var line : font.split(Smooth.text(Component.translatable(key)), w - 4 * PAD)) {
                 Gfx.centeredText(g, font, line, x + w / 2, my0, MUTED);
                 my0 += 10;
             }
@@ -494,7 +494,7 @@ final class Panel {
         for (int r = rowScroll; r < rows.size() && ry < gy + GRID_H; r++) {
             Row row = rows.get(r);
             if (row.heading() != null) {
-                small(g, font, Component.literal(font.plainSubstrByWidth(row.heading(), Math.round((w - 2 * PAD) / smallScale()))),
+                small(g, font, Component.literal(Smooth.cut(font, row.heading(), Math.round((w - 2 * PAD) / smallScale()))),
                         x + PAD + 2, ry + 4, 0xFF6C7386);
                 ry += row.h();
                 continue;
@@ -616,7 +616,7 @@ final class Panel {
 
     /** {x, y, w, h} of a small popup right above the smiley. */
     private static int[] smileMenuRect(Font font, int sw, int sh) {
-        int w = Math.round(font.width(smileMenuLabel()) * smallScale()) + 12, h = 13;
+        int w = Math.round(Smooth.width(font, smileMenuLabel()) * smallScale()) + 12, h = 13;
         int x = Math.min(btnX(sw) + BTN + 2, sw - 4) - w;
         int y = btnY(sh) - h - 6;
         return new int[]{x, y, w, h};

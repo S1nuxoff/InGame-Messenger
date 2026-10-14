@@ -106,10 +106,10 @@ public final class ChatInput {
         if (searching) { // searching: only a close button at the top
             boolean overX = mx >= sideX && mx < sideX + ChatMotion.SIDEBAR && my >= top && my < top + ITEM;
             Panel.round(g, cx, top + 2, ICON, ICON, ICON / 2, overX ? 0xFF3A4258 : 0xFF2A3040);
-            Gfx.text(g, font, "\u2715", cx + (ICON - font.width("\u2715")) / 2 + 1, top + 7, 0xFFF2F3F7, false);
+            Gfx.text(g, font, "\u2715", cx + (ICON - Smooth.width(font, "\u2715")) / 2 + 1, top + 7, 0xFFF2F3F7, false);
             plusY = -1;
             if (overX) {
-                glassBox(g, sideX + ChatMotion.SIDEBAR + 3, top + 4, font.width(Component.translatable("ingamemessenger.search.close")) + 12, 14);
+                glassBox(g, sideX + ChatMotion.SIDEBAR + 3, top + 4, Smooth.width(font, Component.translatable("ingamemessenger.search.close")) + 12, 14);
                 Gfx.text(g, font, Component.translatable("ingamemessenger.search.close"), sideX + ChatMotion.SIDEBAR + 9, top + 7, 0xFFF2F3F7, false);
             }
             Gfx.pop(g);
@@ -144,15 +144,15 @@ public final class ChatInput {
                 if (c.game) {
                     Panel.drawIcon(g, "chats", cx + 3, y + 5, ICON - 6, 0xFFFFFFFF);
                 } else {
-                    Gfx.text(g, font, "#", cx + (ICON - font.width("#")) / 2 + 1, y + 7, 0xFFFFFFFF, false);
+                    Gfx.text(g, font, "#", cx + (ICON - Smooth.width(font, "#")) / 2 + 1, y + 7, 0xFFFFFFFF, false);
                 }
             }
             if (c.unread > 0) {
                 String badge = c.unread > 99 ? "99+" : String.valueOf(c.unread);
-                float bwf = Math.max(9, (float) Math.ceil(font.width(badge) * Panel.smallScale()) + 4);
+                float bwf = Math.max(9, (float) Math.ceil(Smooth.width(font, badge) * Panel.smallScale()) + 4);
                 int bw = Math.round(bwf), bx = cx + ICON - bw + 4, by = y;
                 Panel.round(g, bx, by, bw, 9, 4, 0xFFE0475A);
-                ChatDates.small(g, badge, bx + (bw - (float) Math.ceil(font.width(badge) * Panel.smallScale())) / 2f, by + 2, 0xFFFFFFFF);
+                ChatDates.small(g, badge, bx + (bw - (float) Math.ceil(Smooth.width(font, badge) * Panel.smallScale())) / 2f, by + 2, 0xFFFFFFFF);
             }
             if (over) {
                 hover = new Item(c.id, title, y);
@@ -177,7 +177,7 @@ public final class ChatInput {
         }
         if (hover != null && !picking) { // name next to the column
             String n = hover.name();
-            int tw = font.width(n) + 12, tx = Prefs.chatRight() ? sideX - tw - 3 : sideX + ChatMotion.SIDEBAR + 3;
+            int tw = Smooth.width(font, n) + 12, tx = Prefs.chatRight() ? sideX - tw - 3 : sideX + ChatMotion.SIDEBAR + 3;
             glassBox(g, tx, hover.y() + 4, tw, 14);
             Gfx.text(g, font, n, tx + 6, hover.y() + 7, 0xFFF2F3F7, false);
         }
@@ -356,7 +356,7 @@ public final class ChatInput {
         boolean over = mx >= b[0] - 2 && mx < b[0] + b[2] + 2 && my >= b[1] - 2 && my < b[1] + b[3] + 2;
         Panel.round(g, b[0] - 2, b[1] - 2, b[2] + 4, b[3] + 4, 8, over ? 0xC0E0475A : 0x901B1F2A);
         var font = Minecraft.getInstance().font;
-        Gfx.text(g, font, "\u2715", b[0] + (b[2] - font.width("\u2715")) / 2 + 1, b[1] + 2, over ? 0xFFFFFFFF : 0xFFC8CCD8, false);
+        Gfx.text(g, font, "\u2715", b[0] + (b[2] - Smooth.width(font, "\u2715")) / 2 + 1, b[1] + 2, over ? 0xFFFFFFFF : 0xFFC8CCD8, false);
     }
 
     private static boolean clickClose(double mx, double my) {
@@ -500,12 +500,12 @@ public final class ChatInput {
                 Gfx.text(g, font, Component.translatable("ingamemessenger.search.hint"), tx, r[1] + 4, 0xFF6C7386, false);
             }
             String shown = query;
-            while (font.width(shown) > maxW && shown.length() > 1) {
+            while (Smooth.width(font, shown) > maxW && shown.length() > 1) {
                 shown = shown.substring(1);
             }
             Gfx.text(g, font, shown, tx, r[1] + 4, 0xFFF2F3F7, false);
             if (System.currentTimeMillis() / 500 % 2 == 0) { // caret
-                int cx = tx + font.width(shown);
+                int cx = tx + Smooth.width(font, shown);
                 g.fill(cx, r[1] + 3, cx + 1, r[1] + 13, 0xFFF2F3F7);
             }
             boolean overX = on(gear, mx, my);
@@ -525,9 +525,9 @@ public final class ChatInput {
                 Panel.round(g, rr[0] + 3, ry, rr[2] - 6, RES_H - 2, 6, hot ? (foundTop + i == foundSel ? 0xB05B4BD6 : 0xB02A3040) : 0x901B1F2A);
                 String when = ChatDates.when(f.t());
                 Gfx.text(g, font, f.name().isEmpty() ? "\u2022" : f.name(), rr[0] + 10, ry + 2, f.name().isEmpty() ? 0xFFC8CCD8 : 0xFF000000 | ChatDecor.colorOf(f.name()), false);
-                float ww = (float) Math.ceil(font.width(when) * Panel.smallScale());
+                float ww = (float) Math.ceil(Smooth.width(font, when) * Panel.smallScale());
                 ChatDates.small(g, when, rr[0] + rr[2] - 10 - ww, ry + 3, 0xFF6C7386);
-                ChatDates.small(g, font.plainSubstrByWidth(f.bit(), (int) ((rr[2] - 22) / Panel.smallScale())), rr[0] + 10, ry + 12, 0xFFB8BECC);
+                ChatDates.small(g, Smooth.cut(font, f.bit(), (int) ((rr[2] - 22) / Panel.smallScale())), rr[0] + 10, ry + 12, 0xFFB8BECC);
             }
         }
         Gfx.pop(g);
@@ -746,12 +746,12 @@ public final class ChatInput {
         Component head = editId >= 0 ? Component.translatable("ingamemessenger.edit.bar") : Component.translatable("ingamemessenger.reply.to", who);
         int x = r[0] + 12, y = r[1] + (r[3] - 8) / 2;
         Gfx.text(g, font, head, x, y, 0xFF9C8CFF, false);
-        x += font.width(head) + 6;
+        x += Smooth.width(font, head) + 6;
         String text = i == null ? "" : i[1];
         int room = r[0] + r[2] - 18 - x;
-        String cut = font.plainSubstrByWidth(text, Math.max(0, room));
+        String cut = Smooth.cut(font, text, Math.max(0, room));
         if (cut.length() < text.length()) {
-            cut = font.plainSubstrByWidth(text, Math.max(0, room - font.width("…"))) + "…";
+            cut = Smooth.cut(font, text, Math.max(0, room - Smooth.width(font, "…"))) + "…";
         }
         Gfx.text(g, font, cut, x, y, 0xFF9AA1B2, false);
         boolean overX = overBarClose(mx, my, sw, sh);
@@ -765,6 +765,12 @@ public final class ChatInput {
 
     static boolean overSend(double mx, double my, int sw, int sh) {
         return mx >= sendX(sw) && mx < sendX(sw) + SEND && my >= sendY(sh) && my < sendY(sh) + SEND;
+    }
+
+    /** The chat's input, while the smooth font is on (its caret and scrolling are measured in it). */
+    public static boolean smoothInput(net.minecraft.client.gui.components.EditBox box) {
+        return Smooth.on() && ChatHooks.on() && Minecraft.getInstance().gui.screen() instanceof ChatScreen screen
+                && ((ChatScreenAccessor) screen).ingamemessenger$input() == box;
     }
 
     /** Draws the field in place of the black bar, before the input text. */
@@ -830,15 +836,15 @@ public final class ChatInput {
                     + (VoiceClient.maxSeconds % 60 < 10 ? "0" : "") + VoiceClient.maxSeconds % 60;
             Gfx.text(g, mc.font, t, x + 24, textY(h), 0xFFF2F3F7, false);
             Component hint = Component.translatable("ingamemessenger.voice.hint");
-            Gfx.text(g, mc.font, hint, sx - 8 - mc.font.width(hint), textY(h), 0xFF8E95A6, false);
+            Gfx.text(g, mc.font, hint, sx - 8 - Smooth.width(mc.font, hint), textY(h), 0xFF8E95A6, false);
         }
         int len = expand(text).length() + (replyTo >= 0 ? 4 + String.valueOf(replyTo).length() : 0); // length as sent
         // the input ends before the location button (and the counter near the limit)
         int countW = 0;
         if (len > LIMIT - 56) {
             String n = len + "/" + LIMIT;
-            countW = mc.font.width(n) + 6;
-            Gfx.text(g, mc.font, n, pinX(w) - 5 - mc.font.width(n), textY(h), len >= LIMIT ? 0xFFFF6E6E : 0xFF8E95A6, false);
+            countW = Smooth.width(mc.font, n) + 6;
+            Gfx.text(g, mc.font, n, pinX(w) - 5 - Smooth.width(mc.font, n), textY(h), len >= LIMIT ? 0xFFFF6E6E : 0xFF8E95A6, false);
         }
         var line = ((ChatScreenAccessor) screen).ingamemessenger$input();
         line.setX(inputX(w));
@@ -862,7 +868,7 @@ public final class ChatInput {
                 drawAttach(g, w, h, pmx, pmy);
             } else if (over) {
                 Component tip = Component.translatable("ingamemessenger.attach.tip");
-                int tw = mc.font.width(tip) + 12, tx = Math.min(w - tw - 4, pinX(w) + Panel.BTN / 2 - tw / 2), ty = y - barH() - 18;
+                int tw = Smooth.width(mc.font, tip) + 12, tx = Math.min(w - tw - 4, pinX(w) + Panel.BTN / 2 - tw / 2), ty = y - barH() - 18;
                 Gfx.push(g);
                 Gfx.raise(g, 400);
                 glassBox(g, tx, ty, tw, 14);
@@ -943,7 +949,7 @@ public final class ChatInput {
             int[] c = trayCell(sw, sh, atts.size());
             boolean over = in(c, mx, my);
             Panel.round(g, c[0], c[1], c[2], c[2], 6, over ? 0xE02A3040 : 0xD01B1F2A);
-            Gfx.text(g, font, "+", c[0] + (c[2] - font.width("+")) / 2, c[1] + c[2] / 2 - 4, over ? 0xFFFFFFFF : 0xFFC8CCD8, false);
+            Gfx.text(g, font, "+", c[0] + (c[2] - Smooth.width(font, "+")) / 2, c[1] + c[2] / 2 - 4, over ? 0xFFFFFFFF : 0xFFC8CCD8, false);
         }
         if (Images.sending) {
             drawProgress(g, fieldX(sw) + 10, fieldY(sh) - PROG, fieldW(sw) - 20);
@@ -956,7 +962,7 @@ public final class ChatInput {
         String label = Component.translatable("ingamemessenger.image.sending_n",
                 Math.min(Images.sendTotal, Images.sendDone + 1), Images.sendTotal).getString();
         ChatDates.small(g, label, x + 2, y + 1, 0xFFC8CCD8);
-        int lw = (int) Math.ceil(Minecraft.getInstance().font.width(label) * Panel.smallScale()) + 8;
+        int lw = (int) Math.ceil(Smooth.width(Minecraft.getInstance().font, label) * Panel.smallScale()) + 8;
         int bx = x + lw, bw = Math.max(20, w - lw - 2);
         Panel.round(g, bx, y + 2, bw, 4, 2, 0x30FFFFFF);
         Panel.round(g, bx, y + 2, Math.max(4, Math.round(bw * Images.progress())), 4, 2, 0xFF7B68FF);
@@ -1102,7 +1108,7 @@ public final class ChatInput {
         var font = Minecraft.getInstance().font;
         int w = 0;
         for (var l : lines) {
-            w = Math.max(w, font.width(l));
+            w = Math.max(w, Smooth.width(font, l));
         }
         int sw = screen.width;
         float k = Math.min(1f, (sw - 18f) / w); // a long one is made smaller to fit the screen
@@ -1174,7 +1180,7 @@ public final class ChatInput {
             if (code == null) {
                 continue;
             }
-            int x = x0 + font.width(v.substring(from, i));
+            int x = x0 + Smooth.width(font, v.substring(from, i));
             if (x + 10 > maxX) {
                 break;
             }
@@ -1237,7 +1243,7 @@ public final class ChatInput {
         var input = ((ChatScreenAccessor) screen).ingamemessenger$input();
         int w = 0;
         for (var p : list) {
-            w = Math.max(w, font.width(p.getProfile().name()));
+            w = Math.max(w, Smooth.width(font, p.getProfile().name()));
         }
         w += 30;
         int x = Math.max(4, Math.min(input.getScreenX(at) - 6, screen.width - w - 4));
@@ -1377,8 +1383,8 @@ public final class ChatInput {
         Panel.drawIcon(g, playing ? "pause" : "play", x + (playing ? 5 : 5.5f), y + 5, 8, 0xFFFFFFFF);
         String who = VoiceClient.nowWho() == null ? "" : VoiceClient.nowWho();
         float p = VoiceClient.progress(key, VoiceClient.nowMs());
-        int nameW = Math.min(60, font.width(who));
-        Gfx.text(g, font, font.plainSubstrByWidth(who, 60), x + 21, y + 5, 0xFFF2F3F7, false);
+        int nameW = Math.min(60, Smooth.width(font, who));
+        Gfx.text(g, font, Smooth.cut(font, who, 60), x + 21, y + 5, 0xFFF2F3F7, false);
         int bx = x + 21 + nameW + 6, bw = MP_W - (bx - x) - 52 - SPEED_W;
         Panel.round(g, bx, y + 8, bw, 2, 1, 0x40FFFFFF);
         Panel.round(g, bx, y + 8, Math.max(2, Math.round(bw * p)), 2, 1, 0xFF9C8CFF);
@@ -1390,7 +1396,7 @@ public final class ChatInput {
         boolean overSpeed = chatOpen && mx >= sx && mx < sx + SPEED_W && my >= y && my < y + MP_H;
         String sp = speedLabel();
         Panel.round(g, sx, y + 4, SPEED_W, 10, 5, overSpeed ? 0x40FFFFFF : VoiceClient.speed() != 1f ? 0xFF5B4BD6 : 0x24FFFFFF);
-        ChatDates.small(g, sp, sx + (SPEED_W - (float) Math.ceil(font.width(sp) * Panel.smallScale())) / 2f, y + 6.5f, 0xFFF2F3F7);
+        ChatDates.small(g, sp, sx + (SPEED_W - (float) Math.ceil(Smooth.width(font, sp) * Panel.smallScale())) / 2f, y + 6.5f, 0xFFF2F3F7);
         boolean overX = chatOpen && mx >= x + MP_W - 15 && mx < x + MP_W && my >= y && my < y + MP_H;
         Gfx.text(g, font, "\u2715", x + MP_W - 12, y + 5, overX ? 0xFFFFFFFF : 0xFF8E95A6, false);
         Gfx.pop(g);

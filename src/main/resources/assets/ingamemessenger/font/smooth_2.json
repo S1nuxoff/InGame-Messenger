@@ -1,0 +1,58 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "ingamemessenger:inter/latin.ttf",
+      "size": 9.0,
+      "oversample": 2.0,
+      "shift": [
+        0,
+        0
+      ]
+    },
+    {
+      "type": "ttf",
+      "file": "ingamemessenger:inter/latin-ext.ttf",
+      "size": 9.0,
+      "oversample": 2.0,
+      "shift": [
+        0,
+        0
+      ]
+    },
+    {
+      "type": "ttf",
+      "file": "ingamemessenger:inter/cyrillic.ttf",
+      "size": 9.0,
+      "oversample": 2.0,
+      "shift": [
+        0,
+        0
+      ]
+    },
+    {
+      "type": "ttf",
+      "file": "ingamemessenger:inter/cyrillic-ext.ttf",
+      "size": 9.0,
+      "oversample": 2.0,
+      "shift": [
+        0,
+        0
+      ]
+    },
+    {
+      "type": "ttf",
+      "file": "ingamemessenger:inter/greek.ttf",
+      "size": 9.0,
+      "oversample": 2.0,
+      "shift": [
+        0,
+        0
+      ]
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:default"
+    }
+  ]
+}

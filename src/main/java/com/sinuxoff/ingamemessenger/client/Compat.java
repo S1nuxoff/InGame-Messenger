@@ -179,6 +179,15 @@ public final class Compat {
         *///?}
     }
 
+    /** The style uses the game's own font (no font of its own). */
+    public static boolean defaultFont(net.minecraft.network.chat.Style style) {
+        //? if >=1.21.9 {
+        return style.getFont().equals(net.minecraft.network.chat.FontDescription.DEFAULT);
+        //?} else {
+        /*return style.getFont().equals(net.minecraft.network.chat.Style.DEFAULT_FONT);
+        *///?}
+    }
+
     /** Ctrl, or Cmd on a Mac. */
     public static boolean ctrlDown() {
         //? if >=1.21.9 {
