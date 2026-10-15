@@ -15,29 +15,45 @@ Stickers, voice messages, pictures, reactions, replies, private chats, polls and
 
 <table><tr><td align="center" width="104"><img src="docs/images/platforms/minecraft.png" width="36" height="36" alt=""><br><sub><b>1.19.2&nbsp;–&nbsp;26.3</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/fabric.png" width="36" height="36" alt=""><br><sub><b>Fabric</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/quilt.png" width="36" height="36" alt=""><br><sub><b>Quilt</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/neoforge.png" width="36" height="36" alt=""><br><sub><b>NeoForge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/forge.png" width="36" height="36" alt=""><br><sub><b>Forge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/paper.png" width="36" height="36" alt=""><br><sub><b>Paper</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/spigot.svg" width="36" height="36" alt=""><br><sub><b>Spigot</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/purpur.png" width="36" height="36" alt=""><br><sub><b>Purpur</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/folia.png" width="36" height="36" alt=""><br><sub><b>Folia</b></sub></td></tr></table>
 
-[Features](#features) · [Installation](#installation) · [Versions](#supported-versions) · [Server guide](docs/server.md) · [Contributing](CONTRIBUTING.md)
+[Overview](#overview) · [Features](#features) · [Installation](#installation) · [Versions](#supported-versions) · [FAQ](#faq) · [Server guide](docs/server.md) · [Contributing](CONTRIBUTING.md)
 
 <img src="docs/images/chat.webp" alt="Friends talking in the chat: a question, an answer, a reaction, a reply, a sticker" width="620">
 
 </div>
 
-## What it is
+## Overview
 
-InGame Messenger replaces the plain Minecraft chat with a messenger, right where the chat is. The server's chat stays
-the place where everyone talks and where commands are typed; it just gets bubbles with faces, stickers, voice, pictures,
-reactions and replies, plus private chats next to it.
+InGame Messenger turns the Minecraft chat into a messenger, right where the chat is. The server's chat stays the place
+where everyone talks and where commands are typed; it just gets bubbles with faces, stickers, voice, pictures,
+reactions and replies, with private chats next to it. No accounts, no cloud: everything lives on your server.
 
-- **Players** install the mod. On a server without it, nothing changes: the chat stays the normal Minecraft chat.
-- **Servers** run the mod (NeoForge, Fabric, Forge) or the plugin (Paper, Spigot, Purpur, Folia). The client's and the
-  server's loader don't have to match.
-- **Players without the mod** can still join and chat; they see stickers, voice messages, pictures and polls as short
-  text lines.
+<table>
+<tr>
+<td width="33%" valign="top">
 
+**🎮 Players**<br>
+Install the mod. On a server without it nothing changes: the chat stays the normal Minecraft chat.
+
+</td>
+<td width="33%" valign="top">
+
+**🖥️ Servers**<br>
+Run the mod (NeoForge, Fabric, Forge) or the plugin (Paper, Spigot, Purpur, Folia). The client's and the server's
+loader don't have to match.
+
+</td>
+<td width="33%" valign="top">
+
+**👥 Players without the mod**<br>
+Can still join and chat. Stickers, voice messages, pictures and polls reach them as short text lines.
+
+</td>
+</tr>
+</table>
+
+## See it in action
 
 https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
-
-
-## A look
 
 <table>
 <tr>
@@ -52,44 +68,43 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 ## Features
 
 ### 💬 Chat
-- Bubbles with the sender's face, name and time; messages from one player are grouped, with a tail on the last one.
-  Your own messages can sit on the right, like on a phone.
-- Replies with a quote (click it to jump to the original, however far back), editing and deleting your own messages.
-- Reactions: built-in ones plus the server's emoji, on messages and stickers. Double-click a message for a heart.
-- @mentions with autocompletion; mentions of you are highlighted and announced above the hotbar.
-- "Player is typing...", date separators, smooth scrolling.
-- The server's own lines (joins, deaths, announcements, command answers) come from the server with its name and icon,
-  keeping their colors, links and hover texts.
-- Names look the way the server shows them: ranks and colors from the server or LuckPerms/Vault.
-- Commands work from anywhere. Typed in a private chat, the answer appears right there, visible only to you.
+- **Bubbles** with the sender's face, name and time. Messages from one player are grouped, with a tail on the last one;
+  your own can sit on the right, like on a phone.
+- **Replies** with a quote: click it to jump to the original, however far back. Edit and delete your own messages.
+- **Reactions**: built-in ones and the server's emoji, on messages and stickers. Double-click a message for a heart.
+- **@mentions** with autocompletion; mentions of you are highlighted and announced above the hotbar.
+- **"Is typing..."**, date separators, smooth scrolling.
+- **The server's own lines** (joins, deaths, announcements, command answers) come with its name and icon and keep their
+  colors, links and hover texts.
+- **Names as the server shows them**: ranks and colors from the server or LuckPerms/Vault.
+- **Commands from anywhere.** Typed in a private chat, the answer appears right there, visible only to you.
 
 ### 🔒 Private chats
 - One-to-one chats in a list next to the server's chat, with unread counters and notifications.
 - Read receipts: one check when sent, two when read.
 
 ### 🖼️ Stickers, pictures, voice
-- Sticker and emoji packs come from the server (PNG, JPG, animated GIF). Sticker panel with recent, favourites and
-  every pack; hold the chat key for a quick picker.
-- Pictures: up to four per message with a caption, from a file, an in-game screenshot or the clipboard (Ctrl+V).
-- Voice messages: hold the microphone button to record, release to send. Waveform, 1x/1.5x/2x speed, a mini player
-  that keeps playing while you move. Opus, no other mod needed.
-- Shared coordinates become a card; with JourneyMap a click makes a waypoint.
+- **Sticker and emoji packs** from the server (PNG, JPG, animated GIF). A panel with recent, favourites and every pack;
+  hold the chat key for a quick picker.
+- **Pictures**: up to four per message with a caption, from a file, an in-game screenshot or the clipboard (Ctrl+V).
+- **Voice messages**: hold the microphone button to record, release to send. Waveform, 1x/1.5x/2x speed and a mini
+  player that keeps playing while you move. Opus, no other mod needed.
+- **Coordinates** become a card; with JourneyMap a click makes a waypoint.
 
-### 📊 More
+### 📊 Polls, search, settings
 - Polls with one or several answers.
 - Search through every chat you can see (Ctrl+F); a result opens its chat at the message.
-- Settings for size and scale, sticker size, microphone, output device, gain, noise gate.
+- Size and scale, sticker size, microphone, output device, gain, noise gate.
 - 40 languages.
 
 ### 🛠️ For server owners
-- Mutes in the server's chat, in private chats or both, for a time or for good. They also stop `/msg` and `/me`;
+- **Mutes** in the server's chat, in private chats or both, for a time or for good. They also stop `/msg` and `/me`;
   mutes from EssentialsX, LiteBans and AdvancedBan count too (plugin).
-- Works with chat plugins such as EssentialsX Chat: each line shows once, with the rank and colors the server gives it.
-- History in a database: H2 by default (nothing to set up), or MySQL, MariaDB, PostgreSQL. Voice messages and pictures
+- **Chat plugins** such as EssentialsX Chat: each line shows once, with the rank and colors the server gives it.
+- **Storage**: history in H2 by default (nothing to set up), or MySQL, MariaDB, PostgreSQL. Voice messages and pictures
   in the world folder or any S3-compatible storage; old files are cleaned up automatically.
-- The server's name and icon in the messenger (the MOTD and the server list icon by default).
-- One config file, reloadable in game. Velocity and BungeeCord: install on the servers behind the proxy, nothing on
-  the proxy; each server keeps its own chat.
+- **Your server's name and icon** in the messenger (the MOTD and the server list icon by default).
+- **One config file**, reloadable in game.
 
 ## Installation
 
@@ -99,7 +114,7 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 3. Join a server that has the mod or the plugin.
 
 ### Servers
-1. **Modded server:** the mod's jar in `mods` (plus Fabric API on Fabric and Quilt).
+1. **Modded server:** the mod's jar in `mods` (plus Fabric API on Fabric and Quilt).<br>
    **Paper, Spigot, Purpur, Folia:** the plugin's jar in `plugins`.
 2. Start the server once. It creates `config/ingamemessenger/` (plugin: `plugins/InGameMessenger/`) with the config
    and the folders for sticker and emoji packs.
@@ -156,14 +171,15 @@ packs, commands and permissions.
 
 </details>
 
-Every version is tested in the game: the mod plays a scenario by itself against a test server (messages, stickers,
-pictures, voice, polls, private chats, mutes) and every step is screenshotted.
-[See the latest test runs.](https://s1nuxoff.github.io/InGame-Messenger-tests/)
+> [!NOTE]
+> Every version is tested in the game: the mod plays a scenario by itself against a test server (messages, stickers,
+> pictures, voice, polls, private chats, mutes) and every step is screenshotted.
+> [See the latest test runs.](https://s1nuxoff.github.io/InGame-Messenger-tests/)
 
 ## Controls
 
 <details>
-<summary>Show</summary>
+<summary>Show the controls</summary>
 
 | Action | How |
 |---|---|
@@ -183,10 +199,41 @@ pictures, voice, polls, private chats, mutes) and every step is screenshotted.
 
 </details>
 
-## Privacy
+## FAQ
+
+<details>
+<summary><b>Does every player need the mod?</b></summary>
+
+No. Players without it join and chat as usual; stickers, voice messages, pictures and polls reach them as short text
+lines. Only players with the mod see the messenger.
+</details>
+
+<details>
+<summary><b>Do I need it on the server?</b></summary>
+
+Yes: the mod on a modded server, or the plugin on Paper, Spigot, Purpur or Folia. On a server without it, the mod
+leaves the chat alone.
+</details>
+
+<details>
+<summary><b>Does it work with chat plugins, ranks and mutes?</b></summary>
+
+Yes. Lines from chat plugins such as EssentialsX Chat show once, with the rank and colors the server gives them; ranks
+come from the server or LuckPerms/Vault, and mutes from EssentialsX, LiteBans and AdvancedBan count too.
+</details>
+
+<details>
+<summary><b>Velocity or BungeeCord?</b></summary>
+
+Install it on the servers behind the proxy, nothing on the proxy. Each server keeps its own chat.
+</details>
+
+<details>
+<summary><b>Who can read the messages?</b></summary>
 
 Messages, private chats included, are stored on the server in plain form, so the server's operators can read them, as
 on any chat platform. Voice messages and pictures are kept for a set number of days, then deleted.
+</details>
 
 ## Building from source
 
