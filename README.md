@@ -33,6 +33,10 @@ reactions and replies, plus private chats next to it.
 - **Players without the mod** can still join and chat; they see stickers, voice messages, pictures and polls as short
   text lines.
 
+
+https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
+
+
 ## A look
 
 <table>
