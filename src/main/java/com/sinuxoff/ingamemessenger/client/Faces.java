@@ -46,10 +46,11 @@ final class Faces {
 
     /** The autotest's skins by name, for the showcase's players who aren't online. */
     private static final java.util.Map<String, Object> testSkins = new java.util.HashMap<>();
+    private static final boolean TEST = Boolean.getBoolean("ingamemessenger.autotest");
 
     @SuppressWarnings("unchecked")
     private static <T> T testSkin(String name) {
-        if (name == null || !Boolean.getBoolean("ingamemessenger.autotest")) {
+        if (!TEST || name == null) {
             return null;
         }
         Object t = testSkins.computeIfAbsent(name, n -> {
