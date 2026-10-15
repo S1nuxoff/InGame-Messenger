@@ -12,7 +12,7 @@
 
 [Обзор](#обзор) · [Возможности](#возможности) · [Установка](#установка) · [Версии](#поддерживаемые-версии) · [Вопросы](#частые-вопросы) · [Для серверов](docs/server.md) · [Помочь проекту](CONTRIBUTING.md)
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/platforms-strip.png"><img src="docs/images/platforms-strip-light.png" alt="Minecraft 1.19.2 – 26.3: Fabric, Quilt, NeoForge, Forge, Paper, Spigot, Purpur, Folia" width="855"></picture>
+<img src="docs/images/platforms-strip.png" alt="Minecraft 1.19.2 – 26.3: Fabric, Quilt, NeoForge, Forge, Paper, Spigot, Purpur, Folia" width="855">
 
 </div>
 

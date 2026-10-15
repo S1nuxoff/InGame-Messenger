@@ -12,7 +12,7 @@
 
 [Огляд](#огляд) · [Можливості](#можливості) · [Встановлення](#встановлення) · [Версії](#підтримувані-версії) · [Питання](#часті-питання) · [Для серверів](docs/server.md) · [Долучитися](CONTRIBUTING.md)
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/platforms-strip.png"><img src="docs/images/platforms-strip-light.png" alt="Minecraft 1.19.2 – 26.3: Fabric, Quilt, NeoForge, Forge, Paper, Spigot, Purpur, Folia" width="855"></picture>
+<img src="docs/images/platforms-strip.png" alt="Minecraft 1.19.2 – 26.3: Fabric, Quilt, NeoForge, Forge, Paper, Spigot, Purpur, Folia" width="855">
 
 </div>
 
