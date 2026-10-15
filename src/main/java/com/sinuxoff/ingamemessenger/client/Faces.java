@@ -56,7 +56,7 @@ final class Faces {
         Object t = testSkins.computeIfAbsent(name, n -> {
             java.nio.file.Path p = Minecraft.getInstance().gameDirectory.toPath().resolve("ingamemessenger-autotest-skins").resolve(n + ".png");
             try {
-                var img = com.mojang.blaze3d.platform.NativeImage.read(java.nio.file.Files.readAllBytes(p));
+                var img = com.mojang.blaze3d.platform.NativeImage.read(new java.io.ByteArrayInputStream(java.nio.file.Files.readAllBytes(p)));
                 var tex = Compat.texture("skin", img);
                 var id = com.sinuxoff.ingamemessenger.InGameMessenger.id("dyn/skin/" + n.toLowerCase().replaceAll("[^a-z0-9_]", "_"));
                 Minecraft.getInstance().getTextureManager().register(id, tex);
