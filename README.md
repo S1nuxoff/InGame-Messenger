@@ -2,6 +2,8 @@
 
 <img src="docs/images/banner.png" alt="InGame Messenger: a real messenger inside the Minecraft chat" width="100%">
 
+**English** · [Українська](README.uk.md) · [Русский](README.ru.md)
+
 [![Download](https://img.shields.io/github/v/release/S1nuxoff/InGame-Messenger?style=for-the-badge&label=Download&color=2EA043)](https://github.com/S1nuxoff/InGame-Messenger/releases/latest)
 
 [![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
