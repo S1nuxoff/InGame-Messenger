@@ -12,7 +12,7 @@
 
 [Overview](#overview) · [Features](#features) · [Installation](#installation) · [Versions](#supported-versions) · [FAQ](#faq) · [Server guide](docs/server.md) · [Contributing](CONTRIBUTING.md)
 
-<table><tr><td align="center" width="104"><img src="docs/images/platforms/minecraft.png" width="36" height="36" alt=""><br><sub><b>1.19.2&nbsp;–&nbsp;26.3</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/fabric.png" width="36" height="36" alt=""><br><sub><b>Fabric</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/quilt.png" width="36" height="36" alt=""><br><sub><b>Quilt</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/neoforge.png" width="36" height="36" alt=""><br><sub><b>NeoForge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/forge.png" width="36" height="36" alt=""><br><sub><b>Forge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/paper.png" width="36" height="36" alt=""><br><sub><b>Paper</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/spigot.svg" width="36" height="36" alt=""><br><sub><b>Spigot</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/purpur.png" width="36" height="36" alt=""><br><sub><b>Purpur</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/folia.png" width="36" height="36" alt=""><br><sub><b>Folia</b></sub></td></tr></table>
+<table><tr><td align="center" width="104"><img src="docs/images/platforms/minecraft.png" width="36" height="36" alt="Minecraft"><br><sub><b>1.19.2&nbsp;–&nbsp;26.3</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/fabric.png" width="36" height="36" alt="Fabric"><br><sub><b>Fabric</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/quilt.png" width="36" height="36" alt="Quilt"><br><sub><b>Quilt</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/neoforge.png" width="36" height="36" alt="NeoForge"><br><sub><b>NeoForge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/forge.png" width="36" height="36" alt="Forge"><br><sub><b>Forge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/paper.png" width="36" height="36" alt="Paper"><br><sub><b>Paper</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/spigot.svg" width="36" height="36" alt="Spigot"><br><sub><b>Spigot</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/purpur.png" width="36" height="36" alt="Purpur"><br><sub><b>Purpur</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/folia.png" width="36" height="36" alt="Folia"><br><sub><b>Folia</b></sub></td></tr></table>
 
 </div>
 
@@ -52,7 +52,7 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 
 ## Features
 
-### <img src="docs/images/icons/writable_book.png" width="24" height="24" align="top" alt=""> A chat that feels like a messenger
+### <img src="docs/images/icons/writable_book.png" width="24" height="24" align="top" alt="Book and quill"> A chat that feels like a messenger
 
 <table>
 <tr>
@@ -64,15 +64,15 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 - **"Is typing..."**, date separators, smooth scrolling.
 
 </td>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/conversation.png" width="420" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/conversation.png" width="420" alt="A conversation in the chat: server lines, messages from Kenji and Mia, a reaction and a reply"></td>
 </tr>
 </table>
 
-### <img src="docs/images/icons/cherry_sign.png" width="24" height="24" align="top" alt=""> Replies and reactions
+### <img src="docs/images/icons/cherry_sign.png" width="24" height="24" align="top" alt="Cherry sign"> Replies and reactions
 
 <table>
 <tr>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-mia-reply.png" width="400" alt=""><br><br><img src="docs/images/features/msg-mine-lava.png" width="400" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-mia-reply.png" width="400" alt="Mia replies to a message with a quote"><br><br><img src="docs/images/features/msg-mine-lava.png" width="400" alt="Your own message with a reaction under it"></td>
 <td width="50%" valign="middle">
 
 - **Reply** with a quote; click it to jump to the original, however far back.
@@ -83,7 +83,7 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 </tr>
 </table>
 
-### <img src="docs/images/icons/bell.png" width="24" height="24" align="top" alt=""> Mentions
+### <img src="docs/images/icons/bell.png" width="24" height="24" align="top" alt="Bell"> Mentions
 
 <table>
 <tr>
@@ -93,15 +93,15 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 - Mentions of you are highlighted and announced above the hotbar, even with the chat closed.
 
 </td>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-mention-mia.png" width="400" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-mention-mia.png" width="400" alt="Mia mentions you with @"></td>
 </tr>
 </table>
 
-### <img src="docs/images/icons/name_tag.png" width="24" height="24" align="top" alt=""> Private chats
+### <img src="docs/images/icons/name_tag.png" width="24" height="24" align="top" alt="Name tag"> Private chats
 
 <table>
 <tr>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/private-chat.png" width="420" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/private-chat.png" width="420" alt="A private chat with Mia, with read checks"></td>
 <td width="50%" valign="middle">
 
 - One-to-one chats in a list next to the server's chat, with unread counters and notifications.
@@ -112,7 +112,7 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 </tr>
 </table>
 
-### <img src="docs/images/icons/slime_ball.png" width="24" height="24" align="top" alt=""> Stickers and emoji
+### <img src="docs/images/icons/slime_ball.png" width="24" height="24" align="top" alt="Slimeball"> Stickers and emoji
 
 <table>
 <tr>
@@ -123,15 +123,15 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 - The server's emoji right in the text and in reactions.
 
 </td>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/sticker-panel.png" width="420" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/sticker-panel.png" width="420" alt="The sticker panel with recent stickers and packs"></td>
 </tr>
 </table>
 
-### <img src="docs/images/icons/painting.png" width="24" height="24" align="top" alt=""> Pictures
+### <img src="docs/images/icons/painting.png" width="24" height="24" align="top" alt="Painting"> Pictures
 
 <table>
 <tr>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-picture.png" width="360" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-picture.png" width="360" alt="A picture of a sunset sent with a caption"></td>
 <td width="50%" valign="middle">
 
 - Up to four per message, with a caption.
@@ -142,7 +142,7 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 </tr>
 </table>
 
-### <img src="docs/images/icons/goat_horn.png" width="24" height="24" align="top" alt=""> Voice messages
+### <img src="docs/images/icons/goat_horn.png" width="24" height="24" align="top" alt="Goat horn"> Voice messages
 
 <table>
 <tr>
@@ -153,15 +153,15 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 - Opus, no other mod needed.
 
 </td>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-voice-mia.png" width="400" alt=""><br><br><img src="docs/images/features/msg-voice-mine.png" width="400" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-voice-mia.png" width="400" alt="Mia's voice message with its waveform"><br><br><img src="docs/images/features/msg-voice-mine.png" width="400" alt="Your voice message"></td>
 </tr>
 </table>
 
-### <img src="docs/images/icons/paper.png" width="24" height="24" align="top" alt=""> Polls
+### <img src="docs/images/icons/paper.png" width="24" height="24" align="top" alt="Paper"> Polls
 
 <table>
 <tr>
-<td width="50%" align="center" valign="middle"><img src="docs/images/features/poll-window.png" width="380" alt=""><br><br><img src="docs/images/features/msg-poll.png" width="380" alt=""></td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/poll-window.png" width="380" alt="The window for a new poll"><br><br><img src="docs/images/features/msg-poll.png" width="380" alt="A poll in the chat with its results"></td>
 <td width="50%" valign="middle">
 
 - One or several answers, results live.
@@ -171,12 +171,12 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 </tr>
 </table>
 
-### <img src="docs/images/icons/spyglass.png" width="24" height="24" align="top" alt=""> Search, settings, languages
+### <img src="docs/images/icons/spyglass.png" width="24" height="24" align="top" alt="Spyglass"> Search, settings, languages
 - Search through every chat you can see (Ctrl+F); a result opens its chat at the message.
 - Size and scale, sticker size, microphone, output device, gain, noise gate.
 - 40 languages.
 
-### <img src="docs/images/icons/command_block_minecart.png" width="24" height="24" align="top" alt=""> For server owners
+### <img src="docs/images/icons/command_block_minecart.png" width="24" height="24" align="top" alt="Minecart with command block"> For server owners
 - **Mutes** in the server's chat, in private chats or both, for a time or for good. They also stop `/msg` and `/me`;
   mutes from EssentialsX, LiteBans and AdvancedBan count too (plugin).
 - **Chat plugins** such as EssentialsX Chat: each line shows once, with the rank and colors the server gives it.
@@ -204,20 +204,20 @@ packs, commands and permissions.
 
 ## Supported versions
 
-<img src="docs/images/platforms/minecraft.png" width="20" height="20" alt=""> **22 Minecraft versions, from 1.19.2 to 26.3.**
+<img src="docs/images/platforms/minecraft.png" width="20" height="20" alt="Minecraft"> **22 Minecraft versions, from 1.19.2 to 26.3.**
 
 | Platform | Versions |
 |---|---|
-| <img src="docs/images/platforms/fabric.png" width="18" height="18" alt=""> **Fabric** · <img src="docs/images/platforms/quilt.png" width="18" height="18" alt=""> **Quilt** | 1.19.2 · 1.20 · 1.20.1 · 1.20.3 · 1.20.4 · 1.20.5 · 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
-| <img src="docs/images/platforms/neoforge.png" width="18" height="18" alt=""> **NeoForge** | 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
-| <img src="docs/images/platforms/forge.png" width="18" height="18" alt=""> **Forge** | 1.19.2 · 1.20.1 · 1.20.4 · 1.20.6 · 1.21.1 · 1.21.4 · 1.21.5 · 1.21.8 · 1.21.10 · 1.21.11 · 26.1.2 · 26.2 · 26.3 |
-| <img src="docs/images/platforms/paper.png" width="18" height="18" alt=""> **Paper** · <img src="docs/images/platforms/spigot.svg" width="18" height="18" alt=""> **Spigot** · <img src="docs/images/platforms/purpur.png" width="18" height="18" alt=""> **Purpur** | the plugin, 1.20.1 and newer |
-| <img src="docs/images/platforms/folia.png" width="18" height="18" alt=""> **Folia** | the plugin, every Folia release from 1.21.4 |
+| <img src="docs/images/platforms/fabric.png" width="18" height="18" alt="Fabric"> **Fabric** · <img src="docs/images/platforms/quilt.png" width="18" height="18" alt="Quilt"> **Quilt** | 1.19.2 · 1.20 · 1.20.1 · 1.20.3 · 1.20.4 · 1.20.5 · 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
+| <img src="docs/images/platforms/neoforge.png" width="18" height="18" alt="NeoForge"> **NeoForge** | 1.20.6 · 1.21 · 1.21.1 · 1.21.4 – 1.21.11 · 26.1 – 26.3 |
+| <img src="docs/images/platforms/forge.png" width="18" height="18" alt="Forge"> **Forge** | 1.19.2 · 1.20.1 · 1.20.4 · 1.20.6 · 1.21.1 · 1.21.4 · 1.21.5 · 1.21.8 · 1.21.10 · 1.21.11 · 26.1.2 · 26.2 · 26.3 |
+| <img src="docs/images/platforms/paper.png" width="18" height="18" alt="Paper"> **Paper** · <img src="docs/images/platforms/spigot.svg" width="18" height="18" alt="Spigot"> **Spigot** · <img src="docs/images/platforms/purpur.png" width="18" height="18" alt="Purpur"> **Purpur** | the plugin, 1.20.1 and newer |
+| <img src="docs/images/platforms/folia.png" width="18" height="18" alt="Folia"> **Folia** | the plugin, every Folia release from 1.21.4 |
 
 <details>
 <summary><b>Full table</b> (every version, loader and the Java it needs)</summary>
 
-| Minecraft | <img src="docs/images/platforms/neoforge.png" width="16" height="16" alt=""><br>NeoForge | <img src="docs/images/platforms/fabric.png" width="16" height="16" alt=""><br>Fabric | <img src="docs/images/platforms/quilt.png" width="16" height="16" alt=""><br>Quilt | <img src="docs/images/platforms/forge.png" width="16" height="16" alt=""><br>Forge | <img src="docs/images/platforms/paper.png" width="16" height="16" alt=""> <img src="docs/images/platforms/spigot.svg" width="16" height="16" alt=""> <img src="docs/images/platforms/purpur.png" width="16" height="16" alt=""><br>Paper, Spigot, Purpur | <img src="docs/images/platforms/folia.png" width="16" height="16" alt=""><br>Folia | <img src="docs/images/platforms/java.svg" width="16" height="16" alt=""><br>Java |
+| Minecraft | <img src="docs/images/platforms/neoforge.png" width="16" height="16" alt="NeoForge"><br>NeoForge | <img src="docs/images/platforms/fabric.png" width="16" height="16" alt="Fabric"><br>Fabric | <img src="docs/images/platforms/quilt.png" width="16" height="16" alt="Quilt"><br>Quilt | <img src="docs/images/platforms/forge.png" width="16" height="16" alt="Forge"><br>Forge | <img src="docs/images/platforms/paper.png" width="16" height="16" alt="Paper"> <img src="docs/images/platforms/spigot.svg" width="16" height="16" alt="Spigot"> <img src="docs/images/platforms/purpur.png" width="16" height="16" alt="Purpur"><br>Paper, Spigot, Purpur | <img src="docs/images/platforms/folia.png" width="16" height="16" alt="Folia"><br>Folia | <img src="docs/images/platforms/java.svg" width="16" height="16" alt="Java"><br>Java |
 |-----------|:--------:|:------:|:-----:|:-----:|:------------------------------:|:--------------:|:----:|
 | 1.19.2    |    —     |   ✓    |   ✓   |   ✓   |               —                |       —        |  17  |
 | 1.20      |    —     |   ✓    |   ✓   |   —   |               —                |       —        |  17  |
