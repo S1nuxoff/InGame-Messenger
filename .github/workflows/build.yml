@@ -6,6 +6,8 @@ on:
   push:
     branches: [dev]
     tags: ['v*']
+    # text and pictures only: nothing to build (tags ignore this)
+    paths-ignore: ['**.md', 'docs/**', '.github/release-notes/**', 'LICENSE']
   pull_request:
   workflow_dispatch:
 
