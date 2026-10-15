@@ -17,7 +17,7 @@ Stickers, voice messages, pictures, reactions, replies, private chats, polls and
 
 [Features](#features) · [Installation](#installation) · [Versions](#supported-versions) · [Server guide](docs/server.md) · [Contributing](CONTRIBUTING.md)
 
-<img src="docs/images/chat.jpg" alt="The chat with a poll, a picture, a voice message, a reply and a mention" width="720">
+<img src="docs/images/chat.webp" alt="Friends talking in the chat: a question, an answer, a reaction, a reply, a sticker" width="620">
 
 </div>
 
@@ -32,6 +32,18 @@ reactions and replies, plus private chats next to it.
   server's loader don't have to match.
 - **Players without the mod** can still join and chat; they see stickers, voice messages, pictures and polls as short
   text lines.
+
+## A look
+
+<table>
+<tr>
+<td width="60%"><img src="docs/images/chat.jpg" alt="The server's chat with a sticker, a picture, a poll, two voice messages and a mention"></td>
+<td><img src="docs/images/poll.jpg" alt="A new poll being written"><br><br><img src="docs/images/stickers.jpg" alt="The sticker panel"></td>
+</tr>
+<tr>
+<td colspan="2"><img src="docs/images/private.jpg" alt="A private chat with read receipts"></td>
+</tr>
+</table>
 
 ## Features
 
