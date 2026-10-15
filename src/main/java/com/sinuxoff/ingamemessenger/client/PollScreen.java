@@ -101,6 +101,26 @@ final class PollScreen extends BaseScreen {
         return b;
     }
 
+    // For the autotest
+
+    EditBox questionBox() {
+        return question;
+    }
+
+    List<EditBox> optionBoxes() {
+        return options;
+    }
+
+    /** What "+" does. */
+    void addRow() {
+        kept.add("");
+        rebuildWidgets();
+    }
+
+    void createNow() {
+        create();
+    }
+
     private boolean ready() {
         return question != null && !question.getValue().isBlank() && options.stream().filter(o -> !o.getValue().isBlank()).count() >= 2;
     }

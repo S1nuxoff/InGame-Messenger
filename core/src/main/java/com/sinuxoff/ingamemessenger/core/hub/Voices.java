@@ -60,8 +60,11 @@ final class Voices {
             body.addProperty("k", key);
             body.addProperty("ms", u.durationMs());
             body.addProperty("w", HexFormat.of().formatHex(u.wave()));
-            hub.platform.info("<" + name + "> [voice " + Math.round(u.durationMs() / 1000f) + " s]");
-            hub.deliver(who, name, ch, "voice", body.toString(), null, u.replyTo(), u.nonce());
+            Hub.Peer peer = hub.voiceAsPeer(who);
+            UUID from = peer != null ? peer.id() : who;
+            String as = peer != null ? peer.name() : name;
+            hub.platform.info("<" + as + "> [voice " + Math.round(u.durationMs() / 1000f) + " s]");
+            hub.deliver(from, as, ch, "voice", body.toString(), null, u.replyTo(), peer != null ? "" : u.nonce());
         });
     }
 

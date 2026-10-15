@@ -912,55 +912,91 @@ public final class Hub {
     /** Test servers run with -Dingamemessenger.dev=true: only there the test peer exists. */
     static final boolean DEV = Boolean.getBoolean("ingamemessenger.dev");
     static final UUID PEER = UUID.nameUUIDFromBytes("ingamemessenger:test-peer".getBytes(java.nio.charset.StandardCharsets.UTF_8));
-    static final String PEER_NAME = "TestBot";
+    /** -Dingamemessenger.peer=Name for the showcase screenshots. */
+    static final String PEER_NAME = System.getProperty("ingamemessenger.peer", "TestBot");
+
+    /** The test peers seen so far: the default one, and the showcase's others ("as Name ..."). */
+    private final Map<UUID, String> peers = new java.util.concurrent.ConcurrentHashMap<>(Map.of(PEER, PEER_NAME));
 
     private String nameOf(UUID id) {
-        return DEV && PEER.equals(id) ? PEER_NAME : platform.nameOf(id);
+        String peer = DEV ? peers.get(id) : null;
+        return peer != null ? peer : platform.nameOf(id);
+    }
+
+    /** A test peer: its id and name. */
+    record Peer(UUID id, String name) {
+    }
+
+    /** The player whose next voice message is posted as a test peer's ("voice"), and that peer. */
+    private volatile UUID peerVoice;
+    private volatile Peer peerVoiceAs;
+
+    /** The peer once for that player's upload, else null. */
+    Peer voiceAsPeer(UUID who) {
+        if (DEV && who.equals(peerVoice)) {
+            peerVoice = null;
+            return peerVoiceAs;
+        }
+        return null;
     }
 
     /**
-     * A second player for the test run, who isn't online: writes to the player privately, answers, reacts, mentions
-     * them, reads, types, mutes and unmutes them. Actions: "dm text", "say text", "reply id text", "react id emoji",
-     * "read channel id", "typing channel", "mute", "unmute".
+     * Second players for the test run, who aren't online: write to the player privately, answer, react, mention them,
+     * read, type, mute and unmute them. Actions: "dm text", "say text", "reply id text", "react id emoji",
+     * "read channel id", "typing channel", "mute", "unmute", "voice" (the player's next voice message is the peer's).
+     * "as Name action" acts as another peer, with its own id.
      */
     private void testPeer(UUID who, String name, String action) {
         if (!DEV) {
             return;
+        }
+        UUID pid = PEER;
+        String pname = PEER_NAME;
+        if (action.startsWith("as ")) {
+            String[] p = action.split(" ", 3);
+            pname = p[1];
+            pid = UUID.nameUUIDFromBytes(("ingamemessenger:test-peer:" + pname).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            peers.put(pid, pname);
+            action = p.length > 2 ? p[2] : "";
         }
         String[] a = action.split(" ", 3);
         Channel game = channels.get(gameChat());
         try {
             switch (a[0]) {
                 case "dm" -> {
-                    long ch = openDm(who, PEER);
+                    long ch = openDm(who, pid);
                     String text = action.substring(3);
                     JsonObject b = new JsonObject();
                     b.addProperty("t", text);
-                    deliver(PEER, PEER_NAME, channels.get(ch), "text", b.toString(), text, 0, null);
+                    deliver(pid, pname, channels.get(ch), "text", b.toString(), text, 0, null);
                 }
                 case "say" -> {
                     String text = action.substring(4);
                     JsonObject b = new JsonObject();
                     b.addProperty("t", text);
-                    deliver(PEER, PEER_NAME, game, "text", b.toString(), text, 0, null);
+                    deliver(pid, pname, game, "text", b.toString(), text, 0, null);
                 }
                 case "reply" -> {
                     JsonObject b = new JsonObject();
                     b.addProperty("t", a[2]);
-                    deliver(PEER, PEER_NAME, game, "text", b.toString(), a[2], Long.parseLong(a[1]), null);
+                    deliver(pid, pname, game, "text", b.toString(), a[2], Long.parseLong(a[1]), null);
                 }
-                case "react" -> react(PEER, PEER_NAME, new Proto.React(Long.parseLong(a[1]), a[2]));
-                case "read" -> read(PEER, new Proto.Read(Long.parseLong(a[1]), Long.parseLong(a[2])));
+                case "react" -> react(pid, pname, new Proto.React(Long.parseLong(a[1]), a[2]));
+                case "read" -> read(pid, new Proto.Read(Long.parseLong(a[1]), Long.parseLong(a[2])));
                 case "typing" -> {
                     long ch = Long.parseLong(a[1]);
                     for (UUID v : viewers(ch)) {
-                        if (!v.equals(PEER)) {
-                            platform.send(v, new Proto.TypingAt(ch, PEER, PEER_NAME));
+                        if (!v.equals(pid)) {
+                            platform.send(v, new Proto.TypingAt(ch, pid, pname));
                         }
                     }
                 }
-                case "mute" -> platform.info(moderation.command(PEER_NAME, "mute", List.of(name, "1m", "all", "test")));
-                case "unmute" -> platform.info(moderation.command(PEER_NAME, "unmute", List.of(name)));
+                case "mute" -> platform.info(moderation.command(pname, "mute", List.of(name, "1m", "all", "test")));
+                case "unmute" -> platform.info(moderation.command(pname, "unmute", List.of(name)));
+                case "voice" -> {
+                    peerVoiceAs = new Peer(pid, pname);
+                    peerVoice = who;
+                }
                 default -> {
                 }
             }

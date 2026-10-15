@@ -19,6 +19,10 @@ import javax.sound.sampled.TargetDataLine;
 abstract class Mic implements AutoCloseable {
     /** name is an OpenAL device name, null = default. Falls back to the default; null if there's no microphone. */
     static Mic open(String name) {
+        Mic f = FromFile.open();
+        if (f != null) {
+            return f;
+        }
         //? if >=26.1 {
         Mic m = JavaSound.open(name);
         //?} else {
@@ -34,6 +38,69 @@ abstract class Mic implements AutoCloseable {
 
     @Override
     public abstract void close();
+
+    /**
+     * The autotest's microphone: ingamemessenger-autotest-voice.wav in the game folder (48 kHz mono 16-bit), played at
+     * the speed of a real one, then silence. Only in a game started for the autotest.
+     */
+    static final class FromFile extends Mic {
+        private final short[] all;
+        private long startedNs;
+        private int done;
+
+        private FromFile(short[] all) {
+            this.all = all;
+        }
+
+        static Mic open() {
+            if (!Boolean.getBoolean("ingamemessenger.autotest")) {
+                return null;
+            }
+            short[] pcm = wav("ingamemessenger-autotest-voice.wav");
+            return pcm == null ? null : new FromFile(pcm);
+        }
+
+        /** A 48 kHz mono 16-bit WAV in the game folder, or null. */
+        static short[] wav(String file) {
+            java.nio.file.Path f = net.minecraft.client.Minecraft.getInstance().gameDirectory.toPath().resolve(file);
+            try {
+                byte[] b = java.nio.file.Files.readAllBytes(f);
+                int data = 12;
+                while (data + 8 <= b.length && !new String(b, data, 4, java.nio.charset.StandardCharsets.US_ASCII).equals("data")) {
+                    data += 8 + (b[data + 4] & 0xff | (b[data + 5] & 0xff) << 8 | (b[data + 6] & 0xff) << 16 | (b[data + 7] & 0xff) << 24);
+                }
+                data += 8;
+                short[] pcm = new short[Math.max(0, (b.length - data) / 2)];
+                for (int i = 0; i < pcm.length; i++) {
+                    pcm[i] = (short) (b[data + 2 * i] & 0xff | b[data + 2 * i + 1] << 8);
+                }
+                return pcm;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        void start() {
+            startedNs = System.nanoTime();
+        }
+
+        @Override
+        boolean read(short[] pcm) {
+            if ((System.nanoTime() - startedNs) / 1_000_000L * 48 < (long) done + pcm.length) {
+                return false;
+            }
+            for (int i = 0; i < pcm.length; i++) {
+                pcm[i] = done + i < all.length ? all[done + i] : 0;
+            }
+            done += pcm.length;
+            return true;
+        }
+
+        @Override
+        public void close() {
+        }
+    }
 
     static final class OpenAl extends Mic {
         private final long dev;

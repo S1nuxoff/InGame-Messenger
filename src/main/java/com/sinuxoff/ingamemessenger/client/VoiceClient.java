@@ -161,6 +161,32 @@ final class VoiceClient {
                 all[i] = recLevels.get(i);
             }
         }
+        upload(enc, all);
+    }
+
+    /** The autotest's: this sound, encoded and sent as a voice message without recording it. */
+    static void sendPcm(short[] pcm) {
+        OpusCodec.Encoder encoder;
+        try {
+            encoder = new OpusCodec.Encoder();
+        } catch (Throwable e) {
+            return;
+        }
+        List<byte[]> enc = new ArrayList<>();
+        float[] all = new float[pcm.length / FRAME];
+        try {
+            for (int i = 0; i < all.length; i++) {
+                short[] f = java.util.Arrays.copyOfRange(pcm, i * FRAME, (i + 1) * FRAME);
+                all[i] = VoiceDsp.rms(f);
+                enc.add(encoder.encode(f));
+            }
+        } catch (Exception e) {
+            return;
+        }
+        upload(enc, all);
+    }
+
+    private static void upload(List<byte[]> enc, float[] all) {
         // cut leading silence (microphone warming up, the pause before speaking), keeping 40 ms, at most 1.5 s
         float gate = Prefs.noiseGate() / 2000f; // setting 24 -> 0.012
         int from = VoiceDsp.leadingSilence(all, gate, 75, 2);
