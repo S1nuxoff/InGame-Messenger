@@ -1,11 +1,6 @@
 <div align="center">
 
-<img src="src/main/resources/ingamemessenger.png" alt="InGame Messenger" width="112">
-
-# InGame Messenger
-
-**A real messenger inside the Minecraft chat.**<br>
-Stickers, voice messages, pictures, reactions, replies, private chats, polls and search, for every player on your server.
+<img src="docs/images/banner.png" alt="InGame Messenger: a real messenger inside the Minecraft chat" width="100%">
 
 [![Download](https://img.shields.io/github/v/release/S1nuxoff/InGame-Messenger?style=for-the-badge&label=Download&color=2EA043)](https://github.com/S1nuxoff/InGame-Messenger/releases/latest)
 
@@ -13,11 +8,9 @@ Stickers, voice messages, pictures, reactions, replies, private chats, polls and
 [![Tested in game](https://img.shields.io/badge/tested-in%20game-2EA043)](https://s1nuxoff.github.io/InGame-Messenger-tests/)
 [![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 
-<table><tr><td align="center" width="104"><img src="docs/images/platforms/minecraft.png" width="36" height="36" alt=""><br><sub><b>1.19.2&nbsp;–&nbsp;26.3</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/fabric.png" width="36" height="36" alt=""><br><sub><b>Fabric</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/quilt.png" width="36" height="36" alt=""><br><sub><b>Quilt</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/neoforge.png" width="36" height="36" alt=""><br><sub><b>NeoForge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/forge.png" width="36" height="36" alt=""><br><sub><b>Forge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/paper.png" width="36" height="36" alt=""><br><sub><b>Paper</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/spigot.svg" width="36" height="36" alt=""><br><sub><b>Spigot</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/purpur.png" width="36" height="36" alt=""><br><sub><b>Purpur</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/folia.png" width="36" height="36" alt=""><br><sub><b>Folia</b></sub></td></tr></table>
-
 [Overview](#overview) · [Features](#features) · [Installation](#installation) · [Versions](#supported-versions) · [FAQ](#faq) · [Server guide](docs/server.md) · [Contributing](CONTRIBUTING.md)
 
-<img src="docs/images/chat.webp" alt="Friends talking in the chat: a question, an answer, a reaction, a reply, a sticker" width="800">
+<table><tr><td align="center" width="104"><img src="docs/images/platforms/minecraft.png" width="36" height="36" alt=""><br><sub><b>1.19.2&nbsp;–&nbsp;26.3</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/fabric.png" width="36" height="36" alt=""><br><sub><b>Fabric</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/quilt.png" width="36" height="36" alt=""><br><sub><b>Quilt</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/neoforge.png" width="36" height="36" alt=""><br><sub><b>NeoForge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/forge.png" width="36" height="36" alt=""><br><sub><b>Forge</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/paper.png" width="36" height="36" alt=""><br><sub><b>Paper</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/spigot.svg" width="36" height="36" alt=""><br><sub><b>Spigot</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/purpur.png" width="36" height="36" alt=""><br><sub><b>Purpur</b></sub></td><td align="center" width="84"><img src="docs/images/platforms/folia.png" width="36" height="36" alt=""><br><sub><b>Folia</b></sub></td></tr></table>
 
 </div>
 
@@ -31,20 +24,20 @@ reactions and replies, with private chats next to it. No accounts, no cloud: eve
 <tr>
 <td width="33%" valign="top">
 
-**🎮 Players**<br>
+**Players**<br>
 Install the mod. On a server without it nothing changes: the chat stays the normal Minecraft chat.
 
 </td>
 <td width="33%" valign="top">
 
-**🖥️ Servers**<br>
+**Servers**<br>
 Run the mod (NeoForge, Fabric, Forge) or the plugin (Paper, Spigot, Purpur, Folia). The client's and the server's
 loader don't have to match.
 
 </td>
 <td width="33%" valign="top">
 
-**👥 Players without the mod**<br>
+**Players without the mod**<br>
 Can still join and chat. Stickers, voice messages, pictures and polls reach them as short text lines.
 
 </td>
@@ -55,49 +48,133 @@ Can still join and chat. Stickers, voice messages, pictures and polls reach them
 
 https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 
+## Features
+
+### <img src="docs/images/icons/writable_book.png" width="24" height="24" align="top" alt=""> A chat that feels like a messenger
+
 <table>
 <tr>
-<td width="60%"><img src="docs/images/chat.jpg" alt="The server's chat with a sticker, a picture, a poll, two voice messages and a mention"></td>
-<td><img src="docs/images/poll.jpg" alt="A new poll being written"><br><br><img src="docs/images/stickers.jpg" alt="The sticker panel"></td>
-</tr>
-<tr>
-<td colspan="2"><img src="docs/images/private.jpg" alt="A private chat with read receipts"></td>
+<td width="50%" valign="middle">
+
+- **Bubbles** with the sender's face, name and time; a player's messages are grouped, with a tail on the last one.
+- **The server's own lines** (joins, deaths, announcements, command answers) come with its name and icon.
+- **Names as the server shows them**: ranks and colors from the server or LuckPerms/Vault.
+- **"Is typing..."**, date separators, smooth scrolling.
+
+</td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/conversation.png" width="420" alt=""></td>
 </tr>
 </table>
 
-## Features
+### <img src="docs/images/icons/cherry_sign.png" width="24" height="24" align="top" alt=""> Replies and reactions
 
-### 💬 Chat
-- **Bubbles** with the sender's face, name and time. Messages from one player are grouped, with a tail on the last one;
-  your own can sit on the right, like on a phone.
-- **Replies** with a quote: click it to jump to the original, however far back. Edit and delete your own messages.
-- **Reactions**: built-in ones and the server's emoji, on messages and stickers. Double-click a message for a heart.
-- **@mentions** with autocompletion; mentions of you are highlighted and announced above the hotbar.
-- **"Is typing..."**, date separators, smooth scrolling.
-- **The server's own lines** (joins, deaths, announcements, command answers) come with its name and icon and keep their
-  colors, links and hover texts.
-- **Names as the server shows them**: ranks and colors from the server or LuckPerms/Vault.
-- **Commands from anywhere.** Typed in a private chat, the answer appears right there, visible only to you.
+<table>
+<tr>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-mia-reply.png" width="400" alt=""><br><br><img src="docs/images/features/msg-mine-lava.png" width="400" alt=""></td>
+<td width="50%" valign="middle">
 
-### 🔒 Private chats
+- **Reply** with a quote; click it to jump to the original, however far back.
+- **React** with built-in reactions or the server's emoji. Double-click a message for a heart.
+- Edit and delete your own messages.
+
+</td>
+</tr>
+</table>
+
+### <img src="docs/images/icons/bell.png" width="24" height="24" align="top" alt=""> Mentions
+
+<table>
+<tr>
+<td width="50%" valign="middle">
+
+- **@mentions** with autocompletion.
+- Mentions of you are highlighted and announced above the hotbar, even with the chat closed.
+
+</td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-mention-mia.png" width="400" alt=""></td>
+</tr>
+</table>
+
+### <img src="docs/images/icons/name_tag.png" width="24" height="24" align="top" alt=""> Private chats
+
+<table>
+<tr>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/private-chat.png" width="420" alt=""></td>
+<td width="50%" valign="middle">
+
 - One-to-one chats in a list next to the server's chat, with unread counters and notifications.
-- Read receipts: one check when sent, two when read.
+- **Read receipts**: one check when sent, two when read.
+- **Commands from anywhere**: typed in a private chat, the answer appears right there, visible only to you.
 
-### 🖼️ Stickers, pictures, voice
-- **Sticker and emoji packs** from the server (PNG, JPG, animated GIF). A panel with recent, favourites and every pack;
-  hold the chat key for a quick picker.
-- **Pictures**: up to four per message with a caption, from a file, an in-game screenshot or the clipboard (Ctrl+V).
-- **Voice messages**: hold the microphone button to record, release to send. Waveform, 1x/1.5x/2x speed and a mini
-  player that keeps playing while you move. Opus, no other mod needed.
-- **Coordinates** become a card; with JourneyMap a click makes a waypoint.
+</td>
+</tr>
+</table>
 
-### 📊 Polls, search, settings
-- Polls with one or several answers.
+### <img src="docs/images/icons/slime_ball.png" width="24" height="24" align="top" alt=""> Stickers and emoji
+
+<table>
+<tr>
+<td width="50%" valign="middle">
+
+- **Packs from the server**: PNG, JPG, animated GIF.
+- A panel with recent, favourites and every pack; hold the chat key for a quick picker.
+- The server's emoji right in the text and in reactions.
+
+</td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/sticker-panel.png" width="420" alt=""></td>
+</tr>
+</table>
+
+### <img src="docs/images/icons/painting.png" width="24" height="24" align="top" alt=""> Pictures
+
+<table>
+<tr>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-picture.png" width="360" alt=""></td>
+<td width="50%" valign="middle">
+
+- Up to four per message, with a caption.
+- From a file, an in-game screenshot or the clipboard (Ctrl+V).
+- Shared coordinates become a card; with JourneyMap a click makes a waypoint.
+
+</td>
+</tr>
+</table>
+
+### <img src="docs/images/icons/goat_horn.png" width="24" height="24" align="top" alt=""> Voice messages
+
+<table>
+<tr>
+<td width="50%" valign="middle">
+
+- **Hold the microphone button** to record, release to send.
+- Waveform, 1x/1.5x/2x speed, and a mini player that keeps playing while you move.
+- Opus, no other mod needed.
+
+</td>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/msg-voice-mia.png" width="400" alt=""><br><br><img src="docs/images/features/msg-voice-mine.png" width="400" alt=""></td>
+</tr>
+</table>
+
+### <img src="docs/images/icons/paper.png" width="24" height="24" align="top" alt=""> Polls
+
+<table>
+<tr>
+<td width="50%" align="center" valign="middle"><img src="docs/images/features/poll-window.png" width="380" alt=""><br><br><img src="docs/images/features/msg-poll.png" width="380" alt=""></td>
+<td width="50%" valign="middle">
+
+- One or several answers, results live.
+- Written in a window right from the chat.
+
+</td>
+</tr>
+</table>
+
+### <img src="docs/images/icons/spyglass.png" width="24" height="24" align="top" alt=""> Search, settings, languages
 - Search through every chat you can see (Ctrl+F); a result opens its chat at the message.
 - Size and scale, sticker size, microphone, output device, gain, noise gate.
 - 40 languages.
 
-### 🛠️ For server owners
+### <img src="docs/images/icons/command_block_minecart.png" width="24" height="24" align="top" alt=""> For server owners
 - **Mutes** in the server's chat, in private chats or both, for a time or for good. They also stop `/msg` and `/me`;
   mutes from EssentialsX, LiteBans and AdvancedBan count too (plugin).
 - **Chat plugins** such as EssentialsX Chat: each line shows once, with the rank and colors the server gives it.
@@ -235,23 +312,9 @@ Messages, private chats included, are stored on the server in plain form, so the
 on any chat platform. Voice messages and pictures are kept for a set number of days, then deleted.
 </details>
 
-## Building from source
-
-Needs JDK 21 or newer (JDK 25 for the 26.x builds is downloaded automatically).
-
-```sh
-./gradlew buildAll                 # every version and loader
-./gradlew :1.21.1-neoforge:build   # one of them
-./gradlew :plugin:build            # the server plugin
-./gradlew :core:test               # unit tests
-```
-
-Jars end up in `versions/<minecraft>-<loader>/build/libs/` and `plugin/build/libs/`. Every version is built from one
-source tree with [Stonecutter](https://stonecutter.kikugie.dev/); see [CONTRIBUTING.md](CONTRIBUTING.md).
-
 ## Contributing
 
-Bug reports, ideas, translations and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+Bug reports, ideas, translations and pull requests are welcome. To build it yourself or send a change, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
