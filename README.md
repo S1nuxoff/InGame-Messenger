@@ -4,7 +4,7 @@
 
 **English** · [Українська](README.uk.md) · [Русский](README.ru.md)
 
-[![Download](https://img.shields.io/github/v/release/S1nuxoff/InGame-Messenger?style=for-the-badge&label=Download&color=2EA043)](https://github.com/S1nuxoff/InGame-Messenger/releases/latest)
+[![Download](https://img.shields.io/github/v/release/S1nuxoff/InGame-Messenger?style=for-the-badge&label=Download&color=2EA043)](https://github.com/S1nuxoff/InGame-Messenger/releases/latest) [![CurseForge](https://img.shields.io/curseforge/dt/1746328?style=for-the-badge&logo=curseforge&logoColor=white&label=CurseForge&color=F16436)](https://www.curseforge.com/minecraft/mc-mods/ingame-messenger)
 
 [![Build](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml/badge.svg)](https://github.com/S1nuxoff/InGame-Messenger/actions/workflows/build.yml)
 [![Tested in game](https://img.shields.io/badge/tested-in%20game-2EA043)](https://s1nuxoff.github.io/InGame-Messenger-tests/)
@@ -188,7 +188,7 @@ https://github.com/user-attachments/assets/48dfbc2b-96dd-4af4-9ba5-352966471e95
 ## Installation
 
 ### Players
-1. Download the jar for your Minecraft version and loader from [Releases](https://github.com/S1nuxoff/InGame-Messenger/releases/latest).
+1. Download the jar for your Minecraft version and loader from [Releases](https://github.com/S1nuxoff/InGame-Messenger/releases/latest) or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/ingame-messenger).
 2. Put it in your `mods` folder. On Fabric and Quilt, also install [Fabric API](https://modrinth.com/mod/fabric-api).
 3. Join a server that has the mod or the plugin.
 
