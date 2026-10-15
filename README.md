@@ -17,7 +17,7 @@ Stickers, voice messages, pictures, reactions, replies, private chats, polls and
 
 [Overview](#overview) · [Features](#features) · [Installation](#installation) · [Versions](#supported-versions) · [FAQ](#faq) · [Server guide](docs/server.md) · [Contributing](CONTRIBUTING.md)
 
-<img src="docs/images/chat.webp" alt="Friends talking in the chat: a question, an answer, a reaction, a reply, a sticker" width="620">
+<img src="docs/images/chat.webp" alt="Friends talking in the chat: a question, an answer, a reaction, a reply, a sticker" width="800">
 
 </div>
 
