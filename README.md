@@ -20,7 +20,7 @@
 
 InGame Messenger turns the Minecraft chat into a messenger, right where the chat is. The server's chat stays the place
 where everyone talks and where commands are typed; it just gets bubbles with faces, stickers, voice, pictures,
-reactions and replies, with private chats next to it. No accounts, no cloud: everything lives on your server.
+reactions and replies, with private chats next to it. No accounts: everything lives on your server, unless its owner keeps pictures elsewhere.
 
 <table>
 <tr>
@@ -312,6 +312,8 @@ Install it on the servers behind the proxy, nothing on the proxy. Each server ke
 
 Messages, private chats included, are stored on the server in plain form, so the server's operators can read them, as
 on any chat platform. Voice messages and pictures are kept for a set number of days, then deleted.
+Pictures leave the server only if its owner chooses it: ImgBB, Catbox (then each player's game uploads them) or S3
+storage.
 </details>
 
 ## Contributing
