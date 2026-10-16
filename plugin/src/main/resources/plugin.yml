@@ -7,9 +7,6 @@ author: S1nuxoff
 website: https://github.com/S1nuxoff/InGame-Messenger
 softdepend: [Essentials, LiteBans, AdvancedBan, Vault]
 description: A messenger in the Minecraft chat. Players install the mod on their clients; players without it can still join and chat as usual.
-libraries:
-  - com.h2database:h2:${h2}
-  - io.github.jaredmdobson:concentus:${concentus}
 commands:
   messenger:
     description: InGame Messenger moderation and settings

@@ -30,12 +30,12 @@ public final class Database implements AutoCloseable {
     }
 
     /**
-     * dataDir holds the H2 file; libsDir the downloaded drivers. Fails if the driver can't be loaded or the database
+     * dataDir holds the H2 file; libsDir the external databases' drivers. Fails if the driver can't be loaded or the database
      * can't be reached.
      */
     public static Database open(DatabaseConfig cfg, Path dataDir, Path libsDir, Consumer<String> log) throws Exception {
         String type = cfg.type().trim().toLowerCase();
-        Driver driver = Drivers.load(type, libsDir, log);
+        Driver driver = Drivers.load(type, libsDir, cfg.downloadDriver(), log);
         String prefix = cfg.tablePrefix().replaceAll("[^A-Za-z0-9_]", "");
         Database db = switch (type) {
             case "h2" -> new Database(Dialect.H2, prefix, driver,

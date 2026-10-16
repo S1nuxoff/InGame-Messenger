@@ -1,5 +1,5 @@
-// InGame Messenger as a server plugin: Paper, Spigot, Purpur and Folia. The core is compiled into the jar; H2 and
-// Concentus are downloaded by the server from plugin.yml's libraries, Gson comes with the server.
+// InGame Messenger as a server plugin: Paper, Spigot, Purpur and Folia. The core, H2 and Concentus are packed into the
+// jar, so the server downloads nothing; Gson comes with the server.
 plugins {
     id 'java'
 }
@@ -19,6 +19,15 @@ dependencies {
     implementation project(':core')
 }
 
+configurations {
+    bundled { transitive = false }
+}
+
+dependencies {
+    bundled "com.h2database:h2:${h2_version}"
+    bundled "io.github.jaredmdobson:concentus:${concentus_version}"
+}
+
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
     // built for Java 17 (servers from 1.20.1) against the 1.21 API, using nothing 1.20 lacks
@@ -31,7 +40,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 processResources {
-    def props = [version: version, h2: h2_version, concentus: concentus_version]
+    def props = [version: version]
     inputs.properties props
     filesMatching('plugin.yml') {
         expand props
@@ -40,5 +49,9 @@ processResources {
 
 jar {
     from(project(':core').sourceSets.main.output)
+    from({ configurations.bundled.collect { zipTree(it) } }) {
+        exclude 'META-INF/MANIFEST.MF', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/versions/*/module-info.class', 'module-info.class'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(rootProject.file('LICENSE'))
 }

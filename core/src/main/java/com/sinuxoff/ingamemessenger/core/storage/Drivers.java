@@ -19,8 +19,8 @@ import java.util.HexFormat;
 import java.util.function.Consumer;
 
 /**
- * JDBC drivers for external databases, downloaded from Maven Central on first use and checked against a known SHA-256,
- * so the mod itself stays small. H2 is bundled.
+ * JDBC drivers for external databases: a jar in the libs folder, checked against a known SHA-256. H2 is bundled. Nothing
+ * is downloaded unless the server's owner allows it ([database] downloadDriver); then the jar comes from Maven Central.
  */
 final class Drivers {
     private record Artifact(String path, String sha256, String driverClass) {
@@ -40,7 +40,7 @@ final class Drivers {
     private Drivers() {
     }
 
-    static Driver load(String type, Path libsDir, Consumer<String> log) throws Exception {
+    static Driver load(String type, Path libsDir, boolean mayDownload, Consumer<String> log) throws Exception {
         if (type.equals("h2")) {
             return new org.h2.Driver();
         }
@@ -52,6 +52,11 @@ final class Drivers {
         };
         Path jar = libsDir.resolve(a.fileName());
         if (!Files.exists(jar) || !a.sha256().equals(sha256(jar))) {
+            if (!mayDownload) {
+                throw new IOException((Files.exists(jar) ? a.fileName() + " in " + libsDir + " is not the expected file. Replace it with "
+                        : "The " + type + " driver is not installed. Put ") + a.fileName() + " (" + MAVEN + a.path() + ") into "
+                        + libsDir.toAbsolutePath() + ", or set downloadDriver = true in [database] to let the server download it.");
+            }
             download(a, jar, log);
         }
         URLClassLoader loader = new URLClassLoader(new URL[]{jar.toUri().toURL()}, Drivers.class.getClassLoader());

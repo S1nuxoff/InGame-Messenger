@@ -25,8 +25,7 @@ storage, sticker packs and commands.
 
    On Paper, Spigot, Purpur or Folia, put the plugin's jar in `plugins/`. One jar covers 1.20.1, 1.20.4, 1.20.6, 1.21.1,
    1.21.4, 1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.1, 26.1.1, 26.1.2, 26.2 and 26.3 (on Folia,
-   the versions marked in the README's table); it needs Java 17 or newer. On first start the server downloads the plugin's libraries (the H2 database and the Opus
-   codec) from Maven Central.
+   the versions marked in the README's table); it needs Java 17 or newer. Everything it needs is inside the jar.
 2. Start the server. It creates `config/ingamemessenger/` with `server.toml` and the `stickers/` and `emoji/`
    folders. With the plugin this folder is `plugins/InGameMessenger/`; everything in it works the same.
 3. Players install the same version of the mod on their client to get the messenger, on any loader: a NeoForge client
@@ -45,7 +44,7 @@ config/ingamemessenger/
   server.toml          server configuration
   stickers/            sticker packs, one folder per pack
   emoji/               emoji packs, one folder per pack
-  libs/                database drivers downloaded on demand
+  libs/                drivers for external databases (see Drivers)
 
 <world>/ingamemessenger/
   chat.mv.db           H2 database (when database.type = "h2")
@@ -128,6 +127,7 @@ The texts take `&` color codes, for example `stickerText = "&e%s&7 sent a sticke
 | `user`        | `""`                | Database user.                                                 |
 | `password`    | `""`                | Database password.                                             |
 | `tablePrefix` | `"igm_"`            | Prefix for table names, useful when sharing a database.        |
+| `downloadDriver` | `false`          | Let the server download the external database's driver from Maven Central (see [Drivers](#drivers)). Off: nothing is downloaded. |
 
 ### [storage]
 
@@ -191,9 +191,11 @@ password = "change-me"
 
 ### Drivers
 
-The H2 driver is included in the mod. For MySQL, MariaDB and PostgreSQL the mod downloads the JDBC driver from Maven
-Central on first start, verifies its SHA-256 checksum and stores it in `config/ingamemessenger/libs/`. If the server
-has no internet access, download the jar yourself and put it there:
+The H2 driver is included in the mod. MySQL, MariaDB and PostgreSQL need their JDBC driver in
+`config/ingamemessenger/libs/` (plugin: `plugins/InGameMessenger/libs/`); its SHA-256 checksum is checked on start.
+The mod downloads nothing by itself: download the jar from Maven Central and put it there, or set
+`downloadDriver = true` in `[database]` and the server downloads it on start. Without the driver the log names the file
+and where it goes.
 
 | Type       | File                                |
 |------------|-------------------------------------|
@@ -388,8 +390,9 @@ of the server's chat too.
 could not be loaded. Check `[database]`, that the database server accepts connections from the Minecraft server, and
 that the user has rights to create tables. Fix the config and restart.
 
-**Driver download fails.** The server has no access to `repo1.maven.org`. Put the driver jar into
-`config/ingamemessenger/libs/` manually (see [Drivers](#drivers)).
+**"The mysql driver is not installed"** (or mariadb, postgresql) in the log. Put the driver jar into
+`config/ingamemessenger/libs/`, or set `downloadDriver = true` (see [Drivers](#drivers)). With `downloadDriver` on,
+the download fails when the server has no access to `repo1.maven.org`; then put the jar there yourself.
 
 **Voice messages or pictures are not sent with S3.** Look for `Can't store a file` in the log; it includes the HTTP
 status from the storage. 403 usually means a wrong key or missing permissions, 404 a wrong bucket name or endpoint.

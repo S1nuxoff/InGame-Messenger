@@ -63,13 +63,16 @@ public final class FileSettings implements ModSettings {
     private static final Key DB_TYPE = new Key("database", "type", "h2", """
             Where messages are stored. Changes need a server restart.
               "h2"         - a file in the world folder, nothing to set up
-              "mysql", "mariadb", "postgresql" - an external database; its driver is downloaded on first start""");
+              "mysql", "mariadb", "postgresql" - an external database; it needs its driver in the libs folder (see downloadDriver)""");
     private static final Key DB_HOST = new Key("database", "host", "localhost", "");
     private static final Key DB_PORT = new Key("database", "port", 0, "0 = the default port (3306 for MySQL/MariaDB, 5432 for PostgreSQL)");
     private static final Key DB_NAME = new Key("database", "name", "ingamemessenger", "");
     private static final Key DB_USER = new Key("database", "user", "", "");
     private static final Key DB_PASSWORD = new Key("database", "password", "", "");
     private static final Key DB_PREFIX = new Key("database", "tablePrefix", "igm_", "Prefix for the table names.");
+    private static final Key DB_DOWNLOAD = new Key("database", "downloadDriver", false, """
+            Let the server download the driver of an external database from Maven Central on start (checked against a known
+            SHA-256). Off: nothing is downloaded; put the jar into the libs folder next to this file yourself (the log names it).""");
     private static final Key FILES_TYPE = new Key("storage", "type", "local", """
             Where voice messages and pictures are stored. Changes need a server restart.
               "local" - the world folder
@@ -85,7 +88,7 @@ public final class FileSettings implements ModSettings {
     private static final Key S3_PREFIX = new Key("storage", "prefix", "", "Folder inside the bucket (empty = the root).");
     private static final Key[] ALL = {SERVER_NAME, SERVER_ICON, TYPING, STICKER_COOLDOWN, VOICE_ON, VOICE_MAX, VOICE_KEEP, IMAGES, IMGBB_KEY, IMAGE_KEEP, IMAGE_MAX,
             PLAIN_ON, INSTALL_HINT, TEXT_INSTALL, TEXT_STICKER, TEXT_VOICE, TEXT_PICTURE, TEXT_PICTURES, TEXT_POLL,
-            DB_TYPE, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_PREFIX,
+            DB_TYPE, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_PREFIX, DB_DOWNLOAD,
             FILES_TYPE, S3_ENDPOINT, S3_REGION, S3_BUCKET, S3_ACCESS, S3_SECRET, S3_PATH_STYLE, S3_PREFIX};
 
     private final Path file;
@@ -289,7 +292,7 @@ public final class FileSettings implements ModSettings {
     @Override
     public DatabaseConfig database() {
         return new DatabaseConfig(str(DB_TYPE), str(DB_HOST), num(DB_PORT, 0, 65535), str(DB_NAME), str(DB_USER), str(DB_PASSWORD),
-                str(DB_PREFIX));
+                str(DB_PREFIX), bool(DB_DOWNLOAD));
     }
 
     @Override
